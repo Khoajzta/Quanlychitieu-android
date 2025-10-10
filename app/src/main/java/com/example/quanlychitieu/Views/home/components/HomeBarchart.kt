@@ -1,4 +1,4 @@
-package com.example.quanlychitieu.feature.Views.home
+package com.example.quanlychitieu.Views.home.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 
 @Composable
 fun WeeklyFinanceBarChart(
@@ -28,7 +29,7 @@ fun WeeklyFinanceBarChart(
     data: Map<String, Int>,              // dữ liệu thứ → số tiền
     dates: List<String> = listOf("07", "08", "09", "10", "11", "12", "13") // ngày tương ứng
 ) {
-    val maxAmount = (data.values.maxOfOrNull { kotlin.math.abs(it) } ?: 0).coerceAtLeast(1)
+    val maxAmount = (data.values.maxOfOrNull { abs(it) } ?: 0).coerceAtLeast(1)
 
     val dayKeys = listOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
 
@@ -58,7 +59,7 @@ fun WeeklyFinanceBarChart(
             dayKeys.forEachIndexed { index, key ->
                 val amount = data[key]
                 if (amount != null && amount != 0) {
-                    val barHeight = (size.height / 2) * (kotlin.math.abs(amount).toFloat() / maxAmount)
+                    val barHeight = (size.height / 2) * (abs(amount).toFloat() / maxAmount)
                     val barX = (index * 2 + 1) * barWidth
 
                     val brush = if (amount > 0) {

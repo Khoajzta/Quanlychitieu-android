@@ -1,4 +1,4 @@
-package com.example.quanlychitieu.feature.Views.login
+package com.example.quanlychitieu.Views.login
 
 import TextColumn
 import androidx.compose.foundation.Image
@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.quanlychitieu.R
+import com.example.quanlychitieu.Views.login.components.ButtonLoginGoogle
 
 @Composable
 fun LoginScreen(

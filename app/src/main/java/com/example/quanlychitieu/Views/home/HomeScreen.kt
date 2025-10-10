@@ -19,10 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.quanlychitieu.feature.Views.home.BottomNavigationBar
-import com.example.quanlychitieu.feature.Views.home.HeaderMain
-import com.example.quanlychitieu.feature.Views.home.WeeklyFinanceBarChart
-import com.example.quanlychitieu.feature.models.KhoanChiModel
+import com.example.quanlychitieu.Views.home.components.BottomNavigationBar
+import com.example.quanlychitieu.Views.home.components.HeaderMain
+import com.example.quanlychitieu.Views.home.components.WeeklyFinanceBarChart
+
+import com.example.quanlychitieu.models.KhoanChiModel
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 
 @Composable

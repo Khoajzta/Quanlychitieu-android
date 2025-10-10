@@ -1,4 +1,4 @@
-package com.example.quanlychitieu.feature.Views.login
+package com.example.quanlychitieu.Views.login.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

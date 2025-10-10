@@ -1,4 +1,4 @@
-package com.example.quanlychitieu.feature.Views.home
+package com.example.quanlychitieu.Views.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

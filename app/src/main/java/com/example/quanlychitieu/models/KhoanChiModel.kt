@@ -1,4 +1,4 @@
-package com.example.quanlychitieu.feature.models
+package com.example.quanlychitieu.models
 
 data class KhoanChiModel(
     var makhoanchi: Int? = null,

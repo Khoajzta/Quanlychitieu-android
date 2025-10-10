@@ -1,4 +1,4 @@
-package com.example.quanlychitieu.feature.Views.home
+package com.example.quanlychitieu.Views.home.components
 
 import Screen
 import androidx.compose.foundation.background

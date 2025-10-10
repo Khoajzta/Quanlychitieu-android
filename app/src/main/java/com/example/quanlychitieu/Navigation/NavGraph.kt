@@ -3,14 +3,13 @@ package com.example.quanlychitieu.feature.navigation
 import HomeScreen
 import NganSachScreen
 import ProfileScreen
-import Screen
 import SplashScreen
 import TradeScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.quanlychitieu.feature.Views.login.LoginScreen
+import com.example.quanlychitieu.Views.login.LoginScreen
 
 
 @Composable
