@@ -57,7 +57,7 @@ fun HomeTotalMoney() {
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(15.dp))
+
 
             Text(
                 "Khoản chi dự kiến",

@@ -1,3 +1,9 @@
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -28,7 +35,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.Components.CardKhoanChi
+import com.example.quanlychitieu.Components.CardThuNhap
 import com.example.quanlychitieu.models.KhoanChiModel
+import com.example.quanlychitieu.models.ThuNhapModel
 
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
@@ -36,6 +46,7 @@ import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 @Composable
 fun TradeTabPage(
     listKhoanChi: List<KhoanChiModel>,
+    listThuNhap: List<ThuNhapModel>,
     listSoTienDaDung: List<Int>
 
 ) {
@@ -89,10 +100,23 @@ fun TradeTabPage(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        when (selectedTabIndex) {
-            0 -> ChiTieuPage(listKhoanChi,listSoTienDaDung)
-            1 -> ThuNhapPage()
+        AnimatedContent(
+            targetState = selectedTabIndex,
+            transitionSpec = {
+                if (targetState > initialState) {
+                    slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
+                } else {
+                    slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
+                }
+            },
+            label = ""
+        ) { index ->
+            when (index) {
+                0 -> ChiTieuPage(listKhoanChi,listSoTienDaDung)
+                1 -> ThuNhapPage(listThuNhap)
+            }
         }
+
     }
 }
 
@@ -115,22 +139,18 @@ fun ChiTieuPage(
 
 
 
-// Giả lập nội dung trang Thu nhập
 @Composable
-fun ThuNhapPage() {
+fun ThuNhapPage(listThuNhap: List<ThuNhapModel>) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize().padding(horizontal = PaddingBody),
+        verticalArrangement = Arrangement.spacedBy(SpaceMedium)
     ) {
-        item {
-            Text(
-                text = "Thu nhập page",
-                color = Color.Black
-            )
+        items(listThuNhap) { item ->
+            CardThuNhap(item)
         }
     }
 }
+
 
 
 @Composable
@@ -146,5 +166,15 @@ fun TradeTabPagePreview(){
     )
     val listSoTienDaDung = listOf(300000, 500000, 200000, 200000, 200000)
 
-    TradeTabPage(listKhoanChi, listSoTienDaDung)
+    val listThuNhap = listOf(
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+    )
+
+//    TradeTabPage(listKhoanChi, listThuNhap,listSoTienDaDung)
+    ThuNhapPage(listThuNhap)
 }

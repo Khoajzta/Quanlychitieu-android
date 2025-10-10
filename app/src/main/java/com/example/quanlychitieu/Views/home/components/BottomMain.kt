@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -75,7 +76,7 @@ fun BottomNavigationBar(
                 modifier = Modifier
                     .matchParentSize()
                     .blur(18.dp)
-                    .background(Color.Black.copy(alpha = 0.7f))
+                    .background(Brush.horizontalGradient(listOf(Color(0xFF9FD7EE), Color(0xFF6FBAD6))))
             )
 
             // Các nút trong thanh bottom
@@ -125,7 +126,7 @@ fun BottomBarItem(
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(50.dp)
                 .clip(CircleShape)
                 .clickable { onClick() }
                 .background(
@@ -138,14 +139,14 @@ fun BottomBarItem(
                 imageVector = icon,
                 contentDescription = title,
                 tint = color,
-                modifier = Modifier.size(26.dp)
+                modifier = Modifier.size(35.dp)
             )
         }
-        Text(
-            text = title,
-            color = color,
-            fontSize = 12.sp
-        )
+//        Text(
+//            text = title,
+//            color = color,
+//            fontSize = 12.sp
+//        )
     }
 }
 

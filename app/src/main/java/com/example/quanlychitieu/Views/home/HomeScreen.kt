@@ -1,3 +1,8 @@
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -24,15 +35,36 @@ import com.example.quanlychitieu.Views.home.components.HeaderMain
 import com.example.quanlychitieu.Views.home.components.WeeklyFinanceBarChart
 
 import com.example.quanlychitieu.models.KhoanChiModel
+import com.example.quanlychitieu.ui.theme.BackgroundColor
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 
 @Composable
 fun HomeScreen(
     navController: NavController
 ) {
+    val listState = rememberLazyListState()
+    var previousOffset by remember { mutableStateOf(0) }
+    var isAppBarVisible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(listState.firstVisibleItemScrollOffset) {
+        val currentOffset = listState.firstVisibleItemScrollOffset
+        isAppBarVisible = currentOffset <= previousOffset || currentOffset < 10 // Lên hoặc gần top thì hiện lại
+        previousOffset = currentOffset
+    }
+
     Scaffold(
-        containerColor = Color(0xFFC7E6F6),
+        containerColor = BackgroundColor,
         topBar = {
+//            AnimatedVisibility(
+//                visible = isAppBarVisible,
+//                enter = slideInVertically { -it } ,
+//                exit = slideOutVertically { -it } + fadeOut()
+//            ) {
+//                HeaderMain(
+//                    Modifier.windowInsetsPadding(WindowInsets.statusBars)
+//                )
+//            }
+
             HeaderMain(
                 Modifier.windowInsetsPadding(WindowInsets.statusBars)
             )
@@ -45,6 +77,7 @@ fun HomeScreen(
 
     ) { innerPadding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFC7E6F6))

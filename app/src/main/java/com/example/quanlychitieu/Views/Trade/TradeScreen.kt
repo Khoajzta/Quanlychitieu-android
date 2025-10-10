@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.quanlychitieu.Views.Trade.Components.TradeButtonAdd
 import com.example.quanlychitieu.models.KhoanChiModel
+import com.example.quanlychitieu.models.ThuNhapModel
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 
 @Composable
@@ -33,6 +34,15 @@ fun TradeScreen(
     )
     val listSoTienDaDung = listOf(300000, 500000, 200000, 200000, 200000)
 
+    val listThuNhap = listOf(
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
+    )
+
     ChiTieuPage(
         listKhoanChi = listKhoanChi,
         listSoTienDaDung = listSoTienDaDung
@@ -41,7 +51,7 @@ fun TradeScreen(
     Scaffold(
         containerColor = BackgroundColor,
         topBar = {
-            TradeHeader(navController, Modifier.windowInsetsPadding(WindowInsets.statusBars))
+            Header(navController, Modifier.windowInsetsPadding(WindowInsets.statusBars), title = "Giao dịch")
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
@@ -52,7 +62,7 @@ fun TradeScreen(
                 .padding(innerPadding)
         ) {
             // ✅ Nội dung không có padding bottom
-            TradeTabPage(listKhoanChi,listSoTienDaDung)
+            TradeTabPage(listKhoanChi,listThuNhap,listSoTienDaDung)
 
             // ✅ Nút nổi - không ảnh hưởng layout của nội dung
             TradeButtonAdd(

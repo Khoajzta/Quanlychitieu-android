@@ -38,7 +38,7 @@ fun HeaderMain(
     modifier: Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(PaddingBody),
+        modifier = modifier.fillMaxWidth().padding(horizontal = PaddingBody),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
