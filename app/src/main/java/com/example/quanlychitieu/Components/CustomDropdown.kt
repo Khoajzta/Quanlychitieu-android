@@ -1,6 +1,7 @@
 package com.example.quanlychitieu.Components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,11 +21,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.models.KhoanChiModel
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusFull
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
@@ -63,6 +67,7 @@ fun <T> CustomDropdown(
                 unfocusedContainerColor = Color.White,
                 disabledIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
                 unfocusedTextColor = Color.Black,
                 focusedTextColor = Color.Black
             ),
@@ -85,12 +90,32 @@ fun <T> CustomDropdown(
         ) {
             items.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(itemLabel(item),color = Color.Black) },
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val iconText = (item as? KhoanChiModel)?.icon ?: ""
+
+                            if (iconText.isNotEmpty()) {
+                                Text(
+                                    text = iconText,
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.padding(end = 8.dp)
+                                )
+                            }
+
+                            Text(
+                                text = itemLabel(item),
+                                color = Color.Black
+                            )
+                        }
+                    },
                     onClick = {
                         onSelect(item)
                         expanded = false
                     }
                 )
+
             }
         }
     }

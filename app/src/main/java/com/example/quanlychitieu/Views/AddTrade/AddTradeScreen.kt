@@ -39,19 +39,13 @@ fun AddTradeScreen(
     navController: NavController,
     listKhoanChi: List<KhoanChiModel>,
 ) {
-    var type by remember { mutableStateOf("Chi tiêu") }
-    var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-    var mota by remember { mutableStateOf("") }
-    var selectedKhoanChi by remember { mutableStateOf(listKhoanChi.firstOrNull() ?: "") }
-
     Scaffold(
         containerColor = BackgroundColor,
         topBar = {
             Header(
                 navController,
                 Modifier.windowInsetsPadding(WindowInsets.statusBars),
-                title = "Giao dịch"
+                title = "Thêm giao dịch"
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
@@ -72,9 +66,9 @@ fun AddTradeScreenPreview (){
     var navController = rememberNavController()
 
     var listKhoanChi = listOf(
-        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue"),
-        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red"),
-        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green")
+        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue","🍕"),
+        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red","😍"),
+        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green","")
     )
 
     AddTradeScreen(navController,listKhoanChi)

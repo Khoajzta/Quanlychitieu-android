@@ -32,7 +32,7 @@ fun CustomButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .padding(PaddingBody),
+            .padding(horizontal = PaddingBody),
         colors = ButtonDefaults.buttonColors(
             containerColor = PrimaryColor
         ),

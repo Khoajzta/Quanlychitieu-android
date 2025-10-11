@@ -1,7 +1,6 @@
 package com.example.quanlychitieu.Views.AddTrade
 
-import ChiTieuPage
-import ThuNhapPage
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,18 +20,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
-import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.DriveFileRenameOutline
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,16 +45,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.quanlychitieu.Components.CardKhoanChi
-import com.example.quanlychitieu.Components.CardThuNhap
 import com.example.quanlychitieu.Components.CusTomTextField
 import com.example.quanlychitieu.Components.CustomButton
 import com.example.quanlychitieu.Components.CustomDatePicker
 import com.example.quanlychitieu.Components.CustomDropdown
 import com.example.quanlychitieu.models.KhoanChiModel
-import com.example.quanlychitieu.models.ThuNhapModel
-import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
+import formatCurrency
 
 @Composable
 fun AddTradeTab(
@@ -139,7 +132,7 @@ fun AddTradeTab(
 fun AddChiTieuPage(
     listKhoanChi: List<KhoanChiModel>
 ) {
-    var sotien by remember { mutableStateOf("") }
+    var sotien by remember { mutableStateOf(0) }
     var mota by remember { mutableStateOf("") }
 
     var selectedKhoanChi by remember { mutableStateOf(listKhoanChi.firstOrNull()) }
@@ -151,8 +144,11 @@ fun AddChiTieuPage(
         verticalArrangement = Arrangement.spacedBy(SpaceMedium)
     ) {
         CusTomTextField(
-            value = sotien,
-            onValueChange = { sotien = it },
+            value = if (sotien == 0) "" else formatCurrency(sotien),
+            onValueChange = { newValue ->
+                val digits = newValue.filter { it.isDigit() }
+                sotien = if (digits.isNotEmpty()) digits.toInt() else 0
+            },
             leadingIcon = {
                 Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
             },
@@ -164,7 +160,7 @@ fun AddChiTieuPage(
         CustomDropdown(
             items = listKhoanChi,
             leadingIcon = {
-                Text("🍕", fontSize = 20.sp)
+                Text(selectedKhoanChi?.icon ?: "", fontSize = 20.sp)
             },
             selectedItem = selectedKhoanChi,
             itemLabel = { it.tenKhoanChi },
@@ -180,13 +176,18 @@ fun AddChiTieuPage(
             value = mota,
             onValueChange = { mota = it },
             placeholder = "Nhập ghi chú",
+            leadingIcon = {
+                Icon(Icons.Default.EditNote, contentDescription = null, tint = Color.Gray)
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
             modifier = Modifier.fillMaxWidth().height(200.dp)
         )
 
         CustomButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {},
+            onClick = {
+                Log.d("so tien",sotien.toString())
+            },
             title = "Thêm chi tiêu"
         )
     }
@@ -197,11 +198,52 @@ fun AddChiTieuPage(
 
 @Composable
 fun AddThuNhapPage() {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = PaddingBody),
+    var tenThuNhap by remember { mutableStateOf("") }
+    var sotien by remember { mutableStateOf(0) }
+    var selectedDate by remember { mutableStateOf<Long?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(SpaceMedium)
     ) {
+        CusTomTextField(
+            value = tenThuNhap,
+            onValueChange = { tenThuNhap = it },
+            leadingIcon = {
+                Icon(Icons.Default.DriveFileRenameOutline, contentDescription = null, tint = Color.Gray)
+            },
+            placeholder = "Tên thu nhập",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+            modifier = Modifier.fillMaxWidth()
+        )
 
+        CusTomTextField(
+            value = if (sotien == 0) "" else formatCurrency(sotien),
+            onValueChange = { newValue ->
+                val digits = newValue.filter { it.isDigit() }
+                sotien = if (digits.isNotEmpty()) digits.toInt() else 0
+            },
+            leadingIcon = {
+                Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+            },
+            placeholder = "Số tiền",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        CustomDatePicker(
+            selectedDate = selectedDate,
+            onDateSelected = { selectedDate = it }
+        )
+
+        CustomButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                Log.d("so tien",sotien.toString())
+            },
+            title = "Thêm chi thu nhập"
+        )
     }
 }
 
@@ -210,9 +252,10 @@ fun AddThuNhapPage() {
 fun Preview(){
 
     var listKhoanChi = listOf(
-        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue"),
-        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red"),
-        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green")
+        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue","🍕"),
+        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red","🍕"),
+        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green","🍕")
     )
     AddChiTieuPage(listKhoanChi)
+//    AddThuNhapPage()
 }

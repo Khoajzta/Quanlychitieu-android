@@ -13,6 +13,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -77,7 +78,7 @@ fun CustomDatePicker(
                 color = Color.White,
                 shape = RoundedCornerShape(RadiusLarge)
             )
-            .clickable { openDialog = true } // ✅ CLICK TRÊN TOÀN BỘ BOX
+            .clickable { openDialog = true }
             .padding(PadingExtraSmall)
     ) {
         OutlinedTextField(
@@ -87,7 +88,7 @@ fun CustomDatePicker(
             onValueChange = {},
             readOnly = true,
             placeholder = { Text("Ngày giao dịch", color = Color.Gray) },
-            trailingIcon = {
+            leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = null,
@@ -96,8 +97,19 @@ fun CustomDatePicker(
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = false,
-
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledTextColor = Color.Black,
+                disabledBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                focusedBorderColor = Color.Transparent,
+                disabledPlaceholderColor = Color.Gray,
+                disabledTrailingIconColor = Color.Gray,
+                disabledContainerColor = Color.Transparent,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            )
         )
+
     }
 }
 

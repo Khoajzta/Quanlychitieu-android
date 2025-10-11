@@ -155,21 +155,18 @@ fun HomeScreen(
                         WeeklyFinanceBarChart(data = weeklyData, dates = weekDates)
                     }
                 }
+
                 item {
                     val listKhoanChi = listOf(
-                        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue"),
-                        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red"),
-                        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green"),
-                        KhoanChiModel(4, "Du lịch", 2500000, 2, 103, "orange"),
-                        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple"),
-                        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple"),
-                        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple"),
-                        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple"),
-                        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple"),
-                        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple"),
-                    )
-                    val listSoTienDaDung = listOf(300000, 500000, 200000, 200000, 200000,200000,200000,200000,200000,200000)
+                        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue","🍕"),
+                        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red","🍕"),
+                        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green","🍕"),
+                        KhoanChiModel(4, "Du lịch", 2500000, 2, 103, "orange","🍕"),
+                        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple","🍕"),
 
+                    )
+                    val listSoTienDaDung = listOf(300000, 500000, 200000, 200000, 200000,)
+                    KhoanChiMoreRow(modifier = Modifier, navController = navController)
                     KhoanChiColumn(
                         listKhoanChi,
                         listSoTienDaDung
@@ -177,7 +174,7 @@ fun HomeScreen(
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(110.dp))
+                    Spacer(modifier = Modifier.height(200.dp))
                 }
             }
 

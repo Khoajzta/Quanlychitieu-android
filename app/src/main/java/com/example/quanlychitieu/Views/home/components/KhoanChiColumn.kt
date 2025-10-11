@@ -20,7 +20,7 @@ fun KhoanChiColumn(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(PaddingBody),
+            .padding(horizontal = PaddingBody),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         for (i in listKhoanChi.indices) {
@@ -38,9 +38,9 @@ fun KhoanChiColumn(
 fun PreviewCardKhoanChi() {
 
     var listKhoanChi = listOf(
-        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue"),
-        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red"),
-        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green")
+        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue","🍕"),
+        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red","🍕"),
+        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green","🍕")
     )
 
     var listSoTienDaDung = listOf(300000, 500000, 200000)

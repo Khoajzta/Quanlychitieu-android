@@ -6,5 +6,6 @@ data class KhoanChiModel(
     var soTienDuKien: Int,
     var mathang: Int,
     var manguoidung: Int,
-    var mausac: String
+    var mausac: String,
+    var icon:String
 )
