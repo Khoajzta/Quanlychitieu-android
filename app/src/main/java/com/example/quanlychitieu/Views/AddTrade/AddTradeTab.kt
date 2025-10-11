@@ -1,3 +1,7 @@
+package com.example.quanlychitieu.Views.AddTrade
+
+import ChiTieuPage
+import ThuNhapPage
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,6 +25,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,26 +44,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.Components.CardKhoanChi
 import com.example.quanlychitieu.Components.CardThuNhap
+import com.example.quanlychitieu.Components.CusTomTextField
+import com.example.quanlychitieu.Components.CustomButton
+import com.example.quanlychitieu.Components.CustomDatePicker
+import com.example.quanlychitieu.Components.CustomDropdown
 import com.example.quanlychitieu.models.KhoanChiModel
 import com.example.quanlychitieu.models.ThuNhapModel
-
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 
 @Composable
-fun TradeTabPage(
-    listKhoanChi: List<KhoanChiModel>,
-    listThuNhap: List<ThuNhapModel>,
-    listSoTienDaDung: List<Int>
-
-) {
+fun AddTradeTab(
+    listKhoanChi: List<KhoanChiModel>
+){
     val tabs = listOf("Chi tiêu", "Thu nhập")
     var selectedTabIndex by remember { mutableStateOf(0) }
+
 
     Column(
         modifier = Modifier
@@ -112,69 +127,92 @@ fun TradeTabPage(
             label = ""
         ) { index ->
             when (index) {
-                0 -> ChiTieuPage(listKhoanChi,listSoTienDaDung)
-                1 -> ThuNhapPage(listThuNhap)
+                0 -> AddChiTieuPage(listKhoanChi)
+                1 -> AddThuNhapPage()
             }
         }
 
     }
 }
 
-// Giả lập nội dung trang Chi tiêu
 @Composable
-fun ChiTieuPage(
-    listKhoanChi: List<KhoanChiModel>,
-    listSoTienDaDung: List<Int>
+fun AddChiTieuPage(
+    listKhoanChi: List<KhoanChiModel>
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = PaddingBody),
+    var sotien by remember { mutableStateOf("") }
+    var mota by remember { mutableStateOf("") }
+
+    var selectedKhoanChi by remember { mutableStateOf(listKhoanChi.firstOrNull()) }
+    var selectedDate by remember { mutableStateOf<Long?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(SpaceMedium)
     ) {
-        itemsIndexed(listKhoanChi) { index, item ->
-            val soTienDaDung = listSoTienDaDung.getOrNull(index) ?: 0
-            CardKhoanChi(item, soTienDaDung)
-        }
+        CusTomTextField(
+            value = sotien,
+            onValueChange = { sotien = it },
+            leadingIcon = {
+                Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+            },
+            placeholder = "Số tiền",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        CustomDropdown(
+            items = listKhoanChi,
+            leadingIcon = {
+                Text("🍕", fontSize = 20.sp)
+            },
+            selectedItem = selectedKhoanChi,
+            itemLabel = { it.tenKhoanChi },
+            onSelect = { selectedKhoanChi = it }
+        )
+
+        CustomDatePicker(
+            selectedDate = selectedDate,
+            onDateSelected = { selectedDate = it }
+        )
+
+        CusTomTextField(
+            value = mota,
+            onValueChange = { mota = it },
+            placeholder = "Nhập ghi chú",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
+            modifier = Modifier.fillMaxWidth().height(200.dp)
+        )
+
+        CustomButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {},
+            title = "Thêm chi tiêu"
+        )
     }
 }
+
 
 
 
 @Composable
-fun ThuNhapPage(listThuNhap: List<ThuNhapModel>) {
+fun AddThuNhapPage() {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = PaddingBody),
         verticalArrangement = Arrangement.spacedBy(SpaceMedium)
     ) {
-        items(listThuNhap) { item ->
-            CardThuNhap(item)
-        }
+
     }
 }
-
-
 
 @Composable
 @Preview
-fun TradeTabPagePreview(){
+fun Preview(){
 
-    val listKhoanChi = listOf(
+    var listKhoanChi = listOf(
         KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue"),
         KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red"),
-        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green"),
-        KhoanChiModel(4, "Du lịch", 2500000, 2, 103, "orange"),
-        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple")
+        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green")
     )
-    val listSoTienDaDung = listOf(300000, 500000, 200000, 200000, 200000)
-
-    val listThuNhap = listOf(
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-    )
-
-    TradeTabPage(listKhoanChi, listThuNhap,listSoTienDaDung)
-//    ThuNhapPage(listThuNhap)
+    AddChiTieuPage(listKhoanChi)
 }

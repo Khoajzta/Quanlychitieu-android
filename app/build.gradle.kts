@@ -66,7 +66,12 @@ dependencies {
 
     //hilt
     implementation("com.google.dagger:hilt-android:2.57.1")
+    implementation(libs.androidx.compose.runtime)
     ksp("com.google.dagger:hilt-android-compiler:2.57.1")
+
+    //refresh
+    implementation("androidx.compose.material:material:1.5.0")
+
 
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.ui.graphics)

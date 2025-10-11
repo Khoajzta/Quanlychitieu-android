@@ -70,7 +70,10 @@ fun TradeScreen(
                     .padding(bottom = 10.dp)
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(innerPadding)
+                    .padding(innerPadding),
+                onClick = {
+                    navController.navigate(Screen.AddTrade.route)
+                }
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.example.quanlychitieu.Views.Trade.Components
+package com.example.quanlychitieu.Components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
@@ -24,9 +23,10 @@ import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
 import com.example.quanlychitieu.ui.theme.PrimaryColor
 
 @Composable
-fun TradeButtonAdd(
+fun CustomButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    title: String
 ){
     Button(
         onClick = onClick,
@@ -38,7 +38,6 @@ fun TradeButtonAdd(
         ),
         elevation = ButtonDefaults.buttonElevation(5.dp),
         shape = RoundedCornerShape(RadiusLarge)
-
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -50,17 +49,11 @@ fun TradeButtonAdd(
                 tint = Color.White
             )
             Text(
-                text = "Thêm giao dịch",
+                text = title,
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
         }
     }
-}
-
-@Composable
-@Preview
-fun AddPreview(){
-    TradeButtonAdd(modifier = Modifier)
 }

@@ -1,12 +1,16 @@
 package com.example.quanlychitieu.Components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
@@ -26,15 +30,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.PadingExtraSmall
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusFull
+import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
+import com.example.quanlychitieu.ui.theme.Dimens.RadiusMedium
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceLarge
+import com.example.quanlychitieu.ui.theme.PrimaryColor
 import com.example.quanlychitieu.ui.theme.QuanLyChiTieuTheme
 
 
@@ -44,32 +55,38 @@ fun CusTomTextField(
     value: String,
     onValueChange: (String) -> Unit,
     leadingIcon: (@Composable (() -> Unit))? = null,
-    placeholder: String,
+    placeholder: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    readOnly: Boolean = false
 ) {
+
+    val focusRequester = remember { FocusRequester() }
+
     Box(
         modifier = modifier
+            .padding(horizontal = PaddingBody)
             .shadow(
                 elevation = 11.dp,
-                shape = RoundedCornerShape(RadiusFull),
+                shape = RoundedCornerShape(RadiusLarge),
                 clip = false
             )
-
             .background(
                 color = Color.White,
-                shape = RoundedCornerShape(RadiusFull)
+                shape = RoundedCornerShape(RadiusLarge)
             )
-
+            .clickable { focusRequester.requestFocus() }
             .padding(PadingExtraSmall)
     ) {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             leadingIcon = leadingIcon,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
             placeholder = {
                 Text(
                     placeholder,
-                    color = Color.Black // chữ mờ nhẹ
+                    color = Color.Gray
                 )
             },
             shape = RoundedCornerShape(RadiusFull),
@@ -80,7 +97,14 @@ fun CusTomTextField(
                 errorIndicatorColor = Color.Transparent,
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
-            )
+                cursorColor = PrimaryColor,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            ),
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            readOnly = readOnly,
+
         )
     }
 }
@@ -96,9 +120,7 @@ fun PasswordTextField(
     // trạng thái ẩn/hiện mật khẩu
     var passwordVisible by remember { mutableStateOf(false) }
 
-    val gradientBrush = Brush.verticalGradient(
-        colors = listOf(Color(0xFF4CAF50), Color(0xFF2196F3))
-    )
+
     Box(
         modifier = modifier
             .shadow(

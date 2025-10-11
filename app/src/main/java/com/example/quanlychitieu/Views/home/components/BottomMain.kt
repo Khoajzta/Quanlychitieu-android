@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -68,6 +69,11 @@ fun BottomNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp)
+                .shadow(
+                    5.dp,
+                    RoundedCornerShape(RadiusFull),
+                    ambientColor = Color(0xFF6FBAD6),
+                )
                 .clip(RoundedCornerShape(RadiusFull)),
             contentAlignment = Alignment.Center
         ) {
@@ -116,7 +122,9 @@ fun BottomBarItem(
     selected: Boolean = false,
     onClick: () -> Unit
 ) {
-    val color = if (selected) Color(0xFF1C94D5) else Color.White
+//    val color = if (selected) Color(0xFF1C94D5) else Color.White
+    val color = Color.White
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,11 +136,11 @@ fun BottomBarItem(
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
-                .clickable { onClick() }
-                .background(
-                    if (selected) Color.White.copy(alpha = 0.2f)
-                    else Color.Transparent
-                ),
+                .clickable { onClick() },
+//                .background(
+//                    if (selected) Color.White.copy(alpha = 0.2f)
+//                    else Color.Transparent
+//                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -151,7 +159,7 @@ fun BottomBarItem(
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true)
 fun BottomNavigationBarPreview() {
     BottomNavigationBar()
 }
