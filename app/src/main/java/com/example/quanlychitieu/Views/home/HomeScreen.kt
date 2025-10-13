@@ -33,9 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.quanlychitieu.Const.listKhoanChiConst.listKhoanChi
+import com.example.quanlychitieu.ViewModels.TestViewModel
 import com.example.quanlychitieu.Views.home.components.BottomNavigationBar
 import com.example.quanlychitieu.Views.home.components.HeaderMain
 import com.example.quanlychitieu.Views.home.components.WeeklyFinanceBarChart
@@ -48,7 +50,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: TestViewModel = hiltViewModel()
 ) {
     //Refresh dữ liệu
     var isRefreshing by remember { mutableStateOf(false) }

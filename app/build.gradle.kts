@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
-    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
 
@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.animation.core.lint)
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0")
 
     //icon
     implementation("androidx.compose.material:material-icons-extended")
@@ -65,13 +66,31 @@ dependencies {
     implementation("androidx.compose.animation:animation:1.9.3")
 
     //hilt
-    implementation("com.google.dagger:hilt-android:2.57.1")
+
+    implementation(libs.dagger.hilt.android)
+    kapt(libs.dagger.hilt.android.compiler)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.emoji2.bundled)
-    ksp("com.google.dagger:hilt-android-compiler:2.57.1")
+
 
     //refresh
     implementation("androidx.compose.material:material:1.5.0")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    // Gọi api http
+    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation("com.github.kittinunf.fuel:fuel-android:2.3.1")
+    implementation("com.github.kittinunf.fuel:fuel-json:2.3.1")
+
+    // ViewModel & Lifecycle
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.5")
 
     //emoji
     implementation("androidx.emoji2:emoji2-emojipicker:1.6.0")

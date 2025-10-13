@@ -19,6 +19,7 @@ credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
 runtime = "1.9.3"
 emoji2Bundled = "1.6.0"
+hiltAndroid = "2.57.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,9 @@ androidx-credentials-play-services-auth = { group = "androidx.credentials", name
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 androidx-emoji2-bundled = { group = "androidx.emoji2", name = "emoji2-bundled", version.ref = "emoji2Bundled" }
+
+dagger-hilt-android = {group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid"}
+dagger-hilt-android-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
