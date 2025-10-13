@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.emoji2.bundled.BundledEmojiCompatConfig
+import androidx.emoji2.text.EmojiCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.quanlychitieu.feature.navigation.AppNavGraph
 import com.example.quanlychitieu.ui.theme.QuanLyChiTieuTheme
@@ -14,6 +16,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        EmojiCompat.init(BundledEmojiCompatConfig(this))
         setContent {
             QuanLyChiTieuTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {

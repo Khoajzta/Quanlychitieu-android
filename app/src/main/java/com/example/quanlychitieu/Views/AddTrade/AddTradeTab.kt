@@ -49,6 +49,7 @@ import com.example.quanlychitieu.Components.CusTomTextField
 import com.example.quanlychitieu.Components.CustomButton
 import com.example.quanlychitieu.Components.CustomDatePicker
 import com.example.quanlychitieu.Components.CustomDropdown
+import com.example.quanlychitieu.Const.listKhoanChiConst.listKhoanChi
 import com.example.quanlychitieu.models.KhoanChiModel
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import formatCurrency
@@ -160,15 +161,16 @@ fun AddChiTieuPage(
         CustomDropdown(
             items = listKhoanChi,
             leadingIcon = {
-                Text(selectedKhoanChi?.icon ?: "", fontSize = 20.sp)
+                Text(selectedKhoanChi?.emoji ?: "", fontSize = 20.sp)
             },
             selectedItem = selectedKhoanChi,
-            itemLabel = { it.tenKhoanChi },
+            itemLabel = { it.ten_khoanchi },
             onSelect = { selectedKhoanChi = it }
         )
 
         CustomDatePicker(
             selectedDate = selectedDate,
+            placeholder = "Ngày giao dịch",
             onDateSelected = { selectedDate = it }
         )
 
@@ -234,6 +236,7 @@ fun AddThuNhapPage() {
 
         CustomDatePicker(
             selectedDate = selectedDate,
+            placeholder = "Ngày thu nhập",
             onDateSelected = { selectedDate = it }
         )
 
@@ -242,7 +245,7 @@ fun AddThuNhapPage() {
             onClick = {
                 Log.d("so tien",sotien.toString())
             },
-            title = "Thêm chi thu nhập"
+            title = "Thêm thu nhập"
         )
     }
 }
@@ -250,12 +253,6 @@ fun AddThuNhapPage() {
 @Composable
 @Preview
 fun Preview(){
-
-    var listKhoanChi = listOf(
-        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue","🍕"),
-        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red","🍕"),
-        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green","🍕")
-    )
     AddChiTieuPage(listKhoanChi)
 //    AddThuNhapPage()
 }

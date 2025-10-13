@@ -38,6 +38,7 @@ import java.util.Locale
 @Composable
 fun CustomDatePicker(
     modifier: Modifier = Modifier,
+    placeholder: String,
     selectedDate: Long?,
     onDateSelected: (Long) -> Unit
 ) {
@@ -87,7 +88,7 @@ fun CustomDatePicker(
             } ?: "",
             onValueChange = {},
             readOnly = true,
-            placeholder = { Text("Ngày giao dịch", color = Color.Gray) },
+            placeholder = { Text(placeholder, color = Color.Gray) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.DateRange,

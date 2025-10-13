@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.quanlychitieu.Views.AddKhoanChi.AddKhoanChiScreen
 import com.example.quanlychitieu.Views.ListKhoanChi.ListKhoanChiScreen
 import com.example.quanlychitieu.Views.login.LoginScreen
 import com.example.quanlychitieu.models.KhoanChiModel
@@ -87,11 +88,63 @@ fun AppNavGraph(navController: NavHostController) {
             popEnterTransition = truotVaoTuTrai(),
             popExitTransition = truotRaSangPhai()
         ) {
-            var listKhoanChi = listOf(
-                KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue","🍕"),
-                KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red","🤣"),
-                KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green","❤️")
-            )
+            val listKhoanChi = listOf(
+                KhoanChiModel(
+                    id = 1,
+                    ten_khoanchi ="Tiền ăn",
+                    id_nguoidung = 1,
+                    mausac = "yellow",
+                    ngay_batdau = "16-02-2025",
+                    ngay_ketthuc = "16-02-2025",
+                    so_tien_du_kien = 3000000,
+                    tong_tien_da_chi = 200000,
+                    emoji = "🤣"
+                ),
+                KhoanChiModel(
+                    id = 1,
+                    ten_khoanchi ="Tiền ăn",
+                    id_nguoidung = 1,
+                    mausac = "yellow",
+                    ngay_batdau = "16-02-2025",
+                    ngay_ketthuc = "16-02-2025",
+                    so_tien_du_kien = 3000000,
+                    tong_tien_da_chi = 200000,
+                    emoji = "🤣"
+                ),
+                KhoanChiModel(
+                    id = 1,
+                    ten_khoanchi ="Tiền ăn",
+                    id_nguoidung = 1,
+                    mausac = "yellow",
+                    ngay_batdau = "16-02-2025",
+                    ngay_ketthuc = "16-02-2025",
+                    so_tien_du_kien = 3000000,
+                    tong_tien_da_chi = 200000,
+                    emoji = "🤣"
+                ),
+                KhoanChiModel(
+                    id = 1,
+                    ten_khoanchi ="Tiền ăn",
+                    id_nguoidung = 1,
+                    mausac = "yellow",
+                    ngay_batdau = "16-02-2025",
+                    ngay_ketthuc = "16-02-2025",
+                    so_tien_du_kien = 3000000,
+                    tong_tien_da_chi = 200000,
+                    emoji = "🤣"
+                ),
+                KhoanChiModel(
+                    id = 1,
+                    ten_khoanchi ="Tiền ăn",
+                    id_nguoidung = 1,
+                    mausac = "yellow",
+                    ngay_batdau = "16-02-2025",
+                    ngay_ketthuc = "16-02-2025",
+                    so_tien_du_kien = 3000000,
+                    tong_tien_da_chi = 200000,
+                    emoji = "🤣"
+                ),
+             )
             AddTradeScreen(navController,listKhoanChi)
         }
 
@@ -102,5 +155,13 @@ fun AppNavGraph(navController: NavHostController) {
             popEnterTransition = truotVaoTuTrai(),
             popExitTransition = truotRaSangPhai()
         ) { ListKhoanChiScreen(navController) }
+
+        composable(
+            route = Screen.AddKhoanChi.route,
+            enterTransition = truotVaoTuPhai(),
+            exitTransition = truotRaSangTrai(),
+            popEnterTransition = truotVaoTuTrai(),
+            popExitTransition = truotRaSangPhai()
+        ) { AddKhoanChiScreen(navController) }
     }
 }

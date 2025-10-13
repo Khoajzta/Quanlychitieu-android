@@ -94,7 +94,7 @@ fun <T> CustomDropdown(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            val iconText = (item as? KhoanChiModel)?.icon ?: ""
+                            val iconText = (item as? KhoanChiModel)?.emoji ?: ""
 
                             if (iconText.isNotEmpty()) {
                                 Text(

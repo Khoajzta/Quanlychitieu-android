@@ -1,22 +1,21 @@
+package com.example.quanlychitieu.Views.ListKhoanChi
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.quanlychitieu.Components.CardKhoanChi
-import com.example.quanlychitieu.Const.listKhoanChiConst.listKhoanChi
+import com.example.quanlychitieu.Components.CardKhoanChiDetail
 import com.example.quanlychitieu.models.KhoanChiModel
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 
-
 @Composable
-fun KhoanChiColumn(
+fun ListKhoanChiColumn(
     listKhoanChi: List<KhoanChiModel>,
     modifier: Modifier = Modifier
-) {
+){
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -24,19 +23,10 @@ fun KhoanChiColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         for (i in listKhoanChi.indices) {
-            CardKhoanChi(
+            CardKhoanChiDetail(
                 item = listKhoanChi[i],
                 modifier = Modifier
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewCardKhoanChi() {
-    KhoanChiColumn(
-        listKhoanChi,
-    )
-
 }

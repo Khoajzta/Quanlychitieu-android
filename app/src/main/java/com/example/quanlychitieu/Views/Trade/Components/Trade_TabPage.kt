@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.Components.CardKhoanChi
 import com.example.quanlychitieu.Components.CardThuNhap
+import com.example.quanlychitieu.Const.listKhoanChiConst.listKhoanChi
 import com.example.quanlychitieu.models.KhoanChiModel
 import com.example.quanlychitieu.models.ThuNhapModel
 
@@ -47,8 +48,6 @@ import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 fun TradeTabPage(
     listKhoanChi: List<KhoanChiModel>,
     listThuNhap: List<ThuNhapModel>,
-    listSoTienDaDung: List<Int>
-
 ) {
     val tabs = listOf("Chi tiêu", "Thu nhập")
     var selectedTabIndex by remember { mutableStateOf(0) }
@@ -112,7 +111,7 @@ fun TradeTabPage(
             label = ""
         ) { index ->
             when (index) {
-                0 -> ChiTieuPage(listKhoanChi,listSoTienDaDung)
+                0 -> ChiTieuPage(listKhoanChi)
                 1 -> ThuNhapPage(listThuNhap)
             }
         }
@@ -124,15 +123,13 @@ fun TradeTabPage(
 @Composable
 fun ChiTieuPage(
     listKhoanChi: List<KhoanChiModel>,
-    listSoTienDaDung: List<Int>
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = PaddingBody),
         verticalArrangement = Arrangement.spacedBy(SpaceMedium)
     ) {
         itemsIndexed(listKhoanChi) { index, item ->
-            val soTienDaDung = listSoTienDaDung.getOrNull(index) ?: 0
-            CardKhoanChi(item, soTienDaDung)
+            CardKhoanChi(item, modifier = Modifier)
         }
     }
 }
@@ -156,16 +153,6 @@ fun ThuNhapPage(listThuNhap: List<ThuNhapModel>) {
 @Composable
 @Preview
 fun TradeTabPagePreview(){
-
-    val listKhoanChi = listOf(
-        KhoanChiModel(1, "Ăn uống", 3000000, 12, 100, "blue","🍕"),
-        KhoanChiModel(2, "Mua sắm", 2000000, 5, 101, "red","🍕"),
-        KhoanChiModel(3, "Giải trí", 1500000, 3, 102, "green","🍕"),
-        KhoanChiModel(4, "Du lịch", 2500000, 2, 103, "orange","🍕"),
-        KhoanChiModel(5, "Giáo dục", 1000000, 1, 104, "purple","🍕")
-    )
-    val listSoTienDaDung = listOf(300000, 500000, 200000, 200000, 200000)
-
     val listThuNhap = listOf(
         ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
         ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
@@ -175,6 +162,6 @@ fun TradeTabPagePreview(){
         ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
     )
 
-    TradeTabPage(listKhoanChi, listThuNhap,listSoTienDaDung)
+    TradeTabPage(listKhoanChi, listThuNhap)
 //    ThuNhapPage(listThuNhap)
 }

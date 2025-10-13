@@ -31,14 +31,14 @@ import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 import formatCurrency
 
 @Composable
-fun CardKhoanChi(
+fun CardKhoanChiDetail(
+    modifier: Modifier = Modifier,
     item: KhoanChiModel,
-    modifier: Modifier = Modifier
-) {
+    onClick: ()-> Unit = {}
+){
     val spentPercentage = remember(item.so_tien_du_kien, item.tong_tien_da_chi) {
         (item.tong_tien_da_chi.toFloat() / item.so_tien_du_kien.toFloat()).coerceIn(0f, 1f)
     }
-
 
     var backgroundGradientColors =
         when(item.mausac) {
@@ -62,16 +62,30 @@ fun CardKhoanChi(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(130.dp)
+                        .clip(RoundedCornerShape(RadiusLarge))
+                        .background(color = Color.White.copy(0.5f)),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(
+                        text = "${item.emoji} ${item.ten_khoanchi}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
 
-            Box(
-                modifier = Modifier
-                    .width(130.dp)
-                    .clip(RoundedCornerShape(RadiusLarge))
-                    .background(color = Color.White.copy(0.5f)),
-                contentAlignment = Alignment.Center
-            ){
                 Text(
-                    text = item.ten_khoanchi,
+                    text = "Số lượng chi tiêu: ${item.so_luong_chi_tieu}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
@@ -79,6 +93,7 @@ fun CardKhoanChi(
                     modifier = Modifier.padding(10.dp)
                 )
             }
+
 
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -134,9 +149,11 @@ fun CardKhoanChi(
 
 @Composable
 @Preview
-fun CardKhoanChiPreview(){
+fun CardKhoanChiDetailPreview(){
 
-    CardKhoanChi(KhoanChiModel(
+    CardKhoanChiDetail(
+        modifier = Modifier,
+        KhoanChiModel(
         id = 1,
         ten_khoanchi = "Tiền ăn",
         id_nguoidung = 1,
@@ -144,7 +161,8 @@ fun CardKhoanChiPreview(){
         ngay_batdau = "16-02-2025",
         ngay_ketthuc = "16-02-2025",
         so_tien_du_kien = 3000000,
-        tong_tien_da_chi = 200000,
+        tong_tien_da_chi = 500000,
+        so_luong_chi_tieu = 5,
         emoji = "🤣"
     ))
 }
