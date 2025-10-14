@@ -19,7 +19,6 @@ class KhoanChiViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<List<KhoanChiModel>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<KhoanChiModel>>> = _uiState
 
-
     fun loadKhoanChi(userId: Int) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading

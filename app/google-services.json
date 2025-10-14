@@ -1,85 +1,34 @@
 {
   "project_info": {
-    "project_number": "19164987762",
-    "project_id": "quanlychitieu-53964",
-    "storage_bucket": "quanlychitieu-53964.firebasestorage.app"
+    "project_number": "421455894843",
+    "project_id": "quanlychitieu-android",
+    "storage_bucket": "quanlychitieu-android.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:19164987762:android:2b1d78bc0c9c11a8c05deb",
+        "mobilesdk_app_id": "1:421455894843:android:2bb25b12cacff9f7faff1e",
         "android_client_info": {
           "package_name": "com.example.quanlychitieu"
         }
       },
       "oauth_client": [
         {
-          "client_id": "19164987762-egch4qidu2h5bdscp8dtsien03pe6h6m.apps.googleusercontent.com",
+          "client_id": "421455894843-e6m49anlu68s7mg3glcrr953it6t1cg4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCXjOuDmulHG1fR2NVSZ9DsXgcRkU5oZtU"
+          "current_key": "AIzaSyDTQXmIKzzQVuJraKdte6ORROBkU5ZHMp0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "19164987762-egch4qidu2h5bdscp8dtsien03pe6h6m.apps.googleusercontent.com",
+              "client_id": "421455894843-e6m49anlu68s7mg3glcrr953it6t1cg4.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "19164987762-ph679vcidpantk2h2crc3lu5v59j6p86.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.quanlychitieu2"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:19164987762:android:b36c56a6cead2fdfc05deb",
-        "android_client_info": {
-          "package_name": "com.example.quanlychitieu2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "19164987762-jjl5rrphqne3jrmctem7a9krrsf53m09.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.quanlychitieu2",
-            "certificate_hash": "09e43117208e593084046d4b6986b784737a07fa"
-          }
-        },
-        {
-          "client_id": "19164987762-egch4qidu2h5bdscp8dtsien03pe6h6m.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCXjOuDmulHG1fR2NVSZ9DsXgcRkU5oZtU"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "19164987762-egch4qidu2h5bdscp8dtsien03pe6h6m.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "19164987762-ph679vcidpantk2h2crc3lu5v59j6p86.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.quanlychitieu2"
-              }
             }
           ]
         }

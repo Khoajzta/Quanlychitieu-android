@@ -96,6 +96,14 @@ dependencies {
     //emoji
     implementation("androidx.emoji2:emoji2-emojipicker:1.6.0")
 
+    //login google
+    implementation("com.google.android.gms:play-services-auth:21.4.0")
+
+    //datastore
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)

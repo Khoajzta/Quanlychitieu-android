@@ -1,11 +1,16 @@
 package com.example.quanlychitieu.di
 
+import android.content.Context
 import android.util.Log
 import com.example.quanlychitieu.Utils.BASE_URL
+import com.example.quanlychitieu.data.local.DataStoreManager
 import com.example.quanlychitieu.data.remote.KhoanChiApiService
+import com.example.quanlychitieu.data.remote.NguoiDungAPIService
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -39,8 +44,26 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): KhoanChiApiService {
-        Log.d("HILT_CHECK", "provideApiService CALLED")
+    fun provideKhoanChiApiService(retrofit: Retrofit): KhoanChiApiService {
         return retrofit.create(KhoanChiApiService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideNguoiDungApiService(retrofit: Retrofit): NguoiDungAPIService {
+        return retrofit.create(NguoiDungAPIService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(
+        @ApplicationContext context: Context
+    ): DataStoreManager {
+        return DataStoreManager(context)
+    }
 }
+
