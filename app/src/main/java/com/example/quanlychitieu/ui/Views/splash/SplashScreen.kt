@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.BouncingDotsLoader
+import com.example.quanlychitieu.Components.CustomButton
 import com.example.quanlychitieu.R
 import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
 import kotlinx.coroutines.delay
@@ -37,27 +38,11 @@ fun SplashScreen(
     viewModel: NguoiDungViewModel = hiltViewModel()
 ) {
     val userId by viewModel.getUserId().collectAsState(initial = null)
-    val isFirstLaunch by viewModel.isFirstLaunch().collectAsState(initial = true)
+    val isFirstLaunch by viewModel.isFirstLaunch().collectAsState(initial = null)
 
     Log.d("userId", userId.toString())
-    Log.d("isFirstLaunch", isFirstLaunch.toString())
-
-    LaunchedEffect(Unit) {
-        if (!isFirstLaunch) {
-           delay(2000)
-
-            if (userId != null) {
-                navController.navigate(Screen.Home.createRoute(userId!!)) {
-                    popUpTo(0)
-                }
-            } else {
-                onNavigateToLogin()
-            }
-        }
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Background image
         Image(
             painter = painterResource(R.drawable.bg_splash),
             contentDescription = null,
@@ -65,7 +50,6 @@ fun SplashScreen(
             modifier = Modifier.fillMaxSize(),
         )
 
-        // Gradient overlay
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,9 +59,7 @@ fun SplashScreen(
                             Color.Black.copy(alpha = 0.6f),
                             Color.Transparent,
                             Color.Black.copy(alpha = 0.8f)
-                        ),
-                        startY = 0f,
-                        endY = Float.POSITIVE_INFINITY
+                        )
                     )
                 )
         )
@@ -107,52 +89,40 @@ fun SplashScreen(
                 )
             }
 
-            if (isFirstLaunch) {
-                // 👉 Khi lần đầu mở app, hiện nút bắt đầu
-                Button(
-                    onClick = onNavigateToLogin,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White.copy(alpha = 0.15f),
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(55.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Bắt đầu",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.Default.ArrowForwardIos,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+            when (isFirstLaunch) {
+                null -> {
+                    // Chưa load xong DataStore
+                    BouncingDotsLoader()
                 }
-            } else {
-                // 👉 Các lần sau thì chỉ hiện loading 2 giây rồi auto điều hướng
-                BouncingDotsLoader()
-
-                if(userId != null){
-                    navController.navigate(Screen.Home.createRoute(userId!!)) {
-                        popUpTo(0)
+                true -> {
+                    // Lần đầu mở app
+                    CustomButton(
+                        title = "Bắt đầu",
+                        onClick = {
+                            viewModel.setFirstLaunch(false)
+                            onNavigateToLogin()
+                        }
+                    )
+                }
+                false -> {
+                    // Đã mở app trước đây
+                    LaunchedEffect(userId) {
+                        delay(1000)
+                        if (userId != null) {
+                            navController.navigate(Screen.Home.createRoute(userId!!)) {
+                                popUpTo(0)
+                            }
+                        } else {
+                            onNavigateToLogin()
+                        }
                     }
-                }else{
-                    navController.navigate(Screen.Login.route)
+                    BouncingDotsLoader()
                 }
             }
         }
     }
 }
+
 
 
 @Preview

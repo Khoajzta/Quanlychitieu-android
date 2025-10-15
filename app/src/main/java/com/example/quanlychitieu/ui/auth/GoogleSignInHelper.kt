@@ -55,12 +55,12 @@ fun rememberGoogleSignIn(
         if (loginState is UiState.Success) {
             val user = loginState.data
 
-            // Gọi handleLoginAndCheckUser
             viewModel.handleLoginAndCheckUser(
                 nguoiDung = user,
-                onSuccess = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(0) // xóa backstack
+                onSuccess = { userId ->
+                    Log.d("userid google", userId.toString())
+                    navController.navigate(Screen.Home.createRoute(userId)) {
+                        popUpTo(0)
                     }
                 },
                 onError = { error ->
@@ -69,6 +69,7 @@ fun rememberGoogleSignIn(
             )
         }
     }
+
 
     return {
         googleSignInClient.signOut().addOnCompleteListener {

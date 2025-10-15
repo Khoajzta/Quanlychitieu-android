@@ -46,8 +46,9 @@ data class BottomNavItem(
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavController? = null, // Có thể null khi preview
-    modifier: Modifier = Modifier
+    navController: NavController? = null,
+    modifier: Modifier = Modifier,
+    userId: Int // thêm userId
 ) {
     val items = listOf(
         BottomNavItem("Home", Icons.Default.Home, Screen.Home.route),
@@ -56,7 +57,6 @@ fun BottomNavigationBar(
         BottomNavItem("Cá nhân", Icons.Default.Person, Screen.Profile.route)
     )
 
-    // Lấy route hiện tại từ NavController
     val currentRoute = navController?.currentBackStackEntryAsState()?.value?.destination?.route
 
     Row(
@@ -77,7 +77,6 @@ fun BottomNavigationBar(
                 .clip(RoundedCornerShape(RadiusFull)),
             contentAlignment = Alignment.Center
         ) {
-            // Lớp nền blur
             Box(
                 modifier = Modifier
                     .matchParentSize()
@@ -85,7 +84,6 @@ fun BottomNavigationBar(
                     .background(Brush.horizontalGradient(listOf(Color(0xFF9FD7EE), Color(0xFF6FBAD6))))
             )
 
-            // Các nút trong thanh bottom
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,8 +99,11 @@ fun BottomNavigationBar(
                         selected = isSelected,
                         onClick = {
                             if (navController != null && currentRoute != item.route) {
-                                navController.navigate(item.route) {
-                                    // Xóa các màn trước để tránh backstack lặp
+                                val routeToNavigate = if (item.route == Screen.Trade.route) {
+                                    Screen.Trade.createRoute(userId)
+                                } else item.route
+
+                                navController.navigate(routeToNavigate) {
                                     popUpTo(navController.graph.startDestinationId)
                                     launchSingleTop = true
                                 }
@@ -114,6 +115,7 @@ fun BottomNavigationBar(
         }
     }
 }
+
 
 @Composable
 fun BottomBarItem(
@@ -161,5 +163,5 @@ fun BottomBarItem(
 @Composable
 @Preview(showBackground = true)
 fun BottomNavigationBarPreview() {
-    BottomNavigationBar()
+
 }

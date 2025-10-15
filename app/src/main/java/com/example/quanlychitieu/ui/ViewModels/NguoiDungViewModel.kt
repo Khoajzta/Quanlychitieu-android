@@ -110,7 +110,7 @@ class NguoiDungViewModel @Inject constructor(
 
     fun handleLoginAndCheckUser(
         nguoiDung: NguoiDungModel,
-        onSuccess: () -> Unit,
+        onSuccess: (Int) -> Unit, // ✅ đổi kiểu callback để nhận id
         onError: (String) -> Unit
     ) {
         viewModelScope.launch {
@@ -119,12 +119,14 @@ class NguoiDungViewModel @Inject constructor(
                 val checkResult = repository.checkEmailNguoidung(nguoiDung.email)
 
                 if (checkResult.exists) {
-                    Log.d("CHECK_EMAIL", "Email ${checkResult.data.id} tồn tại")
-                    saveUserId(checkResult.data.id)
-                    onSuccess()
+                    val id = checkResult.data.id
+                    saveUserId(id)
+                    onSuccess(id)
                 } else {
-                    repository.createNguoiDung(nguoiDung)
-                    onSuccess()
+                    val newUser = repository.createNguoiDung(nguoiDung)
+                    val id = newUser.data.id
+                    saveUserId(id)
+                    onSuccess(id)
                 }
             } catch (e: Exception) {
                 onError(e.message ?: "Lỗi không xác định")
@@ -133,6 +135,8 @@ class NguoiDungViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun checkEmailNguoiDung(email: String) {
         viewModelScope.launch {

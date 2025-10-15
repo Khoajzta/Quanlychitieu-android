@@ -19,6 +19,7 @@ import com.example.quanlychitieu.Views.AddKhoanChi.AddKhoanChiScreen
 import com.example.quanlychitieu.Views.ListKhoanChi.ListKhoanChiScreen
 import com.example.quanlychitieu.Views.login.LoginScreen
 import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
+import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
 
 
 @Composable
@@ -36,7 +37,6 @@ fun AppNavGraph(navController: NavHostController) {
             popEnterTransition = truotVaoTuTrai(),
             popExitTransition = truotRaSangPhai()
         ) {
-            var nguoiDungViewModel : NguoiDungViewModel =hiltViewModel()
             SplashScreen(
                 navController,
 
@@ -46,7 +46,7 @@ fun AppNavGraph(navController: NavHostController) {
                     }
                 },
 
-                viewModel = nguoiDungViewModel,
+                viewModel = hiltViewModel(),
             )
         }
 
@@ -81,12 +81,12 @@ fun AppNavGraph(navController: NavHostController) {
             )
         ) { backStackEntry ->
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
-            val viewModel: KhoanChiViewModel = hiltViewModel()
 
             HomeScreen(
                 userId = userId,
                 navController = navController,
-                viewModel = viewModel
+                viewModel = hiltViewModel(),
+                taikhoanViewModel = hiltViewModel()
             )
         }
 
@@ -99,13 +99,26 @@ fun AppNavGraph(navController: NavHostController) {
             popExitTransition = truotRaSangPhai()
         ) { ProfileScreen(navController) }
 
+
         composable(
             route = Screen.Trade.route,
             enterTransition = truotVaoTuPhai(),
             exitTransition = truotRaSangTrai(),
             popEnterTransition = truotVaoTuTrai(),
-            popExitTransition = truotRaSangPhai()
-        ) { TradeScreen(navController) }
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+
+            TradeScreen(
+                navController = navController,
+                userId = userId,
+                khoanChiViewModel = hiltViewModel(),
+                taiKhoanViewModel = hiltViewModel(),
+            )
+        }
 
         composable(
             route = Screen.NganSach.route,
@@ -115,14 +128,25 @@ fun AppNavGraph(navController: NavHostController) {
             popExitTransition = truotRaSangPhai()
         ) { NganSachScreen(navController) }
 
+
         composable(
             route = Screen.AddTrade.route,
             enterTransition = truotVaoTuPhai(),
             exitTransition = truotRaSangTrai(),
             popEnterTransition = truotVaoTuTrai(),
-            popExitTransition = truotRaSangPhai()
-        ) {
-            AddTradeScreen(navController,listKhoanChi)
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+
+            AddTradeScreen(
+                navController = navController,
+                userId = userId,
+                khoanChiViewModel = hiltViewModel(),
+                taiKhoanViewModel = hiltViewModel(),
+            )
         }
 
         composable(

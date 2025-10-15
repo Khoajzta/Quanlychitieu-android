@@ -4,8 +4,10 @@ import android.content.Context
 import android.util.Log
 import com.example.quanlychitieu.Utils.BASE_URL
 import com.example.quanlychitieu.data.local.DataStoreManager
+import com.example.quanlychitieu.data.remote.ChiTieuAPIService
 import com.example.quanlychitieu.data.remote.KhoanChiApiService
 import com.example.quanlychitieu.data.remote.NguoiDungAPIService
+import com.example.quanlychitieu.data.remote.TaiKhoanAPIService
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -52,6 +54,18 @@ object AppModule {
     @Singleton
     fun provideNguoiDungApiService(retrofit: Retrofit): NguoiDungAPIService {
         return retrofit.create(NguoiDungAPIService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun proviceTaiKhoanApiService(retrofit: Retrofit): TaiKhoanAPIService {
+        return retrofit.create(TaiKhoanAPIService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun proviceChiTieuApiService(retrofit: Retrofit): ChiTieuAPIService {
+        return retrofit.create(ChiTieuAPIService::class.java)
     }
 
     @Provides

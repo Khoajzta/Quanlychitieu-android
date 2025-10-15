@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,11 +39,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.BouncingDotsLoader
+import com.example.quanlychitieu.Utils.listKhoanChiConst.listTaiKhoan
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.home.components.BottomNavigationBar
 import com.example.quanlychitieu.Views.home.components.HeaderMain
 import com.example.quanlychitieu.Views.home.components.WeeklyFinanceBarChart
 import com.example.quanlychitieu.domain.model.KhoanChiModel
+import com.example.quanlychitieu.domain.model.TaiKhoanModel
+import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
+import com.example.quanlychitieu.ui.Views.home.components.CardTaiKhoanRow
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
@@ -54,23 +59,38 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     userId: Int,
     navController: NavController,
-    viewModel: KhoanChiViewModel = hiltViewModel()
+    viewModel: KhoanChiViewModel = hiltViewModel(),
+    taikhoanViewModel : TaiKhoanViewModel = hiltViewModel()
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val KhoanChiuiState by viewModel.uiState.collectAsState()
+    val taiKhoanUiState by taikhoanViewModel.uiState.collectAsState()
 
+    Log.d("userId", userId.toString())
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            viewModel.loadKhoanChi(userId)
-            delay(15 * 60 * 1000L)
+    LaunchedEffect(userId) {
+        if (userId > 0) {
+            while (true) {
+                viewModel.loadKhoanChi(userId)
+                taikhoanViewModel.loadTaiKhoans(userId)
+                delay(15 * 60 * 1000L)
+            }
         }
     }
 
-    val khoanChiList = when (uiState) {
-        is UiState.Success -> (uiState as UiState.Success<List<KhoanChiModel>>).data
+
+
+    val khoanChiList = when (KhoanChiuiState) {
+        is UiState.Success -> (KhoanChiuiState as UiState.Success<List<KhoanChiModel>>).data
         else -> emptyList()
     }
+
+    val taikhoanList = when (taiKhoanUiState) {
+        is UiState.Success -> (taiKhoanUiState as UiState.Success<List<TaiKhoanModel>>).data
+        else -> emptyList()
+    }
+
+    val tongSoTienDuKien = khoanChiList.sumOf { it.so_tien_du_kien }
 
     //Refresh dữ liệu
     var isRefreshing by remember { mutableStateOf(false) }
@@ -82,6 +102,7 @@ fun HomeScreen(
             isRefreshing = true
             coroutineScope.launch {
                 viewModel.loadKhoanChi(userId)
+                taikhoanViewModel.loadTaiKhoans(userId)
                 isRefreshing = false
             }
         }
@@ -120,7 +141,10 @@ fun HomeScreen(
             }
         },
         bottomBar = {
-            BottomNavigationBar(navController = navController,Modifier.windowInsetsPadding(WindowInsets.navigationBars))
+            BottomNavigationBar(
+                navController = navController,Modifier.windowInsetsPadding(WindowInsets.navigationBars),
+                userId
+            )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
 
@@ -132,6 +156,8 @@ fun HomeScreen(
                 .fillMaxSize()
                 .pullRefresh(refreshState)
         ){
+
+
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -143,51 +169,58 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                item { Spacer(modifier = Modifier.height(10.dp)) }
 
-                item { HomeTotalMoney() }
+                if(KhoanChiuiState is UiState.Success && taiKhoanUiState is UiState.Success){
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
 
-                item { FunctionRow() }
+                    item { CardTaiKhoanRow(listTaiKhoan = taikhoanList, tongTienDuKien = tongSoTienDuKien) }
 
-                item {
-                    val weeklyData = mapOf(
-                        "T2" to 200000,
-                        "T3" to -80000,
-                        "T4" to 200000,
-                        "T5" to 50000,
-                        "T6" to -50000,
-                        "T7" to -50000,
-                        "CN" to 50000,
-                    )
-                    val weekDates = listOf("07/10", "08/10", "09/10", "10/10", "11/10", "12/10", "13/10")
+                    item { FunctionRow() }
 
-                    Column(
-                        modifier = Modifier
-                            .padding(PaddingBody)
-                    ) {
-                        Text(
-                            "Thống kê trong tuần",
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            fontSize = 15.sp
+                    item {
+                        val weeklyData = mapOf(
+                            "T2" to 200000,
+                            "T3" to -80000,
+                            "T4" to 200000,
+                            "T5" to 50000,
+                            "T6" to -50000,
+                            "T7" to -50000,
+                            "CN" to 50000,
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        WeeklyFinanceBarChart(data = weeklyData, dates = weekDates)
-                    }
-                }
+                        val weekDates = listOf("07/10", "08/10", "09/10", "10/10", "11/10", "12/10", "13/10")
 
-                item {
-                    KhoanChiMoreRow(modifier = Modifier, navController = navController)
-                    if (uiState is UiState.Loading) {
-                        BouncingDotsLoader()
-                    } else {
+                        Column(
+                            modifier = Modifier
+                                .padding(PaddingBody)
+                        ) {
+                            Text(
+                                "Thống kê trong tuần",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                fontSize = 15.sp
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            WeeklyFinanceBarChart(data = weeklyData, dates = weekDates)
+                        }
+                    }
+
+                    item {
+                        KhoanChiMoreRow(
+                            modifier = Modifier,
+                            navController = navController
+                        )
                         KhoanChiColumn(khoanChiList)
                     }
+
+                    item {
+                        Spacer(modifier = Modifier.height(200.dp))
+                    }
+                }else{
+                    item {
+                        BouncingDotsLoader()
+                    }
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(200.dp))
-                }
             }
 
             PullRefreshIndicator(

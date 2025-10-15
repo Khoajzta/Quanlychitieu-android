@@ -22,20 +22,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.domain.model.TaiKhoanModel
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 
 @Composable
-fun HomeTotalMoney() {
+fun HomeTotalMoney(
+    modifier: Modifier,
+    taikhoan: TaiKhoanModel,
+    tongTienDuKien :Int
+) {
     Box(
-        modifier = Modifier
-            .padding(horizontal = 12.dp)
+        modifier = modifier
             .height(200.dp)
-            .fillMaxWidth()
+            .width(370.dp)
             .shadow(12.dp, RoundedCornerShape(RadiusXL))
             .clip(RoundedCornerShape(RadiusXL))
-            .background(Brush.horizontalGradient(
-                colors = listOf(Color(0xFF73B5E1),Color(0xFF753a88))
-            ))
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(Color(0xFF73B5E1), Color(0xFF753a88))
+                )
+            )
     ){
         Column(
             modifier = Modifier
@@ -50,7 +56,7 @@ fun HomeTotalMoney() {
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "3.000.000đ",
+                "${formatCurrency(taikhoan.so_du)}",
                 fontSize = 30.sp,
                 lineHeight = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -67,7 +73,7 @@ fun HomeTotalMoney() {
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "2.000.000đ",
+                "${formatCurrency(tongTienDuKien)}",
                 fontSize = 20.sp,
                 lineHeight = 15.sp,
                 fontWeight = FontWeight.Bold,
@@ -81,9 +87,11 @@ fun HomeTotalMoney() {
                 .fillMaxWidth()
                 .height(50.dp)
                 .align(Alignment.BottomCenter)
-                .background(Brush.horizontalGradient(
-                    colors = listOf(Color(0xFFA0C7E1),Color(0xFFB461CC))
-                ))
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(Color(0xFFA0C7E1), Color(0xFFB461CC))
+                    )
+                )
         ) {
             Row(
                 modifier = Modifier
@@ -92,7 +100,9 @@ fun HomeTotalMoney() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(
-                    modifier = Modifier.fillMaxHeight().weight(1f),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -101,7 +111,9 @@ fun HomeTotalMoney() {
                 }
                 Spacer(modifier = Modifier.width(30.dp))
                 Column(
-                    modifier = Modifier.fillMaxHeight().weight(1f),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -116,5 +128,18 @@ fun HomeTotalMoney() {
 @Composable
 @Preview
 fun PreviewHomeTotalMoney() {
-    HomeTotalMoney()
+
+    var taikhoan =TaiKhoanModel(
+        id = 1,
+        id_nguoidung = 1,
+        ten_taikhoan = "Tiền mua xe",
+        so_du = 2500000,
+        loai_taikhoan = 1,
+        mo_ta = "Tiền để dành mua xe"
+    )
+    HomeTotalMoney(
+        taikhoan = taikhoan,
+        modifier = Modifier,
+        tongTienDuKien = 3000
+    )
 }

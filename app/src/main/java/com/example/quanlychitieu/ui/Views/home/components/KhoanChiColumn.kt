@@ -2,6 +2,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,12 +24,20 @@ fun KhoanChiColumn(
             .padding(horizontal = PaddingBody),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        for (i in listKhoanChi.indices) {
-            CardKhoanChi(
-                item = listKhoanChi[i],
-                modifier = Modifier
+
+        if(listKhoanChi.isNullOrEmpty()){
+            Text(
+                text = "Chưa có khoản chi nào"
             )
+        }else{
+            for (i in listKhoanChi.indices) {
+                CardKhoanChi(
+                    item = listKhoanChi[i],
+                    modifier = Modifier
+                )
+            }
         }
+
     }
 }
 

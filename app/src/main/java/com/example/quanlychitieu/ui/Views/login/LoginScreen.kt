@@ -1,6 +1,7 @@
 package com.example.quanlychitieu.Views.login
 
 import TextColumn
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -38,7 +39,9 @@ fun LoginScreen(
 
     val onGoogleLoginClick = rememberGoogleSignIn(viewModel, navController)
 
+    var userid = viewModel.getUserId()
 
+    Log.d("userid login screen", userid.toString())
 
     Box(
         modifier = Modifier
