@@ -22,18 +22,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.Utils.formatDayDisplay
 import com.example.quanlychitieu.domain.model.ChiTieuModel
 import formatCurrency
 
 @Composable
 fun CardChiTieu(
     modifier: Modifier = Modifier,
-    chtieu: ChiTieuModel
+    chitieu: ChiTieuModel
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp, horizontal = 6.dp)
             .shadow(6.dp, RoundedCornerShape(16.dp))
             .background(
                 brush = Brush.linearGradient(
@@ -57,7 +57,7 @@ fun CardChiTieu(
             ) {
 
                 Text(
-                    text = "${chtieu.ghi_chu}",
+                    text = "${chitieu.ghi_chu}",
                     fontSize = 20.sp,
                     color = Color.White.copy(alpha = 0.9f)
                 )
@@ -65,7 +65,7 @@ fun CardChiTieu(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Ngày: ${chtieu.ngay_tao}",
+                    text = "Ngày: ${formatDayDisplay(chitieu.ngay_tao)}",
                     fontSize = 16.sp,
                     color = Color.White.copy(alpha = 0.85f),
                 )
@@ -82,7 +82,7 @@ fun CardChiTieu(
 
             ) {
                 Text(
-                    text = "💰 ${formatCurrency(chtieu.so_tien)}",
+                    text = "💰 ${formatCurrency(chitieu.so_tien)}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White

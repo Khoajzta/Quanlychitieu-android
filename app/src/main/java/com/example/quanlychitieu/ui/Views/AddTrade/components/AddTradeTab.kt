@@ -2,10 +2,13 @@ package com.example.quanlychitieu.Views.AddTrade
 
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +32,7 @@ import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,21 +48,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.CusTomTextField
 import com.example.quanlychitieu.Components.CustomButton
 import com.example.quanlychitieu.Components.CustomDatePicker
 import com.example.quanlychitieu.Components.CustomDropdown
 import com.example.quanlychitieu.Utils.formatMillisToDB
-import com.example.quanlychitieu.Utils.listKhoanChiConst.listKhoanChi
 import com.example.quanlychitieu.domain.model.ChiTieuModel
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
 import com.example.quanlychitieu.ui.ViewModels.ChiTieuViewModel
+import com.example.quanlychitieu.ui.components.CustomSnackbar
+import com.example.quanlychitieu.ui.components.SnackbarType
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import formatCurrency
+import kotlinx.coroutines.delay
 
 @Composable
 fun AddTradeTab(
+    navController: NavController,
     listKhoanChi: List<KhoanChiModel>,
     taikhoanchinh : TaiKhoanModel,
     userId : Int
@@ -126,7 +134,7 @@ fun AddTradeTab(
             label = ""
         ) { index ->
             when (index) {
-                0 -> AddChiTieuPage(listKhoanChi, taikhoanchinh, userId)
+                0 -> AddChiTieuPage(navController,listKhoanChi, taikhoanchinh, userId)
                 1 -> AddThuNhapPage()
             }
         }
@@ -136,6 +144,7 @@ fun AddTradeTab(
 
 @Composable
 fun AddChiTieuPage(
+    navController: NavController,
     listKhoanChi: List<KhoanChiModel>,
     taikhoanchinh : TaiKhoanModel,
     userId : Int,
@@ -143,78 +152,130 @@ fun AddChiTieuPage(
 ) {
     var sotien by remember { mutableStateOf(0) }
     var mota by remember { mutableStateOf("") }
-
     var selectedKhoanChi by remember { mutableStateOf(listKhoanChi.firstOrNull()) }
     var selectedDate by remember { mutableStateOf<Long?>(null) }
 
+    // Snackbar state
+    var snackbarVisible by remember { mutableStateOf(false) }
+    var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(SpaceMedium)
-    ) {
-        CusTomTextField(
-            value = if (sotien == 0) "" else formatCurrency(sotien),
-            onValueChange = { newValue ->
-                val digits = newValue.filter { it.isDigit() }
-                sotien = if (digits.isNotEmpty()) digits.toInt() else 0
-            },
-            leadingIcon = {
-                Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
-            },
-            placeholder = "Số tiền",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-            modifier = Modifier.fillMaxWidth()
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(SpaceMedium)
+        ) {
+            CusTomTextField(
+                value = if (sotien == 0) "" else formatCurrency(sotien),
+                onValueChange = { newValue ->
+                    val digits = newValue.filter { it.isDigit() }
+                    sotien = if (digits.isNotEmpty()) digits.toInt() else 0
+                },
+                leadingIcon = {
+                    Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+                },
+                placeholder = "Số tiền",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        CustomDropdown(
-            items = listKhoanChi,
-            leadingIcon = {
-                Text(selectedKhoanChi?.emoji ?: "", fontSize = 20.sp)
-            },
-            selectedItem = selectedKhoanChi,
-            itemLabel = { it.ten_khoanchi },
-            onSelect = { selectedKhoanChi = it }
-        )
+            CustomDropdown(
+                items = listKhoanChi,
+                leadingIcon = {
+                    Text(selectedKhoanChi?.emoji ?: "", fontSize = 20.sp)
+                },
+                selectedItem = selectedKhoanChi,
+                itemLabel = { it.ten_khoanchi },
+                onSelect = { selectedKhoanChi = it }
+            )
 
-        CustomDatePicker(
-            selectedDate = selectedDate,
-            placeholder = "Ngày giao dịch",
-            onDateSelected = { selectedDate = it }
-        )
+            CustomDatePicker(
+                selectedDate = selectedDate,
+                placeholder = "Ngày giao dịch",
+                onDateSelected = { selectedDate = it }
+            )
 
-        CusTomTextField(
-            value = mota,
-            onValueChange = { mota = it },
-            placeholder = "Nhập ghi chú",
-            leadingIcon = {
-                Icon(Icons.Default.EditNote, contentDescription = null, tint = Color.Gray)
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Done),
-            modifier = Modifier.fillMaxWidth().height(200.dp)
-        )
+            CusTomTextField(
+                value = mota,
+                onValueChange = { mota = it },
+                placeholder = "Nhập ghi chú",
+                leadingIcon = {
+                    Icon(Icons.Default.EditNote, contentDescription = null, tint = Color.Gray)
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
 
-        CustomButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                var chiTieu = ChiTieuModel(
-                    id = 0,
-                    id_nguoidung = userId,
-                    id_khoanchi = selectedKhoanChi!!.id,
-                    id_taikhoan = taikhoanchinh.id,
-                    so_tien = sotien,
-                    ngay_tao = formatMillisToDB(selectedDate),
-                    ghi_chu = mota
-                )
-                chiTieuViewModel.createChiTieu(chiTieu)
-                    
-                Log.d("Ngay tao","${formatMillisToDB(selectedDate)}" )
+            CustomButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
 
-            },
-            title = "Thêm chi tiêu"
-        )
+                    if(taikhoanchinh.so_du <= 0){
+                        snackbarType = SnackbarType.INFO
+                        snackbarMessage = "Số dư trong tài khoản không đủ"
+                        snackbarVisible = true
+                    }
+
+                    else if (sotien != 0 && selectedDate != null && selectedKhoanChi != null && mota.isNotBlank()) {
+                        val chiTieu = ChiTieuModel(
+                            id = 0,
+                            id_nguoidung = userId,
+                            id_khoanchi = selectedKhoanChi!!.id,
+                            id_taikhoan = taikhoanchinh.id,
+                            so_tien = sotien,
+                            ngay_tao = formatMillisToDB(selectedDate),
+                            ghi_chu = mota
+                        )
+                        chiTieuViewModel.createChiTieu(chiTieu)
+
+                        snackbarType = SnackbarType.SUCCESS
+                        snackbarMessage = "Thêm chi tiêu thành công"
+                        snackbarVisible = true
+
+                        // reset form nếu muốn
+                        sotien = 0
+                        mota = ""
+                        selectedDate = null
+                    } else {
+                        snackbarType = SnackbarType.ERROR
+                        snackbarMessage = "Vui lòng nhập đầy đủ thông tin"
+                        snackbarVisible = true
+                    }
+
+                },
+                title = "Thêm chi tiêu"
+            )
+        }
+
+        // Hiển thị Snackbar ở cuối màn hình
+        AnimatedVisibility(
+            visible = snackbarVisible,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp),
+            enter = slideInVertically { it } + fadeIn(),
+            exit = slideOutVertically { it } + fadeOut()
+        ) {
+            CustomSnackbar(
+                message = snackbarMessage,
+                type = snackbarType
+            )
+        }
+
+        LaunchedEffect(snackbarVisible) {
+            if (snackbarVisible) {
+                delay(3000)
+                snackbarVisible = false
+            }
+        }
     }
 }
+
 
 
 

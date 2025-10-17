@@ -21,7 +21,8 @@ import com.google.android.recaptcha.internal.zzhp
 @Composable
 fun KhoanChiMoreRow(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    userId :Int
 ){
     Row(
         modifier = modifier
@@ -40,7 +41,7 @@ fun KhoanChiMoreRow(
 
         TextButton(
             onClick = {
-                navController.navigate(Screen.ListKhoanChi.route)
+                navController.navigate(Screen.ListKhoanChi.createRoute(userId))
             }
         ) {
             Text(
@@ -57,5 +58,5 @@ fun KhoanChiMoreRow(
 @Preview
 fun KhoanChiMoreRowPreview(){
     var navController = rememberNavController()
-    KhoanChiMoreRow(modifier = Modifier, navController=navController)
+    KhoanChiMoreRow(modifier = Modifier, navController=navController, 1)
 }

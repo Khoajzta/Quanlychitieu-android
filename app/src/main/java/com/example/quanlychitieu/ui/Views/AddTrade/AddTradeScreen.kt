@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.quanlychitieu.Components.BouncingDotsLoader
-import com.example.quanlychitieu.Utils.listKhoanChiConst.listKhoanChi
+import com.example.quanlychitieu.Components.DotLoading
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.AddTrade.AddTradeTab
 import com.example.quanlychitieu.domain.model.KhoanChiModel
@@ -70,7 +68,8 @@ fun AddTradeScreen(
             Header(
                 navController,
                 Modifier.windowInsetsPadding(WindowInsets.statusBars),
-                title = "Thêm giao dịch"
+                title = "Thêm giao dịch",
+                userId
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
@@ -83,9 +82,9 @@ fun AddTradeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if(KhoanChiuiState is UiState.Success && taiKhoanUiState is UiState.Success){
-                AddTradeTab(khoanChiList, taikhoanchinh = taiKhoanChinh!!, userId)
+                AddTradeTab(navController,khoanChiList, taikhoanchinh = taiKhoanChinh!!, userId)
             }else{
-                BouncingDotsLoader()
+                DotLoading()
             }
 
         }

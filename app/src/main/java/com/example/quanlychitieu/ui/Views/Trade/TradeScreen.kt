@@ -41,7 +41,6 @@ fun TradeScreen(
     val KhoanChiuiState by khoanChiViewModel.uiState.collectAsState()
     val taiKhoanUiState by taiKhoanViewModel.uiState.collectAsState()
 
-    Log.d("userId", userId.toString())
 
     LaunchedEffect(userId) {
         if (userId > 0) {
@@ -73,7 +72,8 @@ fun TradeScreen(
             Header(
                 navController,
                 Modifier.windowInsetsPadding(WindowInsets.statusBars),
-                title = "Giao dịch"
+                title = "Giao dịch",
+                userId
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)

@@ -68,7 +68,7 @@ fun BottomNavigationBar(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(65.dp)
                 .shadow(
                     5.dp,
                     RoundedCornerShape(RadiusFull),
@@ -149,7 +149,7 @@ fun BottomBarItem(
                 imageVector = icon,
                 contentDescription = title,
                 tint = color,
-                modifier = Modifier.size(35.dp)
+                modifier = Modifier.size(30.dp)
             )
         }
 //        Text(

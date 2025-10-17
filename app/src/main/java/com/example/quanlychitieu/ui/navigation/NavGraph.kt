@@ -20,6 +20,8 @@ import com.example.quanlychitieu.Views.ListKhoanChi.ListKhoanChiScreen
 import com.example.quanlychitieu.Views.login.LoginScreen
 import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
 import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
+import com.example.quanlychitieu.ui.Views.KhoanChiDetail.KhoanChiDetailScreen
+import com.example.quanlychitieu.ui.Views.UpdateKhoanChi.UpdateKhoanChiScreen
 
 
 @Composable
@@ -154,15 +156,70 @@ fun AppNavGraph(navController: NavHostController) {
             enterTransition = truotVaoTuPhai(),
             exitTransition = truotRaSangTrai(),
             popEnterTransition = truotVaoTuTrai(),
-            popExitTransition = truotRaSangPhai()
-        ) { ListKhoanChiScreen(navController) }
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            ListKhoanChiScreen(
+                navController = navController,
+                userId = userId,
+                khoanChiViewModel = hiltViewModel(),
+            )
+        }
+
+        composable(
+            route = Screen.KhoanChiDetail.route,
+            enterTransition = truotVaoTuPhai(),
+            exitTransition = truotRaSangTrai(),
+            popEnterTransition = truotVaoTuTrai(),
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("id_khoanChi") { type = NavType.IntType },
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val id_khoanChi = backStackEntry.arguments?.getInt("id_khoanChi") ?: 0
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            KhoanChiDetailScreen(
+                navController = navController,
+                id_khoanChi = id_khoanChi,
+                userId = userId,
+                chiTieuViewModel = hiltViewModel(),
+            )
+        }
+
+
 
         composable(
             route = Screen.AddKhoanChi.route,
             enterTransition = truotVaoTuPhai(),
             exitTransition = truotRaSangTrai(),
             popEnterTransition = truotVaoTuTrai(),
-            popExitTransition = truotRaSangPhai()
-        ) { AddKhoanChiScreen(navController) }
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            AddKhoanChiScreen(navController, userId)
+        }
+
+        composable(
+            route = Screen.UpdateKhoanChi.route,
+            enterTransition = truotVaoTuPhai(),
+            exitTransition = truotRaSangTrai(),
+            popEnterTransition = truotVaoTuTrai(),
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType },
+                navArgument("id_khoanchi") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            val id_khoanchi = backStackEntry.arguments?.getInt("id_khoanchi") ?: 0
+            UpdateKhoanChiScreen(navController, id_khoanChi = id_khoanchi, userId = userId )
+        }
     }
 }

@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.quanlychitieu.Components.BouncingDotsLoader
 import com.example.quanlychitieu.Components.CustomButton
+import com.example.quanlychitieu.Components.DotLoading
 import com.example.quanlychitieu.R
 import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
 import kotlinx.coroutines.delay
@@ -92,7 +92,7 @@ fun SplashScreen(
             when (isFirstLaunch) {
                 null -> {
                     // Chưa load xong DataStore
-                    BouncingDotsLoader()
+                    DotLoading()
                 }
                 true -> {
                     // Lần đầu mở app
@@ -116,7 +116,7 @@ fun SplashScreen(
                             onNavigateToLogin()
                         }
                     }
-                    BouncingDotsLoader()
+                    DotLoading()
                 }
             }
         }

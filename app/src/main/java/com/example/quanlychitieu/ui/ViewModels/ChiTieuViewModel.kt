@@ -7,9 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
 import com.example.quanlychitieu.domain.model.ChiTieuModel
+import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.respository.ChiTieuRespository
 import com.example.quanlychitieu.ui.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,8 +20,23 @@ import javax.inject.Inject
 class ChiTieuViewModel @Inject constructor(
     private val repository: ChiTieuRespository
 ): ViewModel() {
+
+    private val _uiState = MutableStateFlow<UiState<List<ChiTieuModel>>>(UiState.Loading)
+    val uiState: StateFlow<UiState<List<ChiTieuModel>>> = _uiState
     var createChiTieuState by mutableStateOf<UiState<BaseResponse<ChiTieuModel>>>(UiState.Loading)
         private set
+
+    fun getChiTieuTheoKhoanChiCuaUser(id_khoanchi: Int, userId: Int) {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            try {
+                val result = repository.getChiTieuTheoKhoanChiCuaNguoiDung(id_khoanchi = id_khoanchi, userId = userId)
+                _uiState.value = UiState.Success(result)
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(e.localizedMessage ?: "Lỗi không xác định")
+            }
+        }
+    }
 
     fun createChiTieu(chitieu: ChiTieuModel) {
         viewModelScope.launch {

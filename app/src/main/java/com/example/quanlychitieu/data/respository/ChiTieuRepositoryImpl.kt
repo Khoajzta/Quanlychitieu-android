@@ -1,5 +1,6 @@
 package com.example.quanlychitieu.data.respository
 
+import android.util.Log
 import com.example.quanlychitieu.data.remote.ChiTieuAPIService
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
 import com.example.quanlychitieu.domain.model.ChiTieuModel
@@ -19,6 +20,19 @@ class ChiTieuRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             throw Exception("Network/API Error: ${e.message}")
+        }
+    }
+
+    override suspend fun getChiTieuTheoKhoanChiCuaNguoiDung(
+        id_khoanchi: Int,
+        userId: Int
+    ): List<ChiTieuModel> {
+        val response = api.getChiTieuTheoKhoanChiCuaNguoiDung(id_khoanchi = id_khoanchi, userId = userId)
+        Log.d("API_TEST", "Response: $response")
+        if (response.success) {
+            return response.data
+        } else {
+            throw Exception("API trả về success = false")
         }
     }
 }

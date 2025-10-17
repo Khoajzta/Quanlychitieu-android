@@ -71,7 +71,7 @@ fun CardKhoanChi(
                 contentAlignment = Alignment.Center
             ){
                 Text(
-                    text = item.ten_khoanchi,
+                    text = "${item.emoji} ${item.ten_khoanchi}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,

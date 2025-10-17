@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.quanlychitieu.Components.BouncingDotsLoader
+import com.example.quanlychitieu.Components.DotLoading
 import com.example.quanlychitieu.Utils.listKhoanChiConst.listTaiKhoan
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.home.components.BottomNavigationBar
@@ -207,7 +207,8 @@ fun HomeScreen(
                     item {
                         KhoanChiMoreRow(
                             modifier = Modifier,
-                            navController = navController
+                            navController = navController,
+                            userId = userId
                         )
                         KhoanChiColumn(khoanChiList)
                     }
@@ -217,7 +218,7 @@ fun HomeScreen(
                     }
                 }else{
                     item {
-                        BouncingDotsLoader()
+                        DotLoading()
                     }
                 }
 

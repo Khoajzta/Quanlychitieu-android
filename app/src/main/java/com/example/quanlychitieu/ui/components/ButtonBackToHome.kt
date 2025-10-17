@@ -13,11 +13,12 @@ import androidx.navigation.NavController
 
 @Composable
 fun ButtonBackToHome(
-    navController: NavController
+    navController: NavController,
+    userId : Int
 ){
     IconButton(onClick = {
-        navController.navigate(Screen.Home.route) {
-            popUpTo(0) { inclusive = true }
+        navController.navigate(Screen.Home.createRoute(userId)) {
+            popUpTo(0)
             launchSingleTop = true
         }
     }) {

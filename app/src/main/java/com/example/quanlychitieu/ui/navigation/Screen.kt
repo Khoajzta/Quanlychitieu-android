@@ -12,6 +12,17 @@ sealed class Screen(val route: String) {
     object AddTrade : Screen("add_trade/{userId}"){
         fun createRoute(userId: Int) = "add_trade/$userId"
     }
-    object ListKhoanChi : Screen("listkhoanchi")
-    object AddKhoanChi : Screen("addkhoanchi")
+    object ListKhoanChi : Screen("listkhoanchi/{userId}"){
+        fun createRoute(userId: Int) = "listkhoanchi/$userId"
+    }
+    object KhoanChiDetail : Screen("khoanchi_detail/{id_khoanChi}/{userId}"){
+        fun createRoute(id_khoanChi: Int , userId: Int) = "khoanchi_detail/$id_khoanChi/$userId"
+    }
+    object AddKhoanChi : Screen("addkhoanchi/{userId}"){
+        fun createRoute(userId: Int) = "addkhoanchi/$userId"
+    }
+
+    object UpdateKhoanChi : Screen("updatekhoanchi/{userId}/{id_khoanchi}"){
+        fun createRoute(userId: Int, id_khoanchi: Int) = "updatekhoanchi/$userId/$id_khoanchi"
+    }
 }

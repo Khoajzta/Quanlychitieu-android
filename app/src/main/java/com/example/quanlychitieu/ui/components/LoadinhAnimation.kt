@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BouncingDotsLoader() {
+fun DotLoading() {
     val dots = listOf(0, 1, 2)
     val scale = remember { Animatable(0.5f) }
 

@@ -6,4 +6,5 @@ import com.example.quanlychitieu.domain.model.ChiTieuModel
 interface ChiTieuRespository  {
 
     suspend fun createChiTieu(chitieu: ChiTieuModel) : BaseResponse<ChiTieuModel>
+    suspend fun getChiTieuTheoKhoanChiCuaNguoiDung(id_khoanchi: Int, userId: Int): List<ChiTieuModel>
 }

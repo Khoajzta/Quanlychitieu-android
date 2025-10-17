@@ -26,7 +26,7 @@ fun CustomFAB(
 ){
     Box(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(bottom = 10.dp)
             .shadow(5.dp, shape = RoundedCornerShape(RadiusLarge))
             .background(Color(0xFF2196F3), RoundedCornerShape(RadiusLarge))
             .clickable { onClick() }

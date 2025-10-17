@@ -20,7 +20,8 @@ import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 fun Header(
     navController: NavController,
     modifier: Modifier = Modifier,
-    title: String
+    title: String,
+    userId: Int = 1
 ) {
     Row(
         modifier = modifier
@@ -41,7 +42,7 @@ fun Header(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ButtonBackToHome(navController)
+        ButtonBackToHome(navController, userId)
     }
 }
 
@@ -50,5 +51,5 @@ fun Header(
 @Preview()
 fun TradeHeaderPreview(){
     var navController = rememberNavController()
-    Header(navController, title = "Giao dịch")
+    Header(navController, title = "Giao dịch", userId = 1)
 }
