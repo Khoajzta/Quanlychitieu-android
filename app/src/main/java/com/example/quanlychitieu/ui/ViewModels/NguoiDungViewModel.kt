@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quanlychitieu.data.local.DataStoreManager
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
+import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
 import com.example.quanlychitieu.data.remote.dto.CheckEmailResponse
 import com.example.quanlychitieu.domain.model.NguoiDungModel
 import com.example.quanlychitieu.domain.respository.AuthRepository
@@ -33,6 +34,9 @@ class NguoiDungViewModel @Inject constructor(
         private set
 
     var checkEmailState by mutableStateOf<UiState<CheckEmailResponse<NguoiDungModel>>>(UiState.Loading)
+        private set
+
+    var getByIdState by mutableStateOf<UiState<BaseResponseMes<NguoiDungModel>>>(UiState.Loading)
         private set
 
     // 🌀 Trạng thái loading toàn cục
@@ -137,7 +141,6 @@ class NguoiDungViewModel @Inject constructor(
     }
 
 
-
     fun checkEmailNguoiDung(email: String) {
         viewModelScope.launch {
             checkEmailState = UiState.Loading
@@ -148,6 +151,20 @@ class NguoiDungViewModel @Inject constructor(
             } catch (e: Exception) {
                 checkEmailState = UiState.Error(e.message ?: "Unknown error")
                 Log.e("CHECK_EMAIL_ERROR", e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun getNguoiDungByID(id :Int){
+        viewModelScope.launch {
+            getByIdState = UiState.Loading
+            try {
+                var result =repository.getNguoiDungByID(id)
+                getByIdState = UiState.Success(result)
+                Log.d("GET_BY_ID", "Email ${result.data}")
+            }catch (e: Exception){
+                getByIdState = UiState.Error(message = e.message?: "Unknown error")
+                Log.e("getbyId error", e.message ?: "Unknown error")
             }
         }
     }

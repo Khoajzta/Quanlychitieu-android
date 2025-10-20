@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,19 +36,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.CardKhoanChi
 import com.example.quanlychitieu.Components.CardThuNhap
+import com.example.quanlychitieu.Components.CardThuNhapSwipeToDelete
+import com.example.quanlychitieu.Components.DotLoading
 import com.example.quanlychitieu.Utils.listKhoanChiConst.listKhoanChi
+import com.example.quanlychitieu.Utils.thuNhapListSample
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.ThuNhapModel
+import com.example.quanlychitieu.ui.ViewModels.ThuNhapViewModel
+import com.example.quanlychitieu.ui.state.UiState
 
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
+import kotlinx.coroutines.delay
+import java.time.LocalDate
 
 @Composable
 fun TradeTabPage(
+    navController: NavController,
     listKhoanChi: List<KhoanChiModel>,
     listThuNhap: List<ThuNhapModel>,
+    userId: Int
 ) {
     val tabs = listOf("Chi tiêu", "Thu nhập")
     var selectedTabIndex by remember { mutableStateOf(0) }
@@ -111,8 +123,8 @@ fun TradeTabPage(
             label = ""
         ) { index ->
             when (index) {
-                0 -> ChiTieuPage(listKhoanChi)
-                1 -> ThuNhapPage(listThuNhap)
+                0 -> ChiTieuPage(navController = navController,listKhoanChi = listKhoanChi, userId = userId)
+                1 -> ThuNhapPage(userId = userId)
             }
         }
 
@@ -122,14 +134,21 @@ fun TradeTabPage(
 // Giả lập nội dung trang Chi tiêu
 @Composable
 fun ChiTieuPage(
+    navController: NavController,
     listKhoanChi: List<KhoanChiModel>,
+    userId:Int
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = PaddingBody),
         verticalArrangement = Arrangement.spacedBy(SpaceMedium)
     ) {
         itemsIndexed(listKhoanChi) { index, item ->
-            CardKhoanChi(item, modifier = Modifier)
+            CardKhoanChi(item, modifier = Modifier, onDetailClick = {navController.navigate(
+                Screen.KhoanChiDetail.createRoute(
+                    id_khoanChi = item.id,
+                    userId = userId
+                )
+            )})
         }
     }
 }
@@ -137,31 +156,66 @@ fun ChiTieuPage(
 
 
 @Composable
-fun ThuNhapPage(listThuNhap: List<ThuNhapModel>) {
+fun ThuNhapPage(
+    userId: Int,
+    thuNhapViewModel: ThuNhapViewModel = hiltViewModel()
+) {
+    val thuNhapState = thuNhapViewModel.thuNhapState
+    val deleteThuNhapState = thuNhapViewModel.deleteThuNhapState
+
+    val currentDate = LocalDate.now()
+    val currentMonth = currentDate.monthValue
+    val currentYear = currentDate.year
+
+    // Tải danh sách thu nhập ban đầu
+    LaunchedEffect(userId) {
+        thuNhapViewModel.getThuNhapTheoThang(
+            userId = userId, thang = currentMonth, nam = currentYear
+        )
+    }
+
+    // Khi xóa thành công -> load lại danh sách
+    LaunchedEffect(deleteThuNhapState) {
+        if (deleteThuNhapState is UiState.Success) {
+            thuNhapViewModel.getThuNhapTheoThang(
+                userId = userId, thang = currentMonth, nam = currentYear
+            )
+        }
+    }
+
+    val listThuNhap = when (thuNhapState) {
+        is UiState.Success -> (thuNhapState as UiState.Success<List<ThuNhapModel>>).data
+        else -> emptyList()
+    }
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = PaddingBody),
-        verticalArrangement = Arrangement.spacedBy(SpaceMedium)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = PaddingBody),
+        verticalArrangement = Arrangement.spacedBy(SpaceMedium),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(listThuNhap) { item ->
-            CardThuNhap(item)
+        if (listThuNhap.isEmpty()) {
+            item { Text("Chưa có thu nhập nào trong tháng", color = Color.Black) }
+        } else {
+            items(listThuNhap, key = { it.id }) { item ->
+                CardThuNhapSwipeToDelete(
+                    thuNhap = item,
+                    onDelete = { thuNhap ->
+                        thuNhapViewModel.deleteThuNhap(thuNhap.id)
+                    }
+                )
+            }
         }
     }
 }
+
 
 
 
 @Composable
 @Preview
 fun TradeTabPagePreview(){
-    val listThuNhap = listOf(
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-        ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"),
-    )
-
-    TradeTabPage(listKhoanChi, listThuNhap)
+//    TradeTabPage(listKhoanChi, thuNhapListSample)
 //    ThuNhapPage(listThuNhap)
 }

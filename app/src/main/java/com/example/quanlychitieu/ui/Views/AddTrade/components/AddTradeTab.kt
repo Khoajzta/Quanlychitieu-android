@@ -57,7 +57,9 @@ import com.example.quanlychitieu.Utils.formatMillisToDB
 import com.example.quanlychitieu.domain.model.ChiTieuModel
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
+import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.ui.ViewModels.ChiTieuViewModel
+import com.example.quanlychitieu.ui.ViewModels.ThuNhapViewModel
 import com.example.quanlychitieu.ui.components.CustomSnackbar
 import com.example.quanlychitieu.ui.components.SnackbarType
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
@@ -135,7 +137,7 @@ fun AddTradeTab(
         ) { index ->
             when (index) {
                 0 -> AddChiTieuPage(navController,listKhoanChi, taikhoanchinh, userId)
-                1 -> AddThuNhapPage()
+                1 -> AddThuNhapPage(navController, userId = userId , taikhoanchinh = taikhoanchinh)
             }
         }
 
@@ -281,55 +283,109 @@ fun AddChiTieuPage(
 
 
 @Composable
-fun AddThuNhapPage() {
+fun AddThuNhapPage(
+    navController: NavController,
+    userId: Int,
+    taikhoanchinh : TaiKhoanModel,
+    thuNhapViewModel: ThuNhapViewModel = hiltViewModel()
+) {
     var tenThuNhap by remember { mutableStateOf("") }
     var sotien by remember { mutableStateOf(0) }
     var selectedDate by remember { mutableStateOf<Long?>(null) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(SpaceMedium)
-    ) {
-        CusTomTextField(
-            value = tenThuNhap,
-            onValueChange = { tenThuNhap = it },
-            leadingIcon = {
-                Icon(Icons.Default.DriveFileRenameOutline, contentDescription = null, tint = Color.Gray)
-            },
-            placeholder = "Tên thu nhập",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-            modifier = Modifier.fillMaxWidth()
-        )
+    var snackbarVisible by remember { mutableStateOf(false) }
+    var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
-        CusTomTextField(
-            value = if (sotien == 0) "" else formatCurrency(sotien),
-            onValueChange = { newValue ->
-                val digits = newValue.filter { it.isDigit() }
-                sotien = if (digits.isNotEmpty()) digits.toInt() else 0
-            },
-            leadingIcon = {
-                Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
-            },
-            placeholder = "Số tiền",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-            modifier = Modifier.fillMaxWidth()
-        )
+    Box(modifier = Modifier.fillMaxSize()){
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(SpaceMedium)
+        ) {
+            CusTomTextField(
+                value = tenThuNhap,
+                onValueChange = { tenThuNhap = it },
+                leadingIcon = {
+                    Icon(Icons.Default.DriveFileRenameOutline, contentDescription = null, tint = Color.Gray)
+                },
+                placeholder = "Tên thu nhập",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        CustomDatePicker(
-            selectedDate = selectedDate,
-            placeholder = "Ngày thu nhập",
-            onDateSelected = { selectedDate = it }
-        )
+            CusTomTextField(
+                value = if (sotien == 0) "" else formatCurrency(sotien),
+                onValueChange = { newValue ->
+                    val digits = newValue.filter { it.isDigit() }
+                    sotien = if (digits.isNotEmpty()) digits.toInt() else 0
+                },
+                leadingIcon = {
+                    Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+                },
+                placeholder = "Số tiền",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        CustomButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                Log.d("so tien",sotien.toString())
-            },
-            title = "Thêm thu nhập"
-        )
+            CustomDatePicker(
+                selectedDate = selectedDate,
+                placeholder = "Ngày thu nhập",
+                onDateSelected = { selectedDate = it }
+            )
+
+            CustomButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    if(tenThuNhap != "" && sotien != 0 && selectedDate != null ){
+                        var thuNhap = ThuNhapModel(
+                            id = 0,
+                            id_nguoidung = userId,
+                            id_taikhoan = taikhoanchinh.id,
+                            so_tien = sotien,
+                            ngay_tao = formatMillisToDB(selectedDate),
+                            ghi_chu = tenThuNhap
+                        )
+
+
+                        thuNhapViewModel.createThuNhap(thuNhap)
+
+                        snackbarType = SnackbarType.SUCCESS
+                        snackbarMessage = "Thêm thu nhập thành công"
+                        snackbarVisible = true
+                    }else{
+                        snackbarType = SnackbarType.ERROR
+                        snackbarMessage = "Vui lòng nhập đây đủ thông tin"
+                        snackbarVisible = true
+                    }
+                },
+                title = "Thêm thu nhập"
+            )
+        }
+
+        // Hiển thị Snackbar ở cuối màn hình
+        AnimatedVisibility(
+            visible = snackbarVisible,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp),
+            enter = slideInVertically { it } + fadeIn(),
+            exit = slideOutVertically { it } + fadeOut()
+        ) {
+            CustomSnackbar(
+                message = snackbarMessage,
+                type = snackbarType
+            )
+        }
+
+        LaunchedEffect(snackbarVisible) {
+            if (snackbarVisible) {
+                delay(1500)
+                navController.popBackStack()
+                snackbarVisible = false
+            }
+        }
     }
+
 }
 
 @Composable

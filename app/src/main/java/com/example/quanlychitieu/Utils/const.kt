@@ -9,39 +9,44 @@ const val BASE_URL = "http://chillcup.io.vn/QuanLyThuChi/public/"
 
 val thuNhapListSample = listOf(
     ThuNhapModel(
-        maThuNhap = 1,
-        tenThuNhap = "Lương tháng 1",
-        soTien = 15000000,
-        maThang = 1,
-        ngayThuNhap = "2025-01-05"
+        id = 1,
+        id_nguoidung = 21,
+        id_taikhoan = 1,
+        so_tien = 1000000,
+        ngay_tao = "2025-09-15",
+        ghi_chu = "Tiền lương"
     ),
     ThuNhapModel(
-        maThuNhap = 2,
-        tenThuNhap = "Lương tháng 2",
-        soTien = 15500000,
-        maThang = 2,
-        ngayThuNhap = "2025-02-05"
+        id = 1,
+        id_nguoidung = 21,
+        id_taikhoan = 1,
+        so_tien = 1000000,
+        ngay_tao = "2025-09-15",
+        ghi_chu = "Tiền lương"
     ),
     ThuNhapModel(
-        maThuNhap = 3,
-        tenThuNhap = "Thưởng dự án",
-        soTien = 5000000,
-        maThang = 2,
-        ngayThuNhap = "2025-02-20"
+        id = 1,
+        id_nguoidung = 21,
+        id_taikhoan = 1,
+        so_tien = 1000000,
+        ngay_tao = "2025-09-15",
+        ghi_chu = "Tiền lương"
     ),
     ThuNhapModel(
-        maThuNhap = 4,
-        tenThuNhap = "Lương tháng 3",
-        soTien = 16000000,
-        maThang = 3,
-        ngayThuNhap = "2025-03-05"
+        id = 1,
+        id_nguoidung = 21,
+        id_taikhoan = 1,
+        so_tien = 1000000,
+        ngay_tao = "2025-09-15",
+        ghi_chu = "Tiền lương"
     ),
     ThuNhapModel(
-        maThuNhap = 5,
-        tenThuNhap = "Bán đồ online",
-        soTien = 2000000,
-        maThang = 3,
-        ngayThuNhap = "2025-03-15"
+        id = 1,
+        id_nguoidung = 21,
+        id_taikhoan = 1,
+        so_tien = 1000000,
+        ngay_tao = "2025-09-15",
+        ghi_chu = "Tiền lương"
     )
 )
 

@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -42,6 +45,7 @@ import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.ui.components.CustomSnackbar
 import com.example.quanlychitieu.ui.components.SnackbarType
+import com.example.quanlychitieu.ui.components.ThongBaoDialog
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
@@ -79,31 +83,21 @@ fun ListKhoanChiScreen(
 
     // 🧭 Dialog xác nhận xóa
     if (khoanChiToDelete != null) {
-        AlertDialog(
-            onDismissRequest = { khoanChiToDelete = null },
-            title = { Text(text = "Xác nhận xóa") },
-            text = {
-                Text(
-                    text = "Bạn có chắc muốn xóa khoản chi '${khoanChiToDelete?.ten_khoanchi ?: ""}' " +
-                            "và tất cả các chi tiêu trong đó không?"
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        khoanChiToDelete?.let {
-                            khoanChiViewModel.deleteKhoanChi(it.id)
-                        }
-                        khoanChiToDelete = null
-                    }
-                ) {
-                    Text("Đồng ý")
+
+        ThongBaoDialog(
+            title = "Xác nhận xóa",
+            message = "Bạn có chắc muốn xóa khoản chi ${khoanChiToDelete?.ten_khoanchi }?: và tất cả các chi tiêu trong đó không?",
+            confirmText ="Đồng ý",
+            dismissText = "Hủy",
+            confirmButtonColor = Color.Red,
+            onConfirm = {
+                khoanChiToDelete?.let {
+                    khoanChiViewModel.deleteKhoanChi(it.id)
                 }
+                khoanChiToDelete = null
             },
-            dismissButton = {
-                TextButton(onClick = { khoanChiToDelete = null }) {
-                    Text("Hủy")
-                }
+            onDismiss = {
+                khoanChiToDelete = null
             }
         )
     }

@@ -30,12 +30,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.R
+import com.example.quanlychitieu.domain.model.NguoiDungModel
+import com.example.quanlychitieu.ui.components.LoadAnhTuUrl
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusFull
 
 @Composable
 fun HeaderMain(
-    modifier: Modifier
+    modifier: Modifier,
+    user: NguoiDungModel
 ) {
     Row(
         modifier = modifier.fillMaxWidth().padding(horizontal = PaddingBody),
@@ -65,13 +68,7 @@ fun HeaderMain(
                             .padding(5.dp,)
 
                     ){
-                        Image(
-                            painter = painterResource(R.drawable.avt) ,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .clip(CircleShape)
-                        )
+                        LoadAnhTuUrl(url = user.url_avt, modifier = Modifier.size(30.dp).clip(CircleShape)  )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(
@@ -86,7 +83,7 @@ fun HeaderMain(
                             lineHeight = 12.sp
                         )
                         Text(
-                            text = "Khoa Huỳnh",
+                            text = user.ten,
                             color = Color.White,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
@@ -123,5 +120,5 @@ fun HeaderMain(
 @Composable
 @Preview
 fun HeaderMainPreview() {
-    HeaderMain(modifier = Modifier)
+
 }

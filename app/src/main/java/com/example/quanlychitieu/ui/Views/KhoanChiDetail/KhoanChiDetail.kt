@@ -70,6 +70,7 @@ fun KhoanChiDetailScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
             when (chiTieuState) {
                 is UiState.Success -> {

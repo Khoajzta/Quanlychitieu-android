@@ -8,6 +8,7 @@ import com.example.quanlychitieu.data.remote.ChiTieuAPIService
 import com.example.quanlychitieu.data.remote.KhoanChiApiService
 import com.example.quanlychitieu.data.remote.NguoiDungAPIService
 import com.example.quanlychitieu.data.remote.TaiKhoanAPIService
+import com.example.quanlychitieu.data.remote.ThuNhapAPIService
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -66,6 +67,12 @@ object AppModule {
     @Singleton
     fun proviceChiTieuApiService(retrofit: Retrofit): ChiTieuAPIService {
         return retrofit.create(ChiTieuAPIService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun proviceThuNhapApiService(retrofit: Retrofit): ThuNhapAPIService {
+        return retrofit.create(ThuNhapAPIService::class.java)
     }
 
     @Provides

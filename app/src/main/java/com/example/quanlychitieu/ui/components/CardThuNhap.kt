@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,16 +16,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.Utils.formatDayDisplay
 import com.example.quanlychitieu.domain.model.ThuNhapModel
+import androidx.compose.material.*
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import com.example.quanlychitieu.ui.components.ThongBaoDialog
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
-import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
-import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
+
+import kotlinx.coroutines.launch
 import formatCurrency
 
 @Composable
@@ -34,80 +47,139 @@ fun CardThuNhap(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(RadiusXL))
+            .shadow(6.dp, RoundedCornerShape(16.dp))
             .background(
-                Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF5AEA6E),  // Mint pastel
-                        Color(0xFFD3FFE0)   // Nhạt dần về cuối
-                    )
-                )
+                brush = Brush.linearGradient(
+                    colors = listOf(Color(0xFF22C4A0), Color(0xFF84EFB2)),
+                    start = Offset(0f, 0f),
+                    end = Offset(300f, 300f)
+                ),
+                shape = RoundedCornerShape(RadiusLarge)
             )
-
-            .padding(horizontal = 16.dp, vertical = 14.dp)
+            .padding(12.dp)
     ) {
         Row(
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(SpaceMedium),
-                verticalAlignment = Alignment.CenterVertically
+
+            Column(
+                modifier = Modifier
             ) {
 
-//                Box(
-//                    modifier = Modifier
-//                        .size(42.dp)
-//                        .clip(CircleShape)
-//                        .background(Color.White.copy(alpha = 0.15f)),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Icon(
-//                        Icons.Default.AttachMoney,
-//                        contentDescription = null,
-//                        tint = Color.White.copy(alpha = 0.9f),
-//                        modifier = Modifier.size(24.dp)
-//                    )
-//                }
+                Text(
+                    text = "${thuNhap.ghi_chu}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
 
-                Box(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .clip(RoundedCornerShape(RadiusLarge))
-                        .background(color = Color.White.copy(0.5f))
-                        .padding(vertical = 3.dp, horizontal = 15.dp),
-                    contentAlignment = Alignment.Center
-                ){
-                    Column {
-                        Text(
-                            text = thuNhap.tenThuNhap,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = thuNhap.ngayThuNhap,
-                            fontSize = 14.sp,
-                            color = Color.Black.copy(alpha = 0.7f)
-                        )
-                    }
-                }
+                Spacer(modifier = Modifier.height(8.dp))
 
+                Text(
+                    text = "Ngày: ${formatDayDisplay(thuNhap.ngay_tao)}",
+                    fontSize = 16.sp,
+                    color = Color.White.copy(alpha = 0.85f),
+                )
             }
 
-            Text(
-                text = "+${formatCurrency(thuNhap.soTien)}",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF008F3C) // Xanh mint để nổi bật
-            )
+
+            Box(
+                modifier = Modifier
+                    .background(
+                        Color.White.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+
+            ) {
+                Text(
+                    text = "+ ${formatCurrency(thuNhap.so_tien)}",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF057968)
+                )
+            }
+
         }
     }
 }
 
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CardThuNhapSwipeToDelete(
+    thuNhap: ThuNhapModel,
+    onDelete: (ThuNhapModel) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    // State điều khiển swipe
+    val dismissState = rememberDismissState(
+        confirmStateChange = { value ->
+            if (value == DismissValue.DismissedToStart) {
+                // Vuốt sang trái xong -> hiện dialog xác nhận
+                showDialog = true
+            }
+            false // Không xóa thẻ ngay lập tức
+        }
+    )
+
+    if (showDialog) {
+
+        ThongBaoDialog(
+            title = "Xác nhận xóa thu nhập",
+            message = "Bạn có chắc muốn xóa thu nhập này không?",
+            onConfirm = {onDelete(thuNhap)
+                showDialog = false},
+            onDismiss = {showDialog = false},
+            confirmText = "Đồng ý",
+            dismissText = "Hủy",
+            confirmButtonColor = Color.Red
+        )
+    }
+
+    SwipeToDismiss(
+        state = dismissState,
+        directions = setOf(DismissDirection.EndToStart),
+        background = {
+            // Nền đỏ khi vuốt sang trái
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Red, shape = RoundedCornerShape(RadiusLarge))
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Xóa",
+                    tint = Color.White
+                )
+            }
+        },
+        dismissContent = {
+            CardThuNhap(thuNhap = thuNhap)
+        }
+    )
+}
+
+
+
 @Composable
 @Preview
 fun CardThuNhapPreview() {
-    CardThuNhap(thuNhap = ThuNhapModel(maThuNhap = 0, tenThuNhap = "tiền cơm", soTien = 1000000, maThang = 1,  ngayThuNhap = "23/09/2025"))
+    CardThuNhap(
+        thuNhap = ThuNhapModel(
+            id = 1,
+            id_nguoidung = 21,
+            id_taikhoan = 1,
+            so_tien = 1000000,
+            ngay_tao = "2025-09-15",
+            ghi_chu = "Tiền lương"
+        )
+    )
 }

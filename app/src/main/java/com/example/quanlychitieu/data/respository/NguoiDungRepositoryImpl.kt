@@ -3,6 +3,7 @@ package com.example.quanlychitieu.data.respository
 import android.util.Log
 import com.example.quanlychitieu.data.remote.NguoiDungAPIService
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
+import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
 import com.example.quanlychitieu.data.remote.dto.CheckEmailResponse
 import com.example.quanlychitieu.domain.model.NguoiDungModel
 import com.example.quanlychitieu.domain.respository.NguoiDungRepository
@@ -33,6 +34,19 @@ class NguoiDungRepositoryImpl @Inject constructor(
                 response
             } else {
                 throw Exception(response.message)
+            }
+        } catch (e: Exception) {
+            throw Exception("Network/API Error: ${e.message}")
+        }
+    }
+
+    override suspend fun getNguoiDungByID(id: Int): BaseResponseMes<NguoiDungModel> {
+        return try {
+            val response = api.getNguoiDungByID(id)
+            if (response.isSuccessful) {
+                response.body() ?: throw Exception("Empty response body")
+            } else {
+                throw Exception("API Error: ${response.errorBody()?.string()}")
             }
         } catch (e: Exception) {
             throw Exception("Network/API Error: ${e.message}")

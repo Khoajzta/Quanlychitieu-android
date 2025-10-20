@@ -1,6 +1,7 @@
 package com.example.quanlychitieu.Components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,8 @@ import formatCurrency
 @Composable
 fun CardKhoanChi(
     item: KhoanChiModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDetailClick: () -> Unit = {},
 ) {
     val spentPercentage = remember(item.so_tien_du_kien, item.tong_tien_da_chi) {
         (item.tong_tien_da_chi.toFloat() / item.so_tien_du_kien.toFloat()).coerceIn(0f, 1f)
@@ -56,6 +58,7 @@ fun CardKhoanChi(
             .clip(RoundedCornerShape(RadiusXL))
             .background(Brush.horizontalGradient(colors = backgroundGradientColors))
             .padding(16.dp)
+            .clickable(onClick = onDetailClick)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

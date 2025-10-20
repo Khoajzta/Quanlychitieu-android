@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.quanlychitieu.Components.DotLoading
 import com.example.quanlychitieu.Utils.listKhoanChiConst.listTaiKhoan
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
@@ -46,6 +47,7 @@ import com.example.quanlychitieu.Views.home.components.HeaderMain
 import com.example.quanlychitieu.Views.home.components.WeeklyFinanceBarChart
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
+import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
 import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
 import com.example.quanlychitieu.ui.Views.home.components.CardTaiKhoanRow
 import com.example.quanlychitieu.ui.state.UiState
@@ -60,11 +62,14 @@ fun HomeScreen(
     userId: Int,
     navController: NavController,
     viewModel: KhoanChiViewModel = hiltViewModel(),
-    taikhoanViewModel : TaiKhoanViewModel = hiltViewModel()
+    taikhoanViewModel : TaiKhoanViewModel = hiltViewModel(),
+    nguoidungViewModel: NguoiDungViewModel = hiltViewModel()
 ) {
 
     val KhoanChiuiState by viewModel.uiState.collectAsState()
     val taiKhoanUiState by taikhoanViewModel.uiState.collectAsState()
+    val getNguoiDungByIdState = nguoidungViewModel.getByIdState
+
 
     Log.d("userId", userId.toString())
 
@@ -73,11 +78,11 @@ fun HomeScreen(
             while (true) {
                 viewModel.loadKhoanChi(userId)
                 taikhoanViewModel.loadTaiKhoans(userId)
+                nguoidungViewModel.getNguoiDungByID(userId)
                 delay(15 * 60 * 1000L)
             }
         }
     }
-
 
 
     val khoanChiList = when (KhoanChiuiState) {
@@ -136,7 +141,18 @@ fun HomeScreen(
                     .windowInsetsPadding(WindowInsets.statusBars)
             ) {
                 if (animatedHeight > 0.dp) {
-                    HeaderMain(Modifier.fillMaxSize())
+                    when(getNguoiDungByIdState){
+                        is UiState.Success -> {
+                            HeaderMain(Modifier.fillMaxSize(), user = getNguoiDungByIdState.data.data!!)
+                        }
+                        is UiState.Error -> {
+                            Text("lỗi ${getNguoiDungByIdState.message}")
+                        }
+                        else -> {
+
+                        }
+                    }
+
                 }
             }
         },
@@ -238,6 +254,11 @@ fun HomeScreen(
 @Composable
 @Preview
 fun PreviewMainScreen() {
-//    var navController = rememberNavController()
-//    HomeScreen(navController = navController)
+    var navController = rememberNavController()
+    HomeScreen(
+        navController = navController,
+        userId = 21,
+        taikhoanViewModel = hiltViewModel(),
+        nguoidungViewModel = hiltViewModel()
+    )
 }

@@ -26,27 +26,39 @@ import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
 import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
+import com.example.quanlychitieu.ui.ViewModels.ThuNhapViewModel
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 import kotlinx.coroutines.delay
+import java.time.LocalDate
 
 @Composable
 fun TradeScreen(
     navController: NavController,
     userId :Int,
     khoanChiViewModel: KhoanChiViewModel = hiltViewModel(),
+    thuNhapViewModel: ThuNhapViewModel = hiltViewModel(),
     taiKhoanViewModel: TaiKhoanViewModel = hiltViewModel()
 ) {
 
     val KhoanChiuiState by khoanChiViewModel.uiState.collectAsState()
     val taiKhoanUiState by taiKhoanViewModel.uiState.collectAsState()
+    val thuNhapState = thuNhapViewModel.thuNhapState
 
+    val currentDate = LocalDate.now()
+    val currentMonth = currentDate.monthValue
+    val currentYear = currentDate.year
+
+    Log.d("Tháng" ,currentMonth.toString())
+    Log.d("năm" ,currentYear.toString())
+    Log.d("idUser" ,userId.toString())
 
     LaunchedEffect(userId) {
         if (userId > 0) {
             while (true) {
                 khoanChiViewModel.loadKhoanChi(userId)
                 taiKhoanViewModel.loadTaiKhoans(userId)
+                thuNhapViewModel.getThuNhapTheoThang(userId = userId, thang = currentMonth, nam = currentYear)
                 delay(15 * 60 * 1000L)
             }
         }
@@ -62,9 +74,21 @@ fun TradeScreen(
         else -> emptyList()
     }
 
-    ChiTieuPage(
-        listKhoanChi = listKhoanChi,
-    )
+    val thunhapList = when (thuNhapState) {
+        is UiState.Success -> (thuNhapState as UiState.Success<List<ThuNhapModel>>).data
+        else -> emptyList()
+    }
+
+    LaunchedEffect(thuNhapState) {
+        Log.d("UI_THU_NHAP", "State hiện tại: $thuNhapState")
+        Log.d("UI_THU_NHAP", "Danh sách: $thunhapList")
+    }
+
+
+//    ChiTieuPage(
+//        navController = navController,
+//        listKhoanChi = listKhoanChi,
+//    )
 
     Scaffold(
         containerColor = BackgroundColor,
@@ -85,7 +109,7 @@ fun TradeScreen(
                 .padding(innerPadding)
         ) {
             // ✅ Nội dung không có padding bottom
-            TradeTabPage(khoanChiList, thuNhapListSample)
+            TradeTabPage(navController = navController ,khoanChiList, thunhapList, userId = userId)
 
             TradeButtonAdd(
                 modifier = Modifier

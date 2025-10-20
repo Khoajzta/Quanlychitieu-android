@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.Utils.formatDayDisplay
 import com.example.quanlychitieu.domain.model.ChiTieuModel
+import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
 import formatCurrency
 
 @Composable
@@ -37,11 +38,11 @@ fun CardChiTieu(
             .shadow(6.dp, RoundedCornerShape(16.dp))
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFFFF8A80), Color(0xFFD32F2F)),
+                    colors = listOf(Color(0xFFEA695E), Color(0xFFF35B5B)),
                     start = Offset(0f, 0f),
                     end = Offset(300f, 300f)
                 ),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(RadiusLarge)
             )
             .padding(12.dp)
     ) {
@@ -59,6 +60,7 @@ fun CardChiTieu(
                 Text(
                     text = "${chitieu.ghi_chu}",
                     fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White.copy(alpha = 0.9f)
                 )
 
