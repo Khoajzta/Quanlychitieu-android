@@ -6,17 +6,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -26,17 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.Utils.formatDayDisplay
 import com.example.quanlychitieu.domain.model.ThuNhapModel
-import androidx.compose.material.*
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.runtime.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import com.example.quanlychitieu.ui.components.ThongBaoDialog
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
-
-import kotlinx.coroutines.launch
+import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 import formatCurrency
 
 @Composable
@@ -47,14 +49,13 @@ fun CardThuNhap(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(6.dp, RoundedCornerShape(16.dp))
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(Color(0xFF22C4A0), Color(0xFF84EFB2)),
                     start = Offset(0f, 0f),
                     end = Offset(300f, 300f)
                 ),
-                shape = RoundedCornerShape(RadiusLarge)
+                shape = RoundedCornerShape(RadiusXL)
             )
             .padding(12.dp)
     ) {
@@ -150,7 +151,7 @@ fun CardThuNhapSwipeToDelete(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Red, shape = RoundedCornerShape(RadiusLarge))
+                    .background(Color.Red, shape = RoundedCornerShape(RadiusXL))
                     .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {

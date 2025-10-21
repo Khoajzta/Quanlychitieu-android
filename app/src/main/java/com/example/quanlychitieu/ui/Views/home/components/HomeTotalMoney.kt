@@ -29,7 +29,9 @@ import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 fun HomeTotalMoney(
     modifier: Modifier,
     taikhoan: TaiKhoanModel,
-    tongTienDuKien :Int
+    tongTienDuKien :Int,
+    tongThuNhap:Int,
+    tongChiTieu :Int
 ) {
     Box(
         modifier = modifier
@@ -107,7 +109,7 @@ fun HomeTotalMoney(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text("Tổng thu nhập:", fontSize = 12.sp, lineHeight = 20.sp, color = Color.White.copy(0.6f))
-                    Text("100.000đ", fontSize = 17.sp, lineHeight = 15.sp, color = Color.White)
+                    Text(formatCurrency(tongThuNhap), fontSize = 17.sp, lineHeight = 15.sp, color = Color.White)
                 }
                 Spacer(modifier = Modifier.width(30.dp))
                 Column(
@@ -118,7 +120,7 @@ fun HomeTotalMoney(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text("Tổng đã chi:", fontSize = 12.sp, lineHeight = 20.sp, color = Color.White.copy(0.6f))
-                    Text("100.000đ", fontSize = 17.sp, lineHeight = 15.sp, color = Color.White)
+                    Text(formatCurrency(tongChiTieu), fontSize = 17.sp, lineHeight = 15.sp, color = Color.White)
                 }
             }
         }
@@ -140,6 +142,8 @@ fun PreviewHomeTotalMoney() {
     HomeTotalMoney(
         taikhoan = taikhoan,
         modifier = Modifier,
-        tongTienDuKien = 3000
+        tongTienDuKien = 3000,
+        tongThuNhap = 30000000,
+        tongChiTieu = 3000000
     )
 }

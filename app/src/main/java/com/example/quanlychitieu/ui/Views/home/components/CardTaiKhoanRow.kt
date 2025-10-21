@@ -30,7 +30,9 @@ import kotlin.math.abs
 fun CardTaiKhoanRow(
     modifier: Modifier = Modifier,
     listTaiKhoan: List<TaiKhoanModel>,
-    tongTienDuKien :Int = 0
+    tongTienDuKien :Int = 0,
+    tongThuNhap:Int = 0,
+    tongChiTieu :Int = 0
 ) {
     // Lấy tài khoản chính nếu có, nếu không thì null
     val taiKhoanChinh: TaiKhoanModel? = listTaiKhoan.firstOrNull { it.loai_taikhoan == 1 }
@@ -52,7 +54,9 @@ fun CardTaiKhoanRow(
                             scaleY = 1f
                         },
                     taikhoan = tkChinh,
-                    tongTienDuKien = tongTienDuKien
+                    tongTienDuKien = tongTienDuKien,
+                    tongThuNhap = tongThuNhap,
+                    tongChiTieu = tongChiTieu
                 )
             }
         }

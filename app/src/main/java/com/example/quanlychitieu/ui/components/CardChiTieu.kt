@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.Utils.formatDayDisplay
 import com.example.quanlychitieu.domain.model.ChiTieuModel
-import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
+import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 import formatCurrency
 
 @Composable
@@ -35,14 +35,13 @@ fun CardChiTieu(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(6.dp, RoundedCornerShape(16.dp))
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(Color(0xFFEA695E), Color(0xFFF35B5B)),
                     start = Offset(0f, 0f),
                     end = Offset(300f, 300f)
                 ),
-                shape = RoundedCornerShape(RadiusLarge)
+                shape = RoundedCornerShape(RadiusXL)
             )
             .padding(12.dp)
     ) {

@@ -1,8 +1,11 @@
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +51,8 @@ import com.example.quanlychitieu.Utils.thuNhapListSample
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.ui.ViewModels.ThuNhapViewModel
+import com.example.quanlychitieu.ui.components.CustomSnackbar
+import com.example.quanlychitieu.ui.components.SnackbarType
 import com.example.quanlychitieu.ui.state.UiState
 
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
@@ -58,7 +64,6 @@ import java.time.LocalDate
 fun TradeTabPage(
     navController: NavController,
     listKhoanChi: List<KhoanChiModel>,
-    listThuNhap: List<ThuNhapModel>,
     userId: Int
 ) {
     val tabs = listOf("Chi tiêu", "Thu nhập")
@@ -131,7 +136,7 @@ fun TradeTabPage(
     }
 }
 
-// Giả lập nội dung trang Chi tiêu
+
 @Composable
 fun ChiTieuPage(
     navController: NavController,
@@ -160,12 +165,17 @@ fun ThuNhapPage(
     userId: Int,
     thuNhapViewModel: ThuNhapViewModel = hiltViewModel()
 ) {
-    val thuNhapState = thuNhapViewModel.thuNhapState
+    val thuNhapState by thuNhapViewModel.uiState.collectAsState()
+
     val deleteThuNhapState = thuNhapViewModel.deleteThuNhapState
 
     val currentDate = LocalDate.now()
     val currentMonth = currentDate.monthValue
     val currentYear = currentDate.year
+
+    var snackbarVisible by remember { mutableStateOf(false) }
+    var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
+    var snackbarMessage by remember { mutableStateOf("") }
 
     // Tải danh sách thu nhập ban đầu
     LaunchedEffect(userId) {
@@ -180,6 +190,10 @@ fun ThuNhapPage(
             thuNhapViewModel.getThuNhapTheoThang(
                 userId = userId, thang = currentMonth, nam = currentYear
             )
+
+            snackbarType = SnackbarType.SUCCESS
+            snackbarMessage = "Xóa thu nhập thành công"
+            snackbarVisible = true
         }
     }
 
@@ -187,27 +201,52 @@ fun ThuNhapPage(
         is UiState.Success -> (thuNhapState as UiState.Success<List<ThuNhapModel>>).data
         else -> emptyList()
     }
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = PaddingBody),
+            verticalArrangement = Arrangement.spacedBy(SpaceMedium),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (listThuNhap.isEmpty()) {
+                item { Text("Chưa có thu nhập nào trong tháng", color = Color.Black) }
+            } else {
+                items(listThuNhap, key = { it.id }) { item ->
+                    CardThuNhapSwipeToDelete(
+                        thuNhap = item,
+                        onDelete = { thuNhap ->
+                            thuNhapViewModel.deleteThuNhap(thuNhap.id)
+                        }
+                    )
+                }
+            }
+        }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = PaddingBody),
-        verticalArrangement = Arrangement.spacedBy(SpaceMedium),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (listThuNhap.isEmpty()) {
-            item { Text("Chưa có thu nhập nào trong tháng", color = Color.Black) }
-        } else {
-            items(listThuNhap, key = { it.id }) { item ->
-                CardThuNhapSwipeToDelete(
-                    thuNhap = item,
-                    onDelete = { thuNhap ->
-                        thuNhapViewModel.deleteThuNhap(thuNhap.id)
-                    }
-                )
+        AnimatedVisibility(
+            visible = snackbarVisible,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(bottom = 16.dp),
+            enter = slideInVertically { -it } + fadeIn(),
+            exit = slideOutVertically { -it } + fadeOut()
+        ) {
+            CustomSnackbar(
+                message = snackbarMessage,
+                type = snackbarType
+            )
+        }
+
+        LaunchedEffect(snackbarVisible) {
+            if (snackbarVisible) {
+                delay(1500)
+                snackbarVisible = false
             }
         }
     }
+
 }
 
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,14 +55,13 @@ fun CardKhoanChi(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .wrapContentHeight()
             .clip(RoundedCornerShape(RadiusXL))
             .background(Brush.horizontalGradient(colors = backgroundGradientColors))
             .padding(16.dp)
             .clickable(onClick = onDetailClick)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {

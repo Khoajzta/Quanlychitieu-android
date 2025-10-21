@@ -1,4 +1,3 @@
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,45 +39,61 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.quanlychitieu.Components.DotLoading
-import com.example.quanlychitieu.Utils.listKhoanChiConst.listTaiKhoan
+import com.example.quanlychitieu.Utils.tinhTongTheoTuanVaNgay
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.home.components.BottomNavigationBar
 import com.example.quanlychitieu.Views.home.components.HeaderMain
 import com.example.quanlychitieu.Views.home.components.WeeklyFinanceBarChart
+import com.example.quanlychitieu.domain.model.ChiTieuModel
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
+import com.example.quanlychitieu.domain.model.ThuNhapModel
+import com.example.quanlychitieu.ui.ViewModels.ChiTieuViewModel
 import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
 import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
+import com.example.quanlychitieu.ui.ViewModels.ThuNhapViewModel
 import com.example.quanlychitieu.ui.Views.home.components.CardTaiKhoanRow
+import com.example.quanlychitieu.ui.Views.home.components.HomeChiTieuColumn
+import com.example.quanlychitieu.ui.Views.home.components.HomeThuNhapColumn
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     userId: Int,
     navController: NavController,
-    viewModel: KhoanChiViewModel = hiltViewModel(),
+    khoanchiViewModel: KhoanChiViewModel = hiltViewModel(),
     taikhoanViewModel : TaiKhoanViewModel = hiltViewModel(),
-    nguoidungViewModel: NguoiDungViewModel = hiltViewModel()
+    nguoidungViewModel: NguoiDungViewModel = hiltViewModel(),
+    thunhapViewModel: ThuNhapViewModel = hiltViewModel(),
+    chitieuViewModel: ChiTieuViewModel = hiltViewModel()
 ) {
 
-    val KhoanChiuiState by viewModel.uiState.collectAsState()
+    val KhoanChiuiState by khoanchiViewModel.uiState.collectAsState()
     val taiKhoanUiState by taikhoanViewModel.uiState.collectAsState()
+    val thunhapUiState by thunhapViewModel.uiState.collectAsState()
+    val chitieuUiState by chitieuViewModel.uiStateTheoThang.collectAsState()
+
     val getNguoiDungByIdState = nguoidungViewModel.getByIdState
 
-
-    Log.d("userId", userId.toString())
+    val currentDate = LocalDate.now()
+    val currentMonth = currentDate.monthValue
+    val currentYear = currentDate.year
 
     LaunchedEffect(userId) {
         if (userId > 0) {
             while (true) {
-                viewModel.loadKhoanChi(userId)
+                khoanchiViewModel.loadKhoanChi(userId)
                 taikhoanViewModel.loadTaiKhoans(userId)
                 nguoidungViewModel.getNguoiDungByID(userId)
+                thunhapViewModel.getThuNhapTheoThang(userId,currentMonth, currentYear)
+                chitieuViewModel.getChiTieuTheoThangVaNam(userId,currentMonth,currentYear)
                 delay(15 * 60 * 1000L)
             }
         }
@@ -95,7 +110,23 @@ fun HomeScreen(
         else -> emptyList()
     }
 
+    val thunhaplist = when(thunhapUiState){
+        is UiState.Success -> (thunhapUiState as UiState.Success<List<ThuNhapModel>>).data
+        else -> {emptyList()}
+    }
+
+    val chitieulist = when(chitieuUiState){
+        is UiState.Success -> (chitieuUiState as UiState.Success<List<ChiTieuModel>>).data
+        else -> {emptyList()}
+    }
+
+    val tongThuNhap = thunhaplist.sumOf { it.so_tien }
+    val tongChiTieu = chitieulist.sumOf { it.so_tien }
+
     val tongSoTienDuKien = khoanChiList.sumOf { it.so_tien_du_kien }
+
+    val (data, dates) = tinhTongTheoTuanVaNgay(chitieulist, thunhaplist)
+
 
     //Refresh dữ liệu
     var isRefreshing by remember { mutableStateOf(false) }
@@ -106,7 +137,7 @@ fun HomeScreen(
         onRefresh = {
             isRefreshing = true
             coroutineScope.launch {
-                viewModel.loadKhoanChi(userId)
+                khoanchiViewModel.loadKhoanChi(userId)
                 taikhoanViewModel.loadTaiKhoans(userId)
                 isRefreshing = false
             }
@@ -172,8 +203,6 @@ fun HomeScreen(
                 .fillMaxSize()
                 .pullRefresh(refreshState)
         ){
-
-
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -189,21 +218,18 @@ fun HomeScreen(
                 if(KhoanChiuiState is UiState.Success && taiKhoanUiState is UiState.Success){
                     item { Spacer(modifier = Modifier.height(10.dp)) }
 
-                    item { CardTaiKhoanRow(listTaiKhoan = taikhoanList, tongTienDuKien = tongSoTienDuKien) }
+                    item { 
+                        CardTaiKhoanRow(
+                            listTaiKhoan = taikhoanList,
+                            tongTienDuKien = tongSoTienDuKien,
+                            tongThuNhap = tongThuNhap,
+                            tongChiTieu = tongChiTieu
+                        )
+                    }
 
                     item { FunctionRow() }
 
                     item {
-                        val weeklyData = mapOf(
-                            "T2" to 200000,
-                            "T3" to -80000,
-                            "T4" to 200000,
-                            "T5" to 50000,
-                            "T6" to -50000,
-                            "T7" to -50000,
-                            "CN" to 50000,
-                        )
-                        val weekDates = listOf("07/10", "08/10", "09/10", "10/10", "11/10", "12/10", "13/10")
 
                         Column(
                             modifier = Modifier
@@ -216,7 +242,12 @@ fun HomeScreen(
                                 fontSize = 15.sp
                             )
                             Spacer(modifier = Modifier.height(10.dp))
-                            WeeklyFinanceBarChart(data = weeklyData, dates = weekDates)
+
+                            WeeklyFinanceBarChart(
+                                data = data,
+                                dates = dates
+                            )
+
                         }
                     }
 
@@ -227,6 +258,21 @@ fun HomeScreen(
                             userId = userId
                         )
                         KhoanChiColumn(khoanChiList)
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
+                    item {
+                        HomeThuNhapColumn(listThuNhap = thunhaplist)
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
+                    item {
+                        HomeChiTieuColumn(listChiTieu = chitieulist)
                     }
 
                     item {

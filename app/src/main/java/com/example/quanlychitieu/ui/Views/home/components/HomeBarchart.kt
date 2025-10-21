@@ -3,11 +3,16 @@ package com.example.quanlychitieu.Views.home.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,30 +24,38 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.ui.theme.Dimens.SpaceLarge
+import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
+import formatMoneyShort
 import kotlin.math.abs
 
 @Composable
 fun WeeklyFinanceBarChart(
     modifier: Modifier = Modifier,
-    data: Map<String, Int>,              // dữ liệu thứ → số tiền
-    dates: List<String> = listOf("07", "08", "09", "10", "11", "12", "13") // ngày tương ứng
+    data: Map<String, Int>,
+    dates: List<String>
 ) {
     val maxAmount = (data.values.maxOfOrNull { abs(it) } ?: 0).coerceAtLeast(1)
-
     val dayKeys = listOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
 
     Column(
         modifier = Modifier
             .border(2.dp, color = Color(0xFF1C94D5), shape = RoundedCornerShape(15.dp))
-            .padding(vertical = 12.dp)
+            .padding(vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Canvas(
             modifier = modifier
                 .fillMaxWidth()
-                .height(220.dp)
-                .padding(horizontal = 16.dp)
+                .height(240.dp)
+                .padding(horizontal = SpaceMedium, vertical = SpaceLarge)
         ) {
             val barWidth = size.width / (dayKeys.size * 2)
             val centerY = size.height / 2
@@ -55,7 +68,7 @@ fun WeeklyFinanceBarChart(
                 strokeWidth = 2f
             )
 
-            // Cột
+            // Cột và số tiền
             dayKeys.forEachIndexed { index, key ->
                 val amount = data[key]
                 if (amount != null && amount != 0) {
@@ -76,17 +89,48 @@ fun WeeklyFinanceBarChart(
                         )
                     }
 
+                    // Vẽ cột
                     drawRoundRect(
                         brush = brush,
                         topLeft = Offset(barX - barWidth / 2, centerY - if (amount > 0) barHeight else 0f),
                         size = Size(barWidth, barHeight),
                         cornerRadius = CornerRadius(20f, 20f)
                     )
+
+                    // Format tiền (230000 → 230k)
+                    val prefix = if (amount > 0) "+" else "-"
+                    val displayAmount =
+                        if (abs(amount) >= 1000) "$prefix${abs(amount) / 1000}k"
+                        else "$prefix$amount"
+
+                    // Vẽ text (đỉnh cột)
+                    val textPaint = Paint().asFrameworkPaint().apply {
+                        isAntiAlias = true
+                        textSize = 30f
+                        color = if (amount > 0) android.graphics.Color.parseColor("#2E7D32")
+                        else android.graphics.Color.parseColor("#C62828")
+                        textAlign = android.graphics.Paint.Align.CENTER
+                    }
+
+                    val textY = if (amount > 0) {
+                        // Dương: hiển thị trên đỉnh cột đi lên
+                        centerY - barHeight - 8
+                    } else {
+                        // Âm: hiển thị tại đỉnh cột đi xuống
+                        centerY + barHeight + 28
+                    }
+
+                    drawContext.canvas.nativeCanvas.drawText(
+                        displayAmount,
+                        barX,
+                        textY,
+                        textPaint
+                    )
                 }
             }
         }
 
-        // Hiển thị thứ + ngày
+        // Nhãn thứ + ngày
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,7 +140,7 @@ fun WeeklyFinanceBarChart(
             dayKeys.forEachIndexed { index, key ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = key, // thứ
+                        text = key,
                         style = MaterialTheme.typography.labelMedium,
                         color = Color.Gray
                     )
@@ -110,6 +154,10 @@ fun WeeklyFinanceBarChart(
         }
     }
 }
+
+
+
+
 
 
 

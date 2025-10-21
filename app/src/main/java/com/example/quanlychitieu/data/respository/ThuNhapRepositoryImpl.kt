@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.quanlychitieu.data.remote.TaiKhoanAPIService
 import com.example.quanlychitieu.data.remote.ThuNhapAPIService
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
+import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
 import com.example.quanlychitieu.data.remote.dto.StatusResponse
 import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.domain.respository.ThuNhapRepository
@@ -17,7 +18,7 @@ class ThuNhapRepositoryImpl @Inject constructor(
         userId: Int,
         thang: Int,
         nam: Int
-    ): BaseResponse<List<ThuNhapModel>> {
+    ): BaseResponseMes<List<ThuNhapModel>> {
         val response = api.getThuNhapTheoThang(userId, thang, nam)
         if (response.isSuccessful) {
             return response.body() ?: throw Exception("Empty body")

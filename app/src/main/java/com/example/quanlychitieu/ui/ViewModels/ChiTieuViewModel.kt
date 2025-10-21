@@ -23,6 +23,8 @@ class ChiTieuViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState<List<ChiTieuModel>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<ChiTieuModel>>> = _uiState
+    private val _uiStateTheoThang = MutableStateFlow<UiState<List<ChiTieuModel>>>(UiState.Loading)
+    val uiStateTheoThang: StateFlow<UiState<List<ChiTieuModel>>> = _uiStateTheoThang
     var createChiTieuState by mutableStateOf<UiState<BaseResponse<ChiTieuModel>>>(UiState.Loading)
         private set
 
@@ -34,6 +36,18 @@ class ChiTieuViewModel @Inject constructor(
                 _uiState.value = UiState.Success(result)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error(e.localizedMessage ?: "Lỗi không xác định")
+            }
+        }
+    }
+
+    fun getChiTieuTheoThangVaNam(userId :Int, thang:Int, nam: Int) {
+        viewModelScope.launch {
+            _uiStateTheoThang.value = UiState.Loading
+            try {
+                val result = repository.getChiTieuTheoThangVaNam(userId = userId, thang = thang, nam = nam)
+                _uiStateTheoThang.value = UiState.Success(result)
+            } catch (e: Exception) {
+                _uiStateTheoThang.value = UiState.Error(e.localizedMessage ?: "Lỗi không xác định")
             }
         }
     }

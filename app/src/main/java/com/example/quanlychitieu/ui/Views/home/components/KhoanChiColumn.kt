@@ -22,7 +22,7 @@ fun KhoanChiColumn(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = PaddingBody),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         if(listKhoanChi.isNullOrEmpty()){

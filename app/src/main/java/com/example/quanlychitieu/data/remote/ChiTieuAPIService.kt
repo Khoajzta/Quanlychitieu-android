@@ -7,6 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ChiTieuAPIService {
     @POST("api/chitieu")
@@ -16,5 +17,12 @@ interface ChiTieuAPIService {
     suspend fun getChiTieuTheoKhoanChiCuaNguoiDung(
         @Path("id_khoanchi") id_khoanchi: Int,
         @Path("userId") userId: Int,
+    ): BaseResponse<List<ChiTieuModel>>
+
+    @GET("api/chitieu/user/{userId}/by-month")
+    suspend fun getChiTieuTheoThangVaNam(
+        @Path("userId") userId: Int,
+        @Query("thang") thang: Int,
+        @Query("nam") nam: Int
     ): BaseResponse<List<ChiTieuModel>>
 }

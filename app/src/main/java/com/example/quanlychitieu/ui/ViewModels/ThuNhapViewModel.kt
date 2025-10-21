@@ -14,6 +14,8 @@ import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.domain.respository.ThuNhapRepository
 import com.example.quanlychitieu.ui.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,8 +24,8 @@ class ThuNhapViewModel @Inject constructor(
     private val repository: ThuNhapRepository
 ) : ViewModel() {
 
-    var thuNhapState by mutableStateOf<UiState<List<ThuNhapModel>>>(UiState.Loading)
-        private set
+    private val _uiState = MutableStateFlow<UiState<List<ThuNhapModel>>>(UiState.Loading)
+    val uiState: StateFlow<UiState<List<ThuNhapModel>>> = _uiState
 
     var thuNhapCreateState by mutableStateOf<UiState<BaseResponse<ThuNhapModel>>>(UiState.Loading)
         private set
@@ -33,24 +35,22 @@ class ThuNhapViewModel @Inject constructor(
 
     fun getThuNhapTheoThang(userId: Int, thang: Int, nam: Int) {
         viewModelScope.launch {
-            thuNhapState = UiState.Loading
+            _uiState.value = UiState.Loading
             try {
                 val result = repository.getThuNhapTheoThang(userId, thang, nam)
                 if (result.success) {
-                    // ⚡ Quan trọng: Cập nhật state tại đây
-                    thuNhapState = UiState.Success(result.data)
+                    _uiState.value = UiState.Success(result.data!!)
                     Log.d("THU_NHAP_VIEWMODEL", "Dữ liệu nhận được: ${result.data}")
                 } else {
-                    thuNhapState = UiState.Error( "Lỗi không xác định")
-                    Log.e("THU_NHAP_VIEWMODEL", "Lỗi từ API: ${result}")
+                    _uiState.value = UiState.Error(result.message ?: "Lỗi không xác định")
+                    Log.e("THU_NHAP_VIEWMODEL", "Lỗi từ API: ${result.message}")
                 }
             } catch (e: Exception) {
-                thuNhapState = UiState.Error(e.message ?: "Lỗi kết nối")
+                _uiState.value = UiState.Error(e.message ?: "Lỗi kết nối")
                 Log.e("THU_NHAP_VIEWMODEL", "Exception: ${e.message}")
             }
         }
     }
-
     fun createThuNhap(thunhap: ThuNhapModel) {
         viewModelScope.launch {
             thuNhapCreateState = UiState.Loading

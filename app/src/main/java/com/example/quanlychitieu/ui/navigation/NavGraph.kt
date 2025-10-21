@@ -4,22 +4,18 @@ import AddTradeScreen
 import HomeScreen
 import NganSachScreen
 import ProfileScreen
+import Screen
 import SplashScreen
 import TradeScreen
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.quanlychitieu.Utils.listKhoanChiConst.listKhoanChi
-import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.AddKhoanChi.AddKhoanChiScreen
 import com.example.quanlychitieu.Views.ListKhoanChi.ListKhoanChiScreen
 import com.example.quanlychitieu.Views.login.LoginScreen
-import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
-import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
 import com.example.quanlychitieu.ui.Views.KhoanChiDetail.KhoanChiDetailScreen
 import com.example.quanlychitieu.ui.Views.UpdateKhoanChi.UpdateKhoanChiScreen
 
@@ -47,8 +43,6 @@ fun AppNavGraph(navController: NavHostController) {
                         popUpTo(Screen.Splash.route) { inclusive = true }
                     }
                 },
-
-                viewModel = hiltViewModel(),
             )
         }
 
@@ -59,11 +53,8 @@ fun AppNavGraph(navController: NavHostController) {
             popEnterTransition = truotVaoTuTrai(),
             popExitTransition = truotRaSangPhai()
         ) {
-
-            val viewModel: NguoiDungViewModel = hiltViewModel()
             LoginScreen(
                 navController,
-                viewModel = viewModel,
                 onLoginSuccess = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
@@ -87,8 +78,6 @@ fun AppNavGraph(navController: NavHostController) {
             HomeScreen(
                 userId = userId,
                 navController = navController,
-                viewModel = hiltViewModel(),
-                taikhoanViewModel = hiltViewModel()
             )
         }
 
@@ -117,8 +106,6 @@ fun AppNavGraph(navController: NavHostController) {
             TradeScreen(
                 navController = navController,
                 userId = userId,
-                khoanChiViewModel = hiltViewModel(),
-                taiKhoanViewModel = hiltViewModel(),
             )
         }
 
@@ -146,8 +133,6 @@ fun AppNavGraph(navController: NavHostController) {
             AddTradeScreen(
                 navController = navController,
                 userId = userId,
-                khoanChiViewModel = hiltViewModel(),
-                taiKhoanViewModel = hiltViewModel(),
             )
         }
 
@@ -165,7 +150,6 @@ fun AppNavGraph(navController: NavHostController) {
             ListKhoanChiScreen(
                 navController = navController,
                 userId = userId,
-                khoanChiViewModel = hiltViewModel(),
             )
         }
 
@@ -186,7 +170,6 @@ fun AppNavGraph(navController: NavHostController) {
                 navController = navController,
                 id_khoanChi = id_khoanChi,
                 userId = userId,
-                chiTieuViewModel = hiltViewModel(),
             )
         }
 

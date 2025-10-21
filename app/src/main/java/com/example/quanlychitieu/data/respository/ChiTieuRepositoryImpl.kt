@@ -35,4 +35,18 @@ class ChiTieuRepositoryImpl @Inject constructor(
             throw Exception("API trả về success = false")
         }
     }
+
+    override suspend fun getChiTieuTheoThangVaNam(
+        userId: Int,
+        thang: Int,
+        nam: Int
+    ): List<ChiTieuModel> {
+        val response = api.getChiTieuTheoThangVaNam(userId = userId, thang = thang, nam = nam)
+        Log.d("API_TEST", "Response: $response")
+        if (response.success) {
+            return response.data
+        } else {
+            throw Exception("API trả về success = false")
+        }
+    }
 }
