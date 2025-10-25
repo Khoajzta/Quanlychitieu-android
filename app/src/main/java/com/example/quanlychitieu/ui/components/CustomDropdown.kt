@@ -37,6 +37,7 @@ fun <T> CustomDropdown(
     leadingIcon: (@Composable (() -> Unit))? = null,
     items: List<T>,
     selectedItem: T?,
+    placeholder: String? = null,
     itemLabel: (T) -> String,
     onSelect: (T) -> Unit
 ) {
@@ -46,7 +47,6 @@ fun <T> CustomDropdown(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
         modifier = modifier
-            .padding(horizontal = PaddingBody)
     ) {
         TextField(
             modifier = Modifier
@@ -67,13 +67,23 @@ fun <T> CustomDropdown(
                 unfocusedTextColor = Color.Black,
                 focusedTextColor = Color.Black
             ),
-            leadingIcon = leadingIcon,
             value = selectedItem?.let { itemLabel(it) } ?: "",
             onValueChange = {},
             readOnly = true,
+            leadingIcon = leadingIcon,
+            placeholder = {
+                if (selectedItem == null && placeholder != null) {
+                    Text(
+                        text = placeholder,
+                        color = Color.Gray
+                    )
+                }
+            },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) }
         )
+
         Spacer(modifier = Modifier.height(40.dp))
+
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -91,7 +101,6 @@ fun <T> CustomDropdown(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             val iconText = (item as? KhoanChiModel)?.emoji ?: ""
-
                             if (iconText.isNotEmpty()) {
                                 Text(
                                     text = iconText,
@@ -99,7 +108,6 @@ fun <T> CustomDropdown(
                                     modifier = Modifier.padding(end = 8.dp)
                                 )
                             }
-
                             Text(
                                 text = itemLabel(item),
                                 color = Color.Black
@@ -111,8 +119,8 @@ fun <T> CustomDropdown(
                         expanded = false
                     }
                 )
-
             }
         }
     }
 }
+

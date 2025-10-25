@@ -69,7 +69,6 @@ fun CustomDatePicker(
 
     Box(
         modifier = modifier
-            .padding(horizontal = PaddingBody)
             .shadow(
                 elevation = 11.dp,
                 shape = RoundedCornerShape(RadiusLarge),

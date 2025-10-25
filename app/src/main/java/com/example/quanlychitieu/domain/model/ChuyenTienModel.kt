@@ -1,10 +1,11 @@
 package com.example.quanlychitieu.domain.model
 
-data class ThuNhapModel(
+data class ChuyenTienModel(
     val id: Int,
     val id_nguoidung: Int,
-    val id_taikhoan: Int,
+    val id_taikhoan_nguon: Int,
+    val id_taikhoan_dich: Int,
     val so_tien: Long,
-    val ngay_tao: String,
+    val ngay_chuyen: String,
     val ghi_chu: String,
 )

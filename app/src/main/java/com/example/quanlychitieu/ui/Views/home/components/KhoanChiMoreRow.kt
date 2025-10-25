@@ -27,7 +27,6 @@ fun KhoanChiMoreRow(
     Row(
         modifier = modifier
             .wrapContentHeight()
-            .padding(horizontal = PaddingBody)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

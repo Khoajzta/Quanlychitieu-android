@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
@@ -32,18 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.PadingExtraSmall
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusFull
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
-import com.example.quanlychitieu.ui.theme.Dimens.RadiusMedium
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceLarge
 import com.example.quanlychitieu.ui.theme.PrimaryColor
 import com.example.quanlychitieu.ui.theme.QuanLyChiTieuTheme
@@ -65,9 +60,8 @@ fun CusTomTextField(
 
     Box(
         modifier = modifier
-            .padding(horizontal = PaddingBody)
             .shadow(
-                elevation = 11.dp,
+                elevation = 5.dp,
                 shape = RoundedCornerShape(RadiusLarge),
                 clip = false
             )

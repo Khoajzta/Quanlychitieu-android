@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -39,22 +40,29 @@ import kotlin.math.abs
 @Composable
 fun WeeklyFinanceBarChart(
     modifier: Modifier = Modifier,
-    data: Map<String, Int>,
+    data: Map<String, Long>,
     dates: List<String>
 ) {
     val maxAmount = (data.values.maxOfOrNull { abs(it) } ?: 0).coerceAtLeast(1)
     val dayKeys = listOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
 
+    // Chiều cao động: giá trị càng lớn, cột càng cao, nhưng có giới hạn
+    val dynamicHeight = remember(maxAmount) {
+        val baseHeight = 120.dp
+        val extraHeight = (maxAmount / 1_000_000).coerceAtMost(5) * 20 // thêm 20dp mỗi triệu
+        (baseHeight.value + extraHeight).dp.coerceAtMost(280.dp)       // giới hạn tối đa
+    }
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .border(2.dp, color = Color(0xFF1C94D5), shape = RoundedCornerShape(15.dp))
             .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Canvas(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp)
+                .height(dynamicHeight)
                 .padding(horizontal = SpaceMedium, vertical = SpaceLarge)
         ) {
             val barWidth = size.width / (dayKeys.size * 2)
@@ -68,10 +76,9 @@ fun WeeklyFinanceBarChart(
                 strokeWidth = 2f
             )
 
-            // Cột và số tiền
             dayKeys.forEachIndexed { index, key ->
                 val amount = data[key]
-                if (amount != null && amount != 0) {
+                if (amount != null && amount != 0L) {
                     val barHeight = (size.height / 2) * (abs(amount).toFloat() / maxAmount)
                     val barX = (index * 2 + 1) * barWidth
 
@@ -89,7 +96,6 @@ fun WeeklyFinanceBarChart(
                         )
                     }
 
-                    // Vẽ cột
                     drawRoundRect(
                         brush = brush,
                         topLeft = Offset(barX - barWidth / 2, centerY - if (amount > 0) barHeight else 0f),
@@ -97,13 +103,12 @@ fun WeeklyFinanceBarChart(
                         cornerRadius = CornerRadius(20f, 20f)
                     )
 
-                    // Format tiền (230000 → 230k)
+                    // Hiển thị giá trị
                     val prefix = if (amount > 0) "+" else "-"
                     val displayAmount =
                         if (abs(amount) >= 1000) "$prefix${abs(amount) / 1000}k"
                         else "$prefix$amount"
 
-                    // Vẽ text (đỉnh cột)
                     val textPaint = Paint().asFrameworkPaint().apply {
                         isAntiAlias = true
                         textSize = 30f
@@ -113,10 +118,8 @@ fun WeeklyFinanceBarChart(
                     }
 
                     val textY = if (amount > 0) {
-                        // Dương: hiển thị trên đỉnh cột đi lên
                         centerY - barHeight - 8
                     } else {
-                        // Âm: hiển thị tại đỉnh cột đi xuống
                         centerY + barHeight + 28
                     }
 
@@ -164,17 +167,18 @@ fun WeeklyFinanceBarChart(
 
 
 
+
 @Composable
 @Preview
 fun PreviewWeeklyFinanceChart() {
     val weeklyData = mapOf(
-        "T2" to 200000,
-        "T3" to -80000,
-        "T4" to 200000,
-        "T5" to 50000,
-        "T6" to -50000,
-        "T7" to -50000,
-        "CN" to 50000,
+        "T2" to 200000L,
+        "T3" to -80000L,
+        "T4" to 200000L,
+        "T5" to 50000L,
+        "T6" to -50000L,
+        "T7" to -50000L,
+        "CN" to 50000L,
     )
     val weekDates = listOf("07", "08", "09", "10", "11", "12", "13")
 

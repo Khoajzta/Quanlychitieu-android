@@ -16,6 +16,8 @@ import androidx.navigation.navArgument
 import com.example.quanlychitieu.Views.AddKhoanChi.AddKhoanChiScreen
 import com.example.quanlychitieu.Views.ListKhoanChi.ListKhoanChiScreen
 import com.example.quanlychitieu.Views.login.LoginScreen
+import com.example.quanlychitieu.ui.Views.AddTaiKhoan.AddTaiKhoanScreen
+import com.example.quanlychitieu.ui.Views.ChuyenTien.ChuyenTienScreen
 import com.example.quanlychitieu.ui.Views.KhoanChiDetail.KhoanChiDetailScreen
 import com.example.quanlychitieu.ui.Views.UpdateKhoanChi.UpdateKhoanChiScreen
 
@@ -87,8 +89,18 @@ fun AppNavGraph(navController: NavHostController) {
             enterTransition = truotVaoTuPhai(),
             exitTransition = truotRaSangTrai(),
             popEnterTransition = truotVaoTuTrai(),
-            popExitTransition = truotRaSangPhai()
-        ) { ProfileScreen(navController) }
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+
+            ProfileScreen(
+                navController = navController,
+                userId = userId,
+            )
+        }
 
 
         composable(
@@ -109,13 +121,24 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
+
         composable(
             route = Screen.NganSach.route,
             enterTransition = truotVaoTuPhai(),
             exitTransition = truotRaSangTrai(),
             popEnterTransition = truotVaoTuTrai(),
-            popExitTransition = truotRaSangPhai()
-        ) { NganSachScreen(navController) }
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+
+            NganSachScreen(
+                navController = navController,
+                userId = userId,
+            )
+        }
 
 
         composable(
@@ -204,5 +227,41 @@ fun AppNavGraph(navController: NavHostController) {
             val id_khoanchi = backStackEntry.arguments?.getInt("id_khoanchi") ?: 0
             UpdateKhoanChiScreen(navController, id_khoanChi = id_khoanchi, userId = userId )
         }
+
+        composable(
+            route = Screen.ChuyenTien.route,
+            enterTransition = truotVaoTuPhai(),
+            exitTransition = truotRaSangTrai(),
+            popEnterTransition = truotVaoTuTrai(),
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+
+            ChuyenTienScreen(
+                navController = navController,
+                userId = userId,
+            )
+        }
+        composable(
+            route = Screen.AddTaiKhoan.route,
+            enterTransition = truotVaoTuPhai(),
+            exitTransition = truotRaSangTrai(),
+            popEnterTransition = truotVaoTuTrai(),
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+
+            AddTaiKhoanScreen(
+                navController = navController,
+                userId = userId,
+            )
+        }
+
     }
 }

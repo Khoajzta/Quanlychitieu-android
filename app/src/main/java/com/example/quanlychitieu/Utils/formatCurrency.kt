@@ -1,7 +1,10 @@
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.math.abs
 
-fun formatCurrency(amount: Int): String {
-    return "%,dđ".format(amount).replace(',', '.')
+fun formatCurrency(amount: Long): String {
+    val formatter = NumberFormat.getInstance(Locale("vi", "VN"))
+    return formatter.format(amount) + "₫"
 }
 
 fun formatMoneyShort(amount: Int): String {

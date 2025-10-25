@@ -2,6 +2,9 @@ package com.example.quanlychitieu.data.respository
 
 import android.util.Log
 import com.example.quanlychitieu.data.remote.TaiKhoanAPIService
+import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
+import com.example.quanlychitieu.data.remote.dto.ChuyenTienRequest
+import com.example.quanlychitieu.data.remote.dto.StatusResponse
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
 import com.example.quanlychitieu.domain.respository.TaiKhoanRepository
 import javax.inject.Inject
@@ -16,6 +19,80 @@ class TaiKhoanRepositoryImpl@Inject constructor(
             return response.data
         } else {
             throw Exception("API trả về success = false")
+        }
+    }
+
+    override suspend fun createaTaiKhoan(taikhoan: TaiKhoanModel): BaseResponseMes<TaiKhoanModel> {
+        return try {
+            val response = api.createTaiKhoan(taikhoan)
+            if (response.isSuccessful) {
+                response.body() ?: throw Exception("Empty response body")
+            } else {
+                throw Exception("API Error: ${response.errorBody()?.string()}")
+            }
+        } catch (e: Exception) {
+            throw Exception("Network/API Error: ${e.message}")
+        }
+    }
+
+    override suspend fun updateTaiKhoan(
+        taikhoan: TaiKhoanModel,
+        id: Int
+    ): BaseResponseMes<TaiKhoanModel> {
+        return try {
+            val response = api.updateTaiKhoan(taikhoan, id)
+            if(response.isSuccessful){
+                response.body() ?: throw Exception("Empty response body")
+            }else{
+                throw Exception("API Error: ${response.errorBody()?.string()}")
+            }
+
+        }catch (e: Exception){
+            throw Exception("Network/API Error: ${e.message}")
+        }
+    }
+
+    override suspend fun chuyenTien(chuyenTienRequest: ChuyenTienRequest): StatusResponse {
+        return try {
+            val response = api.chuyenTien(chuyenTienRequest)
+            if (response.isSuccessful) {
+                response.body() ?: StatusResponse(
+                    success = false,
+                    message = "Empty response"
+                )
+            } else {
+                StatusResponse(
+                    success = false,
+                    message = response.errorBody()?.string() ?: "API Error"
+                )
+            }
+        } catch (e: Exception) {
+            StatusResponse(
+                success = false,
+                message = e.message ?: "Lỗi không xác định"
+            )
+        }
+    }
+
+    override suspend fun deleteTaiKhoan(id: Int): StatusResponse {
+        return try {
+            val response = api.deleteTaiKhoan(id)
+            if (response.isSuccessful) {
+                response.body() ?: StatusResponse(
+                    success = false,
+                    message = "Empty response"
+                )
+            } else {
+                StatusResponse(
+                    success = false,
+                    message = response.errorBody()?.string() ?: "API Error"
+                )
+            }
+        } catch (e: Exception) {
+            StatusResponse(
+                success = false,
+                message = e.message ?: "Lỗi không xác định"
+            )
         }
     }
 }

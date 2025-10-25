@@ -29,9 +29,9 @@ import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 fun HomeTotalMoney(
     modifier: Modifier,
     taikhoan: TaiKhoanModel,
-    tongTienDuKien :Int,
-    tongThuNhap:Int,
-    tongChiTieu :Int
+    tongTienDuKien :Long,
+    tongThuNhap:Long,
+    tongChiTieu :Long
 ) {
     Box(
         modifier = modifier

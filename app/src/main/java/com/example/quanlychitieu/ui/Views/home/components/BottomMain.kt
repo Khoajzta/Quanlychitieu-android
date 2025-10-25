@@ -99,9 +99,12 @@ fun BottomNavigationBar(
                         selected = isSelected,
                         onClick = {
                             if (navController != null && currentRoute != item.route) {
-                                val routeToNavigate = if (item.route == Screen.Trade.route) {
-                                    Screen.Trade.createRoute(userId)
-                                } else item.route
+                                val routeToNavigate = when (item.route) {
+                                    Screen.Trade.route -> Screen.Trade.createRoute(userId)
+                                    Screen.NganSach.route -> Screen.NganSach.createRoute(userId)
+                                    Screen.Profile.route -> Screen.Profile.createRoute(userId)
+                                    else -> item.route
+                                }
 
                                 navController.navigate(routeToNavigate) {
                                     popUpTo(navController.graph.startDestinationId)

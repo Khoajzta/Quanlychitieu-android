@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,7 +85,7 @@ fun AddKhoanChiScreen(
     userId: Int,
     khoanchiViewModel: KhoanChiViewModel = hiltViewModel()
 ) {
-    var sotien by remember { mutableStateOf(0) }
+    var sotien by remember { mutableStateOf(0L) }
     var tenKhoanChiInput by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf("blue") }
 
@@ -119,6 +120,7 @@ fun AddKhoanChiScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
+                .padding(horizontal = PaddingBody)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -154,23 +156,20 @@ fun AddKhoanChiScreen(
                     onDateSelected = { ngayKetThuc = it }
                 )
 
+
                 CusTomTextField(
-                    value = if (sotien == 0) "" else formatCurrency(sotien),
+                    value = if (sotien == 0L) "" else formatCurrency(sotien),
                     onValueChange = { newValue ->
                         val digits = newValue.filter { it.isDigit() }
-                        sotien = if (digits.isNotEmpty()) digits.toInt() else 0
+                        sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
                     },
                     leadingIcon = {
-                        Icon(
-                            Icons.Default.AttachMoney,
-                            contentDescription = null,
-                            tint = Color.Gray
-                        )
+                        Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
                     },
                     placeholder = "Số tiền",
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Next
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -188,7 +187,10 @@ fun AddKhoanChiScreen(
                 )
 
                 CustomButton(
-                    title = "Lưu khoản chi",
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    title = "Thêm khoản chi",
+                    icon = Icons.Default.AddCircle,
                     onClick = {
                         if (
                             tenKhoanChiInput.isNotBlank() &&

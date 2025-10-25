@@ -28,12 +28,13 @@ import com.example.quanlychitieu.ui.theme.BackgroundColor
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    viewModel: NguoiDungViewModel = hiltViewModel()
+    viewModel: NguoiDungViewModel = hiltViewModel(),
+    userId: Int
 ){
     Scaffold(
         containerColor = BackgroundColor,
         topBar = {
-            Header(navController, Modifier.windowInsetsPadding(WindowInsets.statusBars), title = "Thông tin cá nhân")
+            Header(navController, Modifier.windowInsetsPadding(WindowInsets.statusBars), title = "Thông tin cá nhân", userId = userId)
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) {innerPadding ->
@@ -57,5 +58,5 @@ fun ProfileScreen(
 @Preview
 fun ProfileScreenPreview(){
     var navController = rememberNavController()
-    ProfileScreen(navController)
+    ProfileScreen(navController, userId = 1 )
 }

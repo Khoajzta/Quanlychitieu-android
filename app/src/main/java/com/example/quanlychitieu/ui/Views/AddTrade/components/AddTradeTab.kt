@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DriveFileRenameOutline
 import androidx.compose.material.icons.filled.EditNote
@@ -62,6 +63,7 @@ import com.example.quanlychitieu.ui.ViewModels.ChiTieuViewModel
 import com.example.quanlychitieu.ui.ViewModels.ThuNhapViewModel
 import com.example.quanlychitieu.ui.components.CustomSnackbar
 import com.example.quanlychitieu.ui.components.SnackbarType
+import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import formatCurrency
 import kotlinx.coroutines.delay
@@ -152,7 +154,7 @@ fun AddChiTieuPage(
     userId : Int,
     chiTieuViewModel: ChiTieuViewModel = hiltViewModel()
 ) {
-    var sotien by remember { mutableStateOf(0) }
+    var sotien by remember { mutableStateOf(0L) }
     var mota by remember { mutableStateOf("") }
     var selectedKhoanChi by remember { mutableStateOf(listKhoanChi.firstOrNull()) }
     var selectedDate by remember { mutableStateOf<Long?>(null) }
@@ -162,22 +164,29 @@ fun AddChiTieuPage(
     var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
     var snackbarMessage by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = PaddingBody)
+    ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(SpaceMedium)
         ) {
             CusTomTextField(
-                value = if (sotien == 0) "" else formatCurrency(sotien),
+                value = if (sotien == 0L) "" else formatCurrency(sotien),
                 onValueChange = { newValue ->
                     val digits = newValue.filter { it.isDigit() }
-                    sotien = if (digits.isNotEmpty()) digits.toInt() else 0
+                    sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
                 },
                 leadingIcon = {
                     Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
                 },
                 placeholder = "Số tiền",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -214,7 +223,10 @@ fun AddChiTieuPage(
             )
 
             CustomButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                title = "Thêm chi tiêu",
+                icon = Icons.Default.AddCircle,
                 onClick = {
 
                     if(taikhoanchinh.so_du <= 0){
@@ -223,7 +235,7 @@ fun AddChiTieuPage(
                         snackbarVisible = true
                     }
 
-                    else if (sotien != 0 && selectedDate != null && selectedKhoanChi != null && mota.isNotBlank()) {
+                    else if (sotien != 0L && selectedDate != null && selectedKhoanChi != null && mota.isNotBlank()) {
                         val chiTieu = ChiTieuModel(
                             id = 0,
                             id_nguoidung = userId,
@@ -250,7 +262,6 @@ fun AddChiTieuPage(
                     }
 
                 },
-                title = "Thêm chi tiêu"
             )
         }
 
@@ -290,14 +301,18 @@ fun AddThuNhapPage(
     thuNhapViewModel: ThuNhapViewModel = hiltViewModel()
 ) {
     var tenThuNhap by remember { mutableStateOf("") }
-    var sotien by remember { mutableStateOf(0) }
+    var sotien by remember { mutableStateOf(0L) }
     var selectedDate by remember { mutableStateOf<Long?>(null) }
 
     var snackbarVisible by remember { mutableStateOf(false) }
     var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
     var snackbarMessage by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = PaddingBody)
+    ){
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(SpaceMedium)
@@ -314,16 +329,19 @@ fun AddThuNhapPage(
             )
 
             CusTomTextField(
-                value = if (sotien == 0) "" else formatCurrency(sotien),
+                value = if (sotien == 0L) "" else formatCurrency(sotien),
                 onValueChange = { newValue ->
                     val digits = newValue.filter { it.isDigit() }
-                    sotien = if (digits.isNotEmpty()) digits.toInt() else 0
+                    sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
                 },
                 leadingIcon = {
                     Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
                 },
                 placeholder = "Số tiền",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -334,9 +352,12 @@ fun AddThuNhapPage(
             )
 
             CustomButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                title = "Thêm thu nhập",
+                icon = Icons.Default.AddCircle,
                 onClick = {
-                    if(tenThuNhap != "" && sotien != 0 && selectedDate != null ){
+                    if(tenThuNhap != "" && sotien != 0L && selectedDate != null ){
                         var thuNhap = ThuNhapModel(
                             id = 0,
                             id_nguoidung = userId,
@@ -358,7 +379,6 @@ fun AddThuNhapPage(
                         snackbarVisible = true
                     }
                 },
-                title = "Thêm thu nhập"
             )
         }
 

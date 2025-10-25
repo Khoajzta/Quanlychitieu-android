@@ -7,7 +7,7 @@ import java.time.LocalDate
 fun tinhTongTheoTuanVaNgay(
     chitieulist: List<ChiTieuModel>,
     thunhaplist: List<ThuNhapModel>
-): Pair<Map<String, Int>, List<String>> {
+): Pair<Map<String, Long>, List<String>> {
     val today = LocalDate.now()
     val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
     val weekDates = (0..6).map { startOfWeek.plusDays(it.toLong()) }

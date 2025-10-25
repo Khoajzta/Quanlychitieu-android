@@ -2,9 +2,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,11 +19,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.quanlychitieu.Components.CustomButton
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.Trade.Components.TradeButtonAdd
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
+import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import kotlinx.coroutines.delay
 
 @Composable
@@ -70,15 +75,18 @@ fun TradeScreen(
                 userId = userId
             )
 
-            TradeButtonAdd(
+            CustomButton(
                 modifier = Modifier
-                    .padding(bottom = 10.dp)
+                    .padding(horizontal = PaddingBody)
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(innerPadding),
+                    .navigationBarsPadding()
+                    .padding(bottom = PaddingBody),
+                title = "Thêm giao dịch",
                 onClick = {
                     navController.navigate(Screen.AddTrade.createRoute(userId))
-                }
+                },
+                icon = Icons.Default.AddCircle
             )
         }
     }

@@ -20,7 +20,7 @@ fun HomeThuNhapColumn(
     listThuNhap : List<ThuNhapModel>
 ){
     Column(
-        modifier = Modifier.padding(horizontal = PaddingBody).wrapContentHeight(),
+        modifier = Modifier.wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
