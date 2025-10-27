@@ -1,15 +1,11 @@
 package com.example.quanlychitieu.Views.AddTrade
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +13,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -37,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,22 +64,25 @@ import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import formatCurrency
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddTradeTab(
     navController: NavController,
     listKhoanChi: List<KhoanChiModel>,
-    taikhoanchinh : TaiKhoanModel,
-    userId : Int
-){
+    taikhoanchinh: TaiKhoanModel,
+    userId: Int
+) {
     val tabs = listOf("Chi tiêu", "Thu nhập")
-    var selectedTabIndex by remember { mutableStateOf(0) }
-
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { tabs.size })
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxSize()
     ) {
+        // --- Tab header ---
         Box(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
@@ -94,13 +94,12 @@ fun AddTradeTab(
                 .padding(4.dp)
         ) {
             Row(
-                modifier = Modifier.wrapContentWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 tabs.forEachIndexed { index, title ->
-                    val isSelected = selectedTabIndex == index
-                    val backgroundColor =
-                        if (isSelected) Color.White else Color.Transparent
+                    val isSelected = pagerState.currentPage == index
+                    val backgroundColor = if (isSelected) Color.White else Color.Transparent
                     val textColor =
                         if (isSelected) Color(0xFF1C94D5) else Color.Black.copy(alpha = 0.8f)
 
@@ -109,7 +108,11 @@ fun AddTradeTab(
                             .weight(1f)
                             .clip(RoundedCornerShape(25))
                             .background(backgroundColor)
-                            .clickable { selectedTabIndex = index }
+                            .clickable {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            }
                             .padding(vertical = 8.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -126,25 +129,28 @@ fun AddTradeTab(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        AnimatedContent(
-            targetState = selectedTabIndex,
-            transitionSpec = {
-                if (targetState > initialState) {
-                    slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
-                } else {
-                    slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
-                }
-            },
-            label = ""
-        ) { index ->
-            when (index) {
-                0 -> AddChiTieuPage(navController,listKhoanChi, taikhoanchinh, userId)
-                1 -> AddThuNhapPage(navController, userId = userId , taikhoanchinh = taikhoanchinh)
+        // --- Swipe content area ---
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            when (page) {
+                0 -> AddChiTieuPage(
+                    navController = navController,
+                    listKhoanChi = listKhoanChi,
+                    taikhoanchinh = taikhoanchinh,
+                    userId = userId
+                )
+                1 -> AddThuNhapPage(
+                    navController = navController,
+                    userId = userId,
+                    taikhoanchinh = taikhoanchinh
+                )
             }
         }
-
     }
 }
+
 
 @Composable
 fun AddChiTieuPage(

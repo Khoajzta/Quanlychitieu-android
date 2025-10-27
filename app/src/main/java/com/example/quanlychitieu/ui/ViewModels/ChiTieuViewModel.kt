@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
+import com.example.quanlychitieu.data.remote.dto.StatusResponse
 import com.example.quanlychitieu.domain.model.ChiTieuModel
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.respository.ChiTieuRespository
@@ -27,6 +28,9 @@ class ChiTieuViewModel @Inject constructor(
     val uiStateTheoThang: StateFlow<UiState<List<ChiTieuModel>>> = _uiStateTheoThang
     var createChiTieuState by mutableStateOf<UiState<BaseResponse<ChiTieuModel>>>(UiState.Loading)
         private set
+
+    private val _deleteChiTieuState = MutableStateFlow<UiState<StatusResponse>>(UiState.Loading)
+    val deleteChiTieuState: StateFlow<UiState<StatusResponse>> = _deleteChiTieuState
 
     fun getChiTieuTheoKhoanChiCuaUser(id_khoanchi: Int, userId: Int) {
         viewModelScope.launch {
@@ -60,6 +64,22 @@ class ChiTieuViewModel @Inject constructor(
                 createChiTieuState = UiState.Success(result)
             } catch (e: Exception) {
                 createChiTieuState = UiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun deleteChiTieu(id:Int){
+        viewModelScope.launch {
+            _deleteChiTieuState.value = UiState.Loading
+            try {
+                val result = repository.deleteChiTieu(id)
+                if (result.success) {
+                    _deleteChiTieuState.value = UiState.Success(result)
+                } else {
+                    _deleteChiTieuState.value = UiState.Error(result.message)
+                }
+            } catch (e: Exception) {
+                _deleteChiTieuState.value = UiState.Error(e.message ?: "Lỗi không xác định")
             }
         }
     }

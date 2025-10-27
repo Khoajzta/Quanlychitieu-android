@@ -33,13 +33,16 @@ import androidx.emoji2.emojipicker.EmojiPickerView
 import com.example.quanlychitieu.Utils.loadEmojiList
 
 @Composable
-fun EmojiPickerGrid(onEmojiSelected: (String) -> Unit) {
+fun EmojiPickerGrid(
+    modifier: Modifier = Modifier,
+    onEmojiSelected: (String) -> Unit
+) {
     val context = LocalContext.current
     val emojis = remember { loadEmojiList(context) } // load 1 lần
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(6),
-        modifier = Modifier.height(300.dp)
+        modifier = modifier.height(300.dp)
     ) {
         items(emojis) { emoji ->
             Text(

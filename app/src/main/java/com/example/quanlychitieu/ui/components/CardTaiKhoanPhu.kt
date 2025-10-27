@@ -54,7 +54,7 @@ fun CardTaikhoanPhu(
 ) {
     Box(
         modifier = modifier
-            .wrapContentHeight()
+            .height(200.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(RadiusXL))
             .background(

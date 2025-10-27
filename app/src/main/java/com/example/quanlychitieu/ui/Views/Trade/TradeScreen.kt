@@ -6,75 +6,144 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.CustomButton
+import com.example.quanlychitieu.Components.DotLoading
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
-import com.example.quanlychitieu.Views.Trade.Components.TradeButtonAdd
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun TradeScreen(
     navController: NavController,
-    userId :Int,
+    userId: Int,
     khoanChiViewModel: KhoanChiViewModel = hiltViewModel(),
 ) {
-    val KhoanChiuiState by khoanChiViewModel.uiState.collectAsState()
+    val khoanChiUiState by khoanChiViewModel.uiState.collectAsState()
+    var isRefreshing by remember { mutableStateOf(false) }
 
+    // ✅ Gọi API khi mở màn hình
+    LaunchedEffect(userId) {
+        if (userId > 0) {
+            khoanChiViewModel.loadKhoanChi(userId)
+        }
+    }
+
+    // ✅ Cập nhật tự động mỗi 15 phút (không block UI)
     LaunchedEffect(userId) {
         if (userId > 0) {
             while (true) {
-                khoanChiViewModel.loadKhoanChi(userId)
                 delay(15 * 60 * 1000L)
+                khoanChiViewModel.loadKhoanChi(userId)
             }
         }
     }
 
-    val khoanChiList = when (KhoanChiuiState) {
-        is UiState.Success -> (KhoanChiuiState as UiState.Success<List<KhoanChiModel>>).data
+    // ✅ Trạng thái refresh
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            khoanChiViewModel.loadKhoanChi(userId)
+            isRefreshing = false
+        }
+    )
+
+    // ✅ Lấy danh sách từ state
+    val khoanChiList = when (khoanChiUiState) {
+        is UiState.Success -> (khoanChiUiState as UiState.Success<List<KhoanChiModel>>).data
         else -> emptyList()
     }
-
 
     Scaffold(
         containerColor = BackgroundColor,
         topBar = {
             Header(
-                navController,
-                Modifier.windowInsetsPadding(WindowInsets.statusBars),
+                navController = navController,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                 title = "Giao dịch",
-                userId
+                userId = userId
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .pullRefresh(pullRefreshState)
         ) {
-            TradeTabPage(
-                navController = navController ,
-                listKhoanChi= khoanChiList,
-                userId = userId
-            )
+            when (val state = khoanChiUiState) {
+                is UiState.Loading -> {
+                    DotLoading(modifier = Modifier.align(Alignment.Center))
+                }
 
+                is UiState.Success -> {
+                    if (khoanChiList.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Chưa có giao dịch nào",
+                                color = Color.Gray,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    } else {
+                        TradeTabPage(
+                            navController = navController,
+                            listKhoanChi = khoanChiList,
+                            userId = userId
+                        )
+                    }
+                }
+
+                is UiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = state.message,
+                            color = Color.Gray,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
+                else -> Unit
+            }
+
+            // ✅ Nút thêm giao dịch
             CustomButton(
                 modifier = Modifier
                     .padding(horizontal = PaddingBody)
@@ -88,9 +157,17 @@ fun TradeScreen(
                 },
                 icon = Icons.Default.AddCircle
             )
+
+            // ✅ Hiển thị vòng tròn refresh ở trên cùng
+            PullRefreshIndicator(
+                refreshing = isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
+
 
 @Composable
 @Preview

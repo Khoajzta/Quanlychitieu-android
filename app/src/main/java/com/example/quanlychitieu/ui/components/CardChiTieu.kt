@@ -6,12 +6,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -22,8 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.Components.CardThuNhap
 import com.example.quanlychitieu.Utils.formatDayDisplay
 import com.example.quanlychitieu.domain.model.ChiTieuModel
+import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 import formatCurrency
 
@@ -94,7 +110,63 @@ fun CardChiTieu(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CardChiTieuSwipeToDelete(
+    chitieu: ChiTieuModel,
+    onDelete: (ChiTieuModel) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
 
+    // State điều khiển swipe
+    val dismissState = rememberDismissState(
+        confirmStateChange = { value ->
+            if (value == DismissValue.DismissedToStart) {
+                // Vuốt sang trái xong -> hiện dialog xác nhận
+                showDialog = true
+            }
+            false // Không xóa thẻ ngay lập tức
+        }
+    )
+
+    if (showDialog) {
+
+        ThongBaoDialog(
+            title = "Xác nhận xóa chi tiêu",
+            message = "Bạn có chắc muốn xóa chi tiêu này không?",
+            onConfirm = {onDelete(chitieu)
+                showDialog = false},
+            onDismiss = {showDialog = false},
+            confirmText = "Đồng ý",
+            dismissText = "Hủy",
+            confirmButtonColor = Color.Red
+        )
+    }
+
+    SwipeToDismiss(
+        state = dismissState,
+        directions = setOf(DismissDirection.EndToStart),
+        background = {
+            // Nền đỏ khi vuốt sang trái
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Red, shape = RoundedCornerShape(RadiusXL))
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Xóa",
+                    tint = Color.White
+                )
+            }
+        },
+        dismissContent = {
+           CardChiTieu(chitieu = chitieu)
+        }
+    )
+}
 
 
 

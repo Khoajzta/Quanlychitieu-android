@@ -1,5 +1,6 @@
 package com.example.quanlychitieu.ui.Views.UpdateKhoanChi
 
+import EmojiPickerBottomSheet
 import Header
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
@@ -57,6 +58,7 @@ import com.example.quanlychitieu.ui.components.CustomSnackbar
 import com.example.quanlychitieu.ui.components.SnackbarType
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
+import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import formatCurrency
 import kotlinx.coroutines.delay
@@ -69,41 +71,66 @@ fun UpdateKhoanChiScreen(
     userId: Int,
     khoanChiViewModel: KhoanChiViewModel = hiltViewModel()
 ) {
-
     val khoanChiState = khoanChiViewModel.getKhoanChiByIdState
-    val khoanchiUpdateState = khoanChiViewModel.updateKhoanChiState
+    val updateState = khoanChiViewModel.updateKhoanChiState
 
-    // Gọi API khi mở màn hình
-    LaunchedEffect(id_khoanChi) {
-        khoanChiViewModel.getKhoanChiById(id_khoanChi)
-    }
-
-    // 🧠 Tạo state trước
-    var sotien by remember { mutableStateOf(0L) }
-    var tenKhoanChiInput by remember { mutableStateOf("") }
+    // State UI
+    var tenKhoanChi by remember { mutableStateOf("") }
+    var soTien by remember { mutableStateOf(0L) }
     var selectedColor by remember { mutableStateOf("") }
-    var emojiInput by remember { mutableStateOf("") }
+    var emoji by remember { mutableStateOf("") }
     var ngayBatDau by remember { mutableStateOf<Long?>(null) }
     var ngayKetThuc by remember { mutableStateOf<Long?>(null) }
 
-    val suggestedEmojis = listOf("🍔", "☕", "🛒", "🎁", "✈️")
     var showEmojiDialog by remember { mutableStateOf(false) }
+    val emojiSuggestions = listOf("🍔", "☕", "🛒", "🎁", "✈️")
     val colorOptions = listOf("red", "blue", "green", "yellow")
 
     var snackbarVisible by remember { mutableStateOf(false) }
     var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
     var snackbarMessage by remember { mutableStateOf("") }
 
-    // 🪄 Khi API trả về Success, gán giá trị cho các biến UI
+    // 🔹 Lấy dữ liệu khi mở màn hình
+    LaunchedEffect(id_khoanChi) {
+        khoanChiViewModel.getKhoanChiById(id_khoanChi)
+    }
+
+    // 🔹 Gán dữ liệu khi API thành công
     LaunchedEffect(khoanChiState) {
         if (khoanChiState is UiState.Success) {
-            val khoanchi = khoanChiState.data
-            sotien = khoanchi.so_tien_du_kien
-            tenKhoanChiInput = khoanchi.ten_khoanchi
-            selectedColor = khoanchi.mausac ?: ""
-            emojiInput = khoanchi.emoji ?: ""
-            ngayBatDau = parseDateToMillis(khoanchi.ngay_batdau)
-            ngayKetThuc = parseDateToMillis(khoanchi.ngay_ketthuc)
+            with(khoanChiState.data) {
+                tenKhoanChi = ten_khoanchi
+                soTien = so_tien_du_kien
+                selectedColor = mausac ?: ""
+                emoji = this.emoji ?: ""
+                ngayBatDau = parseDateToMillis(ngay_batdau)
+                ngayKetThuc = parseDateToMillis(ngay_ketthuc)
+            }
+        }
+    }
+
+    // 🔹 Lắng nghe trạng thái cập nhật
+    LaunchedEffect(updateState) {
+        when (updateState) {
+            is UiState.Success -> {
+                snackbarMessage = "Cập nhật khoản chi thành công"
+                snackbarType = SnackbarType.SUCCESS
+                snackbarVisible = true
+                delay(1000)
+                navController.popBackStack()
+                khoanChiViewModel.resetUpdateState()
+            }
+
+            is UiState.Error -> {
+                snackbarMessage = updateState.message
+                snackbarType = SnackbarType.ERROR
+                snackbarVisible = true
+                delay(2500)
+                snackbarVisible = false
+                khoanChiViewModel.resetUpdateState()
+            }
+
+            else -> Unit
         }
     }
 
@@ -111,41 +138,37 @@ fun UpdateKhoanChiScreen(
         containerColor = BackgroundColor,
         topBar = {
             Header(
-                navController,
-                Modifier.windowInsetsPadding(WindowInsets.statusBars),
+                navController = navController,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                 title = "Cập nhật khoản chi"
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
-        when (khoanChiState) {
-            is UiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    DotLoading()
-                }
-            }
 
-            is UiState.Success -> {
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (khoanChiState) {
+                is UiState.Loading -> DotLoading()
 
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
+                is UiState.Success -> {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .padding(horizontal = PaddingBody),
                         verticalArrangement = Arrangement.spacedBy(SpaceMedium)
                     ) {
+                        // 🏷️ Tên khoản chi + emoji
                         CusTomTextField(
-                            value = tenKhoanChiInput,
-                            onValueChange = { tenKhoanChiInput = it },
+                            value = tenKhoanChi,
+                            onValueChange = { tenKhoanChi = it },
                             leadingIcon = {
                                 Text(
-                                    text = EmojiCompat.get().process(emojiInput).toString(),
+                                    text = EmojiCompat.get().process(emoji).toString(),
                                     fontSize = MaterialTheme.typography.headlineMedium.fontSize
                                 )
                             },
@@ -157,26 +180,31 @@ fun UpdateKhoanChiScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
+                        // 📅 Ngày bắt đầu & kết thúc
                         CustomDatePicker(
                             selectedDate = ngayBatDau,
                             placeholder = "Ngày bắt đầu",
                             onDateSelected = { ngayBatDau = it }
                         )
-
                         CustomDatePicker(
                             selectedDate = ngayKetThuc,
                             placeholder = "Ngày kết thúc",
                             onDateSelected = { ngayKetThuc = it }
                         )
 
+                        // 💰 Số tiền
                         CusTomTextField(
-                            value = if (sotien == 0L) "" else formatCurrency(sotien),
-                            onValueChange = { newValue ->
-                                val digits = newValue.filter { it.isDigit() }
-                                sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
+                            value = if (soTien == 0L) "" else formatCurrency(soTien),
+                            onValueChange = {
+                                val digits = it.filter(Char::isDigit)
+                                soTien = digits.toLongOrNull() ?: 0L
                             },
                             leadingIcon = {
-                                Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+                                Icon(
+                                    Icons.Default.AttachMoney,
+                                    contentDescription = null,
+                                    tint = Color.Gray
+                                )
                             },
                             placeholder = "Số tiền",
                             keyboardOptions = KeyboardOptions(
@@ -186,9 +214,10 @@ fun UpdateKhoanChiScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
+                        // 😀 Emoji + màu
                         EmojiRow(
-                            listEmoji = suggestedEmojis,
-                            onClickEmoji = { emoji -> emojiInput = emoji },
+                            listEmoji = emojiSuggestions,
+                            onClickEmoji = { emoji = it },
                             onClickMore = { showEmojiDialog = true }
                         )
 
@@ -198,106 +227,58 @@ fun UpdateKhoanChiScreen(
                             onColorSelected = { selectedColor = it }
                         )
 
+                        // 💾 Nút lưu
                         CustomButton(
+                            modifier = Modifier.fillMaxWidth(),
                             title = "Lưu khoản chi",
                             onClick = {
-                                val khoanchinew = KhoanChiModel(
-                                    id = id_khoanChi,
-                                    ten_khoanchi = tenKhoanChiInput,
-                                    id_nguoidung = userId,
-                                    mausac = selectedColor,
-                                    ngay_batdau = formatMillisToDB(ngayBatDau),
-                                    ngay_ketthuc = formatMillisToDB(ngayKetThuc),
-                                    so_tien_du_kien = sotien,
-                                    emoji = emojiInput
+                                khoanChiViewModel.updateKhoanChi(
+                                    id_khoanchi = id_khoanChi,
+                                    khoanchi = KhoanChiModel(
+                                        id = id_khoanChi,
+                                        ten_khoanchi = tenKhoanChi,
+                                        id_nguoidung = userId,
+                                        mausac = selectedColor,
+                                        ngay_batdau = formatMillisToDB(ngayBatDau),
+                                        ngay_ketthuc = formatMillisToDB(ngayKetThuc),
+                                        so_tien_du_kien = soTien,
+                                        emoji = emoji
+                                    )
                                 )
-                                khoanChiViewModel.updateKhoanChi(id_khoanchi = id_khoanChi , khoanchi = khoanchinew)
                             }
                         )
-
-                        if (showEmojiDialog) {
-                            ModalBottomSheet(
-                                onDismissRequest = { showEmojiDialog = false },
-                                containerColor = Color.White,
-                                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    EmojiPickerGrid { selected ->
-                                        emojiInput = selected
-                                        showEmojiDialog = false
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    AnimatedVisibility(
-                        visible = snackbarVisible,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 16.dp),
-                        enter = slideInVertically { it } + fadeIn(),
-                        exit = slideOutVertically { it } + fadeOut()
-                    ) {
-                        CustomSnackbar(
-                            message = snackbarMessage,
-                            type = snackbarType
-                        )
-                    }
-
-                    // ✅ Tự động ẩn snackbar sau vài giây
-                    LaunchedEffect(snackbarVisible) {
-                        if (snackbarVisible) {
-                            delay(3000)
-                            snackbarVisible = false
-                        }
-                    }
-
-                    // ✅ Lắng nghe UI state khi tạo khoản chi
-                    LaunchedEffect(khoanchiUpdateState) {
-                        when (khoanchiUpdateState) {
-                            is UiState.Success -> {
-                                snackbarMessage = "Cập nhật khoản chi thành công"
-                                snackbarType = SnackbarType.SUCCESS
-                                snackbarVisible = true
-
-                                delay(1000)
-                                navController.popBackStack()
-                                khoanChiViewModel.resetUpdateState()
-                            }
-
-                            is UiState.Error -> {
-                                val errorMessage = (khoanchiUpdateState as UiState.Error).message
-                                snackbarMessage = errorMessage
-                                snackbarType = SnackbarType.ERROR
-                                snackbarVisible = true
-
-                                delay(3000)
-                                snackbarVisible = false
-                                khoanChiViewModel.resetUpdateState()
-                            }
-
-                            else -> Unit
-                        }
                     }
                 }
+
+                is UiState.Error -> Text("Lỗi: ${khoanChiState.message}")
             }
 
-            is UiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Lỗi: ${khoanChiState.message}")
+            // 🎭 Dialog emoji
+            EmojiPickerBottomSheet(
+                show = showEmojiDialog,
+                onDismiss = { showEmojiDialog = false },
+                onEmojiSelected = {
+                    emoji = it
+                    showEmojiDialog = false
                 }
+            )
+
+
+            // 🪄 Snackbar
+            AnimatedVisibility(
+                visible = snackbarVisible,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp),
+                enter = slideInVertically { it } + fadeIn(),
+                exit = slideOutVertically { it } + fadeOut()
+            ) {
+                CustomSnackbar(message = snackbarMessage, type = snackbarType)
             }
         }
     }
 }
+
 
 
 @Composable

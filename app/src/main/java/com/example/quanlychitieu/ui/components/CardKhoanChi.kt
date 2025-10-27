@@ -65,7 +65,6 @@ fun CardKhoanChi(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-
             Box(
                 modifier = Modifier
                     .width(130.dp)
@@ -100,8 +99,15 @@ fun CardKhoanChi(
                 )
 
 
+//                Text(
+//                    text = "Đã dùng: ${formatCurrency(item.tong_tien_da_chi)}",
+//                    fontSize = 16.sp,
+//                    fontWeight = FontWeight.Medium,
+//                    color = Color.White.copy(alpha = 0.9f)
+//                )
+
                 Text(
-                    text = "Đã dùng: ${formatCurrency(item.tong_tien_da_chi)}",
+                    text = "Còn lại: ${formatCurrency(item.so_tien_du_kien - item.tong_tien_da_chi)}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.White.copy(alpha = 0.9f)

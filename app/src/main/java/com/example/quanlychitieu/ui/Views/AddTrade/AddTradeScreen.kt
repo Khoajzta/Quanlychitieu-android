@@ -37,8 +37,6 @@ fun AddTradeScreen(
     val KhoanChiuiState by khoanChiViewModel.uiState.collectAsState()
     val taiKhoanUiState by taiKhoanViewModel.uiState.collectAsState()
 
-    Log.d("userId", userId.toString())
-
     LaunchedEffect(userId) {
         if (userId > 0) {
             while (true) {

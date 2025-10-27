@@ -3,6 +3,7 @@ package com.example.quanlychitieu.data.respository
 import android.util.Log
 import com.example.quanlychitieu.data.remote.ChiTieuAPIService
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
+import com.example.quanlychitieu.data.remote.dto.StatusResponse
 import com.example.quanlychitieu.domain.model.ChiTieuModel
 import com.example.quanlychitieu.domain.respository.ChiTieuRespository
 import javax.inject.Inject
@@ -47,6 +48,28 @@ class ChiTieuRepositoryImpl @Inject constructor(
             return response.data
         } else {
             throw Exception("API trả về success = false")
+        }
+    }
+
+    override suspend fun deleteChiTieu(id: Int): StatusResponse {
+        return try {
+            val response = api.deleteChiTieu(id)
+            if (response.isSuccessful) {
+                response.body() ?: StatusResponse(
+                    success = false,
+                    message = "Empty response"
+                )
+            } else {
+                StatusResponse(
+                    success = false,
+                    message = response.errorBody()?.string() ?: "API Error"
+                )
+            }
+        } catch (e: Exception) {
+            StatusResponse(
+                success = false,
+                message = e.message ?: "Lỗi không xác định"
+            )
         }
     }
 }

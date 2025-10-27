@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.quanlychitieu.Utils.BASE_URL
 import com.example.quanlychitieu.data.local.DataStoreManager
 import com.example.quanlychitieu.data.remote.ChiTieuAPIService
+import com.example.quanlychitieu.data.remote.ChuyenTienAPIService
 import com.example.quanlychitieu.data.remote.KhoanChiApiService
 import com.example.quanlychitieu.data.remote.NguoiDungAPIService
 import com.example.quanlychitieu.data.remote.TaiKhoanAPIService
@@ -77,6 +78,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun proviceChuyenTienApiService(retrofit: Retrofit): ChuyenTienAPIService {
+        return retrofit.create(ChuyenTienAPIService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Provides
@@ -86,5 +93,7 @@ object AppModule {
     ): DataStoreManager {
         return DataStoreManager(context)
     }
+
+
 }
 

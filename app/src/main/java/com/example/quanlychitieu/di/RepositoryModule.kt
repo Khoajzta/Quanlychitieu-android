@@ -3,12 +3,14 @@ package com.example.quanlychitieu.di
 
 import com.example.quanlychitieu.data.respository.AuthRepositoryImpl
 import com.example.quanlychitieu.data.respository.ChiTieuRepositoryImpl
+import com.example.quanlychitieu.data.respository.ChuyenTienRepositoryImpl
 import com.example.quanlychitieu.data.respository.KhoanChiRepositoryImpl
 import com.example.quanlychitieu.data.respository.NguoiDungRepositoryImpl
 import com.example.quanlychitieu.data.respository.TaiKhoanRepositoryImpl
 import com.example.quanlychitieu.data.respository.ThuNhapRepositoryImpl
 import com.example.quanlychitieu.domain.respository.AuthRepository
 import com.example.quanlychitieu.domain.respository.ChiTieuRespository
+import com.example.quanlychitieu.domain.respository.ChuyenTienRepository
 import com.example.quanlychitieu.domain.respository.KhoanChiRepository
 import com.example.quanlychitieu.domain.respository.NguoiDungRepository
 import com.example.quanlychitieu.domain.respository.TaiKhoanRepository
@@ -59,4 +61,10 @@ abstract class RepositoryModule {
     abstract fun bindThuNhapRepository(
         impl: ThuNhapRepositoryImpl
     ): ThuNhapRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindChuyenTienRepository(
+        impl: ChuyenTienRepositoryImpl
+    ): ChuyenTienRepository
 }

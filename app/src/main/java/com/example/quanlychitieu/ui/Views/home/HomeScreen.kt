@@ -3,7 +3,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,10 +33,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -47,11 +44,6 @@ import com.example.quanlychitieu.Utils.tinhTongTheoTuanVaNgay
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.home.components.BottomNavigationBar
 import com.example.quanlychitieu.Views.home.components.HeaderMain
-import com.example.quanlychitieu.Views.home.components.WeeklyFinanceBarChart
-import com.example.quanlychitieu.domain.model.ChiTieuModel
-import com.example.quanlychitieu.domain.model.KhoanChiModel
-import com.example.quanlychitieu.domain.model.TaiKhoanModel
-import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.ui.ViewModels.ChiTieuViewModel
 import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
 import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
@@ -67,7 +59,6 @@ import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -112,6 +103,11 @@ fun HomeScreen(
 
     //========================= CHUYỂN UI STATE SANG LIST =======================
     val khoanChiList = (khoanChiState as? UiState.Success)?.data ?: emptyList()
+
+    val top5KhoanChi = khoanChiList
+        .sortedByDescending { it.so_luong_chi_tieu }
+        .take(5)
+
     val taiKhoanList = (taiKhoanState as? UiState.Success)?.data ?: emptyList()
     val thuNhapList = ((thuNhapState as? UiState.Success)?.data ?: emptyList())
         .sortedByDescending { it.ngay_tao }
@@ -179,13 +175,6 @@ fun HomeScreen(
                 }
             }
         },
-        bottomBar = {
-            BottomNavigationBar(
-                navController = navController,
-                modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars),
-                userId = userId
-            )
-        },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
 
@@ -242,7 +231,7 @@ fun HomeScreen(
                             )
                         } else {
                             KhoanChiMoreRow(navController = navController, userId = userId)
-                            KhoanChiColumn(khoanChiList)
+                            KhoanChiColumn(top5KhoanChi)
                         }
                     }
 
@@ -269,6 +258,12 @@ fun HomeScreen(
             } else {
                 DotLoading(Modifier.align(Alignment.Center))
             }
+
+            BottomNavigationBar(
+                navController = navController,
+                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+                userId = userId
+            )
         }
     }
 }

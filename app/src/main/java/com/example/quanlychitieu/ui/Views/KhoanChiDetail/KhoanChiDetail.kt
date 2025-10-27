@@ -2,23 +2,43 @@ package com.example.quanlychitieu.ui.Views.KhoanChiDetail
 
 import Header
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -26,81 +46,182 @@ import com.example.quanlychitieu.Components.DotLoading
 import com.example.quanlychitieu.domain.model.ChiTieuModel
 import com.example.quanlychitieu.ui.ViewModels.ChiTieuViewModel
 import com.example.quanlychitieu.ui.Views.KhoanChiDetail.components.ListChiTieuColumn
+import com.example.quanlychitieu.ui.components.CardChiTieu
+import com.example.quanlychitieu.ui.components.CardChiTieuSwipeToDelete
+import com.example.quanlychitieu.ui.components.CustomSnackbar
+import com.example.quanlychitieu.ui.components.SnackbarType
 import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun KhoanChiDetailScreen(
     navController: NavHostController,
-    id_khoanChi :Int,
+    id_khoanChi: Int,
     userId: Int,
     chiTieuViewModel: ChiTieuViewModel = hiltViewModel()
-){
+) {
     val chiTieuState by chiTieuViewModel.uiState.collectAsState()
+    var isRefreshing by remember { mutableStateOf(false) }
 
+    var snackbarVisible by remember { mutableStateOf(false) }
+    var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
+    var snackbarMessage by remember { mutableStateOf("") }
+
+    val deleteChiTieuState by chiTieuViewModel.deleteChiTieuState.collectAsState()
+
+    LaunchedEffect(deleteChiTieuState) {
+        if (deleteChiTieuState is UiState.Success) {
+            snackbarType = SnackbarType.SUCCESS
+            snackbarMessage = "Xóa chi tiêu thành công"
+            snackbarVisible = true
+
+            chiTieuViewModel.getChiTieuTheoKhoanChiCuaUser(id_khoanChi, userId)
+        } else if (deleteChiTieuState is UiState.Error) {
+            snackbarType = SnackbarType.ERROR
+            snackbarMessage = "Xóa chi tiêu thất bại"
+            snackbarVisible = true
+        }
+    }
+
+    // ✅ Gọi API ban đầu
     LaunchedEffect(id_khoanChi, userId) {
         if (userId > 0) {
+            chiTieuViewModel.getChiTieuTheoKhoanChiCuaUser(id_khoanChi, userId)
+        }
+    }
+
+    // ✅ Cập nhật định kỳ 15 phút
+    LaunchedEffect(Unit) {
+        if (userId > 0) {
             while (true) {
-                chiTieuViewModel.getChiTieuTheoKhoanChiCuaUser(id_khoanChi, userId)
                 delay(15 * 60 * 1000L)
+                chiTieuViewModel.getChiTieuTheoKhoanChiCuaUser(id_khoanChi, userId)
             }
         }
     }
 
-    val chhitieuList = when (chiTieuState) {
-        is UiState.Success -> (chiTieuState as UiState.Success<List<ChiTieuModel>>).data
-        else -> emptyList()
-    }
+    // ✅ Kéo để refresh
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            chiTieuViewModel.getChiTieuTheoKhoanChiCuaUser(id_khoanChi, userId)
+            isRefreshing = false
+        }
+    )
 
     Scaffold(
         containerColor = BackgroundColor,
         topBar = {
             Header(
-                navController,
-                Modifier.windowInsetsPadding(WindowInsets.statusBars),
+                navController = navController,
+                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                 title = "Danh sách chi tiêu",
-                userId
+                userId = userId
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
-
         Box(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
+                .pullRefresh(pullRefreshState) // ✅ Thêm pull-to-refresh
         ) {
-            when (chiTieuState) {
+            when (val state = chiTieuState) {
+                is UiState.Loading -> {
+                    DotLoading(modifier = Modifier.align(Alignment.Center))
+                }
+
                 is UiState.Success -> {
-                    if (chhitieuList.isEmpty()) {
-                        Text(
-                            text = "Chưa có chi tiêu nào",
-                            color = Color.Red,
-                            fontSize = 20.sp
-                        )
+                    val chiTieuList = state.data
+                    if (chiTieuList.isEmpty()) {
+                        // ✅ Dù trống vẫn có thể kéo để refresh
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Chưa có chi tiêu nào",
+                                color = Color.Gray,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            item {
-                                ListChiTieuColumn(
-                                    chhitieuList,
-                                    modifier = Modifier
+                            items(chiTieuList) { chiTieu ->
+                                CardChiTieuSwipeToDelete(
+                                    chitieu = chiTieu,
+                                    onDelete = { deletedItem ->
+                                        chiTieuViewModel.deleteChiTieu(deletedItem.id)
+                                    }
                                 )
                             }
+                            item { Spacer(modifier = Modifier.height(80.dp)) }
                         }
                     }
                 }
 
-                is UiState.Loading -> DotLoading()
-                else -> Log.d("Error", "Error")
+                is UiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = state.message,
+                            color = Color.Gray,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
+                else -> Unit
+            }
+
+            PullRefreshIndicator(
+                refreshing = isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+
+            AnimatedVisibility(
+                visible = snackbarVisible,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp),
+                enter = slideInVertically { it } + fadeIn(),
+                exit = slideOutVertically { it } + fadeOut()
+            ) {
+                CustomSnackbar(
+                    message = snackbarMessage,
+                    type = snackbarType
+                )
+            }
+
+            LaunchedEffect(snackbarVisible) {
+                if (snackbarVisible) {
+                    delay(3000)
+                    snackbarVisible = false
+                }
             }
         }
     }
 }
+
+
+
+
 
 
 @Composable

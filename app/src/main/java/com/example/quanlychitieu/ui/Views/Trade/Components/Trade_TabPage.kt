@@ -1,5 +1,6 @@
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -9,6 +10,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,11 +33,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,7 +63,9 @@ import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import kotlinx.coroutines.delay
 import java.time.LocalDate
+import kotlin.math.abs
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TradeTabPage(
     navController: NavController,
@@ -67,15 +73,16 @@ fun TradeTabPage(
     userId: Int
 ) {
     val tabs = listOf("Chi tiêu", "Thu nhập")
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
     Column(
         modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxSize()
     ) {
+        // --- Thanh tab ---
         Box(
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp, vertical = 10.dp)
                 .fillMaxWidth()
                 .background(
                     color = Color.White.copy(alpha = 0.2f),
@@ -84,8 +91,8 @@ fun TradeTabPage(
                 .padding(4.dp)
         ) {
             Row(
-                modifier = Modifier.wrapContentWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 tabs.forEachIndexed { index, title ->
                     val isSelected = selectedTabIndex == index
@@ -114,25 +121,50 @@ fun TradeTabPage(
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        // --- Nội dung có thể vuốt ---
+        var dragOffset by remember { mutableStateOf(0f) }
+        val dragThreshold = 100 // Vuốt ít nhất 100px mới đổi tab
 
-        AnimatedContent(
-            targetState = selectedTabIndex,
-            transitionSpec = {
-                if (targetState > initialState) {
-                    slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
-                } else {
-                    slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(selectedTabIndex) {
+                    detectHorizontalDragGestures(
+                        onDragEnd = {
+                            if (abs(dragOffset) > dragThreshold) {
+                                if (dragOffset > 0 && selectedTabIndex > 0) {
+                                    selectedTabIndex--
+                                } else if (dragOffset < 0 && selectedTabIndex < tabs.lastIndex) {
+                                    selectedTabIndex++
+                                }
+                            }
+                            dragOffset = 0f
+                        },
+                        onHorizontalDrag = { _, dragAmount ->
+                            dragOffset += dragAmount
+                        }
+                    )
                 }
-            },
-            label = ""
-        ) { index ->
-            when (index) {
-                0 -> ChiTieuPage(navController = navController,listKhoanChi = listKhoanChi, userId = userId)
-                1 -> ThuNhapPage(userId = userId)
+        ) {
+            AnimatedContent(
+                targetState = selectedTabIndex,
+                transitionSpec = {
+                    if (targetState > initialState) {
+                        slideInHorizontally { it } + fadeIn() togetherWith
+                                slideOutHorizontally { -it } + fadeOut()
+                    } else {
+                        slideInHorizontally { -it } + fadeIn() togetherWith
+                                slideOutHorizontally { it } + fadeOut()
+                    }
+                },
+                label = "tabSwipe"
+            ) { index ->
+                when (index) {
+                    0 -> ChiTieuPage(navController, listKhoanChi, userId)
+                    1 -> ThuNhapPage(userId)
+                }
             }
         }
-
     }
 }
 

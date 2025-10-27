@@ -36,7 +36,7 @@ fun ChucNangRow(
             CustomButton(
                 title = "Lịch sử chuyển tiền",
                 onClick = {
-
+                    navController.navigate(Screen.LichSuChuyenTien.createRoute(userId))
                 },
                 icon = Icons.Default.History
             )
