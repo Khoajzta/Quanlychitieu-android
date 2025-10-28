@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -98,7 +99,7 @@ fun CardKhoanChiDetail(
             ) {
                 Box(
                     modifier = Modifier
-                        .width(130.dp)
+                        .wrapContentWidth()
                         .clip(RoundedCornerShape(12.dp))
                         .background(color = Color.White.copy(0.5f)),
                     contentAlignment = Alignment.Center
@@ -109,7 +110,7 @@ fun CardKhoanChiDetail(
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
                         lineHeight = 20.sp,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier.padding(start = 10.dp, top = 10.dp, bottom = 10.dp, end = 15.dp)
                     )
                 }
                 TextButton(

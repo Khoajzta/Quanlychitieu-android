@@ -20,6 +20,7 @@ googleid = "1.1.1"
 runtime = "1.9.3"
 emoji2Bundled = "1.6.0"
 hiltAndroid = "2.57.1"
+uiText = "1.9.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ androidx-emoji2-bundled = { group = "androidx.emoji2", name = "emoji2-bundled", 
 
 dagger-hilt-android = {group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid"}
 dagger-hilt-android-compiler = {group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid"}
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

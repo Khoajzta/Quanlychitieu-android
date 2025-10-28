@@ -281,6 +281,7 @@ fun AddChiTieuPage(
             exit = slideOutVertically { it } + fadeOut()
         ) {
             CustomSnackbar(
+                modifier = Modifier.fillMaxWidth(),
                 message = snackbarMessage,
                 type = snackbarType
             )
@@ -398,6 +399,7 @@ fun AddThuNhapPage(
             exit = slideOutVertically { it } + fadeOut()
         ) {
             CustomSnackbar(
+                modifier = Modifier.fillMaxWidth(),
                 message = snackbarMessage,
                 type = snackbarType
             )

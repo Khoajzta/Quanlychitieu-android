@@ -71,7 +71,7 @@ fun EmojiPickerBottomSheet(
             Divider(
                 modifier = Modifier
                     .padding(vertical = 4.dp)
-                    .width(80.dp)
+                    .fillMaxWidth()
                     .height(1.dp)
                     .background(Color.LightGray)
             )

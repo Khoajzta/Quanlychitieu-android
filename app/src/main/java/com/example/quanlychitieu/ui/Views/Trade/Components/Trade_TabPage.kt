@@ -15,13 +15,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -47,18 +43,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.CardKhoanChi
-import com.example.quanlychitieu.Components.CardThuNhap
 import com.example.quanlychitieu.Components.CardThuNhapSwipeToDelete
 import com.example.quanlychitieu.Components.DotLoading
-import com.example.quanlychitieu.Utils.listKhoanChiConst.listKhoanChi
-import com.example.quanlychitieu.Utils.thuNhapListSample
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.ui.ViewModels.ThuNhapViewModel
 import com.example.quanlychitieu.ui.components.CustomSnackbar
 import com.example.quanlychitieu.ui.components.SnackbarType
 import com.example.quanlychitieu.ui.state.UiState
-
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import kotlinx.coroutines.delay
@@ -234,28 +226,42 @@ fun ThuNhapPage(
         else -> emptyList()
     }
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ){
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = PaddingBody),
-            verticalArrangement = Arrangement.spacedBy(SpaceMedium),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (listThuNhap.isEmpty()) {
-                item { Text("Chưa có thu nhập nào trong tháng", color = Color.Black) }
-            } else {
-                items(listThuNhap, key = { it.id }) { item ->
-                    CardThuNhapSwipeToDelete(
-                        thuNhap = item,
-                        onDelete = { thuNhap ->
-                            thuNhapViewModel.deleteThuNhap(thuNhap.id)
-                        }
+        when(thuNhapState){
+            is UiState.Success ->{
+                if(listThuNhap.isEmpty()){
+                    Text(
+                        text = "Chưa có thu nhập nào trong tháng",
+                        color = Color.Gray,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium
                     )
+                }else{
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = PaddingBody),
+                        verticalArrangement = Arrangement.spacedBy(SpaceMedium),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        items(listThuNhap, key = { it.id }) { item ->
+                            CardThuNhapSwipeToDelete(
+                                thuNhap = item,
+                                onDelete = { thuNhap ->
+                                    thuNhapViewModel.deleteThuNhap(thuNhap.id)
+                                }
+                            )
+                        }
+                    }
                 }
+
             }
+            is UiState.Error -> Text("Lỗi: ${(thuNhapState as UiState.Error).message}")
+            else -> DotLoading()
         }
+
 
         AnimatedVisibility(
             visible = snackbarVisible,

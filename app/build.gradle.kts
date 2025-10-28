@@ -68,6 +68,7 @@ dependencies {
     //hilt
 
     implementation(libs.dagger.hilt.android)
+    implementation(libs.androidx.compose.ui.text)
     kapt(libs.dagger.hilt.android.compiler)
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 

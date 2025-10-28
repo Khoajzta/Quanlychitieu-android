@@ -19,12 +19,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -86,7 +81,7 @@ fun ListKhoanChiScreen(
 
         ThongBaoDialog(
             title = "Xác nhận xóa",
-            message = "Bạn có chắc muốn xóa khoản chi ${khoanChiToDelete?.ten_khoanchi }?: và tất cả các chi tiêu trong đó không?",
+            message = "Bạn có chắc muốn xóa khoản chi và tất cả các chi tiêu trong đó không?",
             confirmText ="Đồng ý",
             dismissText = "Hủy",
             confirmButtonColor = Color.Red,
