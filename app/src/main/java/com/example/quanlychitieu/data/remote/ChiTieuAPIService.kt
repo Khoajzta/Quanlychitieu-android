@@ -1,8 +1,10 @@
 package com.example.quanlychitieu.data.remote
 
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
+import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
 import com.example.quanlychitieu.data.remote.dto.StatusResponse
 import com.example.quanlychitieu.domain.model.ChiTieuModel
+import com.example.quanlychitieu.domain.model.ThongKeChiTieuModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -27,6 +29,12 @@ interface ChiTieuAPIService {
         @Query("thang") thang: Int,
         @Query("nam") nam: Int
     ): BaseResponse<List<ChiTieuModel>>
+
+    @GET("api/chitieu/nam/{userId}")
+    suspend fun thongkeTheoNam(
+        @Path("userId") userId: Int,
+        @Query("nam") nam: Int
+    ): Response<BaseResponseMes<List<ThongKeChiTieuModel>>>
 
     @DELETE("api/chitieu/{id}")
     suspend fun deleteChiTieu(

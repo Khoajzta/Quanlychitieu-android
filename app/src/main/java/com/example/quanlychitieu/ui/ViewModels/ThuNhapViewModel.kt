@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
 import com.example.quanlychitieu.data.remote.dto.StatusResponse
 import com.example.quanlychitieu.domain.model.KhoanChiModel
+import com.example.quanlychitieu.domain.model.ThongKeThuNhapModel
 import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.domain.respository.ThuNhapRepository
 import com.example.quanlychitieu.ui.state.UiState
@@ -27,6 +28,8 @@ class ThuNhapViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<List<ThuNhapModel>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<ThuNhapModel>>> = _uiState
 
+    private val _thongKeTheoNamuiState = MutableStateFlow<UiState<List<ThongKeThuNhapModel>>>(UiState.Loading)
+    val thongKeTheoNamState: StateFlow<UiState<List<ThongKeThuNhapModel>>> = _thongKeTheoNamuiState
     var thuNhapCreateState by mutableStateOf<UiState<BaseResponse<ThuNhapModel>>>(UiState.Loading)
         private set
 
@@ -47,6 +50,25 @@ class ThuNhapViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _uiState.value = UiState.Error(e.message ?: "Lỗi kết nối")
+                Log.e("THU_NHAP_VIEWMODEL", "Exception: ${e.message}")
+            }
+        }
+    }
+
+    fun thongKeTheoNam(userId: Int, nam: Int) {
+        viewModelScope.launch {
+            _thongKeTheoNamuiState.value = UiState.Loading
+            try {
+                val result = repository.thongkeTheoNam(userId, nam)
+                if (result.success) {
+                    _thongKeTheoNamuiState.value = UiState.Success(result.data!!)
+                    Log.d("THU_NHAP_VIEWMODEL", "Dữ liệu nhận được: ${result.data}")
+                } else {
+                    _thongKeTheoNamuiState.value = UiState.Error(result.message ?: "Lỗi không xác định")
+                    Log.e("THU_NHAP_VIEWMODEL", "Lỗi từ API: ${result.message}")
+                }
+            } catch (e: Exception) {
+                _thongKeTheoNamuiState.value = UiState.Error(e.message ?: "Lỗi kết nối")
                 Log.e("THU_NHAP_VIEWMODEL", "Exception: ${e.message}")
             }
         }

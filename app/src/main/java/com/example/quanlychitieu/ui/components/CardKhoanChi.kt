@@ -43,15 +43,19 @@ fun CardKhoanChi(
         (item.tong_tien_da_chi.toFloat() / item.so_tien_du_kien.toFloat()).coerceIn(0f, 1f)
     }
 
+    val isOverLimit = item.tong_tien_da_chi > item.so_tien_du_kien
 
-    var backgroundGradientColors =
-        when(item.mausac) {
-            "red" -> listOf(Color(0xFFE57373),Color(0xFFF06292).copy(alpha = 0.35f))
-            "blue" -> listOf(Color(0xFF64B5F6),Color(0xFF4FC3F7).copy(alpha = 0.35f))
-            "green" -> listOf(Color(0xFF81C784),Color(0xFF4DB6AC).copy(alpha = 0.35f))
-            "yellow" -> listOf(Color(0xFFFFB74D),Color(0xFFFF8A65).copy(alpha = 0.35f))
-            else -> listOf(Color(0xFFA0C7E1),Color(0xFFB461CC).copy(alpha = 0.35f))
-        }
+    val backgroundGradientColors = when {
+        isOverLimit -> listOf( // ⚠️ nền cảnh báo đỏ
+            Color(0xFFFF4B2B),
+            Color(0xFFFF416C)
+        )
+        item.mausac == "red" -> listOf(Color(0xFFE57373), Color(0xFFF06292).copy(alpha = 0.35f))
+        item.mausac == "blue" -> listOf(Color(0xFF64B5F6), Color(0xFF4FC3F7).copy(alpha = 0.35f))
+        item.mausac == "green" -> listOf(Color(0xFF81C784), Color(0xFF4DB6AC).copy(alpha = 0.35f))
+        item.mausac == "yellow" -> listOf(Color(0xFFFFB74D), Color(0xFFFF8A65).copy(alpha = 0.35f))
+        else -> listOf(Color(0xFFA0C7E1), Color(0xFFB461CC).copy(alpha = 0.35f))
+    }
 
     Box(
         modifier = modifier
@@ -72,48 +76,48 @@ fun CardKhoanChi(
                     .clip(RoundedCornerShape(RadiusLarge))
                     .background(color = Color.White.copy(0.5f)),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Text(
                     text = "${item.emoji} ${item.ten_khoanchi}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
                     lineHeight = 20.sp,
-                    modifier = Modifier.padding(start = 10.dp, top = 10.dp, bottom = 10.dp, end = 15.dp)
+                    modifier = Modifier.padding(
+                        start = 10.dp,
+                        top = 10.dp,
+                        bottom = 10.dp,
+                        end = 15.dp
+                    )
                 )
             }
-
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "Dự kiến: ${formatCurrency(item.so_tien_du_kien)}",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.White.copy(alpha = 0.9f)
                 )
 
-
-//                Text(
-//                    text = "Đã dùng: ${formatCurrency(item.tong_tien_da_chi)}",
-//                    fontSize = 16.sp,
-//                    fontWeight = FontWeight.Medium,
-//                    color = Color.White.copy(alpha = 0.9f)
-//                )
 
                 Text(
-                    text = "Còn lại: ${formatCurrency(item.so_tien_du_kien - item.tong_tien_da_chi)}",
-                    fontSize = 16.sp,
+                    text = if (isOverLimit)
+                        "Quá hạn: ${formatCurrency(item.tong_tien_da_chi - item.so_tien_du_kien)}"
+                    else
+                        "Còn lại: ${formatCurrency(item.so_tien_du_kien - item.tong_tien_da_chi)}",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White.copy(alpha = 0.9f)
+                    color = Color.White.copy(alpha = 0.95f)
                 )
             }
+
+
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -141,6 +145,7 @@ fun CardKhoanChi(
         }
     }
 }
+
 
 @Composable
 @Preview

@@ -16,3 +16,12 @@ fun formatMoneyShort(amount: Int): String {
     }
     return if (amount < 0) "-$suffix" else "+$suffix"
 }
+
+
+fun formatCurrencyShort(value: Long): String {
+    return when {
+        value >= 1_000_000 -> String.format("%.1ftr", value / 1_000_000f)
+        value >= 1_000 -> String.format("%.0fk", value / 1_000f)
+        else -> value.toString()
+    }
+}

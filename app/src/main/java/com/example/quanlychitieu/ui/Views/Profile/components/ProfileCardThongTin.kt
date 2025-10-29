@@ -30,8 +30,9 @@ fun AppSettingCard(
     modifier: Modifier = Modifier,
     isDarkMode: MutableState<Boolean>
 ) {
-
-    val versionName = BuildConfig.VERSION_NAME
+    val context = LocalContext.current
+    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+    val versionName = packageInfo.versionName
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -50,7 +51,7 @@ fun AppSettingCard(
             // Phiên bản ứng dụng
             ProfileInfoRow(
                 title = "Phiên bản ứng dụng",
-                value = versionName,
+                value = versionName.toString(),
                 isDark = isDarkMode.value
             )
 

@@ -109,6 +109,10 @@ fun HomeScreen(
         .take(5)
 
     val taiKhoanList = (taiKhoanState as? UiState.Success)?.data ?: emptyList()
+    val thuNhapListTotal = ((thuNhapState as? UiState.Success)?.data ?: emptyList())
+    val chiTieuListTotal = ((chiTieuState as? UiState.Success)?.data ?: emptyList())
+
+
     val thuNhapList = ((thuNhapState as? UiState.Success)?.data ?: emptyList())
         .sortedByDescending { it.ngay_tao }
         .take(5)
@@ -117,11 +121,11 @@ fun HomeScreen(
         .sortedByDescending { it.ngay_tao }
         .take(5)
 
-
-    val tongThuNhap = thuNhapList.sumOf { it.so_tien }
-    val tongChiTieu = chiTieuList.sumOf { it.so_tien }
+    val tongThuNhap = thuNhapListTotal.sumOf { it.so_tien }
+    val tongChiTieu = chiTieuListTotal.sumOf { it.so_tien }
     val tongTienDuKien = khoanChiList.sumOf { it.so_tien_du_kien }
-    val (data, dates) = tinhTongTheoTuanVaNgay(chiTieuList, thuNhapList)
+
+    val (data, dates) = tinhTongTheoTuanVaNgay(chiTieuListTotal, thuNhapListTotal)
 
     //========================= REFRESH =========================================
     var isRefreshing by remember { mutableStateOf(false) }
@@ -211,10 +215,10 @@ fun HomeScreen(
                         )
                     }
 
-                    item { FunctionRow() }
+                    item { FunctionRow(navController, userId) }
 
                     // Biểu đồ thống kê
-                    if (thuNhapList.isNotEmpty() || chiTieuList.isNotEmpty()) {
+                    if (thuNhapListTotal.isNotEmpty() || chiTieuListTotal.isNotEmpty()) {
                         item {
                             BarChartColumn(data = data, dates = dates)
                         }

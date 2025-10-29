@@ -3,6 +3,7 @@ package com.example.quanlychitieu.data.remote
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
 import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
 import com.example.quanlychitieu.data.remote.dto.StatusResponse
+import com.example.quanlychitieu.domain.model.ThongKeThuNhapModel
 import com.example.quanlychitieu.domain.model.ThuNhapModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,6 +21,12 @@ interface ThuNhapAPIService {
         @Query("nam") nam: Int
     ): Response<BaseResponseMes<List<ThuNhapModel>>>
 
+
+    @GET("api/thunhap/nam/{userId}")
+    suspend fun thongKeTheoNam(
+        @Path("userId") userId: Int,
+        @Query("nam") nam: Int
+    ): Response<BaseResponseMes<List<ThongKeThuNhapModel>>>
     @POST("api/thunhap")
     suspend fun createThuNhap(@Body thunhap: ThuNhapModel): Response<BaseResponse<ThuNhapModel>>
 

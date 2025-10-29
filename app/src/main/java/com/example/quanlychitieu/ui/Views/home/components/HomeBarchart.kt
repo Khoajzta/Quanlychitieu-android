@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceLarge
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
+import formatCurrencyShort
 import formatMoneyShort
 import kotlin.math.abs
 
@@ -46,11 +47,11 @@ fun WeeklyFinanceBarChart(
     val maxAmount = (data.values.maxOfOrNull { abs(it) } ?: 0).coerceAtLeast(1)
     val dayKeys = listOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
 
-    // Chiều cao động: giá trị càng lớn, cột càng cao, nhưng có giới hạn
+    // Chiều cao động
     val dynamicHeight = remember(maxAmount) {
         val baseHeight = 120.dp
         val extraHeight = (maxAmount / 1_000_000).coerceAtMost(5) * 20 // thêm 20dp mỗi triệu
-        (baseHeight.value + extraHeight).dp.coerceAtMost(280.dp)       // giới hạn tối đa
+        (baseHeight.value + extraHeight).dp.coerceAtMost(280.dp)
     }
 
     Column(
@@ -63,7 +64,7 @@ fun WeeklyFinanceBarChart(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(dynamicHeight)
-                .padding(horizontal = SpaceMedium, vertical = SpaceLarge)
+                .padding(horizontal = 16.dp, vertical = 20.dp)
         ) {
             val barWidth = size.width / (dayKeys.size * 2)
             val centerY = size.height / 2
@@ -84,18 +85,15 @@ fun WeeklyFinanceBarChart(
 
                     val brush = if (amount > 0) {
                         Brush.verticalGradient(
-                            colors = listOf(Color(0xFF81C784), Color(0xFF2E7D32)),
-                            startY = centerY - barHeight,
-                            endY = centerY
+                            listOf(Color(0xFF4CAF50), Color(0xFF2E7D32))
                         )
                     } else {
                         Brush.verticalGradient(
-                            colors = listOf(Color(0xFFE57373), Color(0xFFC62828)),
-                            startY = centerY,
-                            endY = centerY + barHeight
+                            listOf(Color(0xFFE53935), Color(0xFFB71C1C))
                         )
                     }
 
+                    // Vẽ cột
                     drawRoundRect(
                         brush = brush,
                         topLeft = Offset(barX - barWidth / 2, centerY - if (amount > 0) barHeight else 0f),
@@ -103,24 +101,25 @@ fun WeeklyFinanceBarChart(
                         cornerRadius = CornerRadius(20f, 20f)
                     )
 
-                    // Hiển thị giá trị
+                    // 💰 Hiển thị giá trị như biểu đồ năm
                     val prefix = if (amount > 0) "+" else "-"
-                    val displayAmount =
-                        if (abs(amount) >= 1000) "$prefix${abs(amount) / 1000}k"
-                        else "$prefix$amount"
+                    val displayAmount = "$prefix${formatCurrencyShort(abs(amount))}"
 
                     val textPaint = Paint().asFrameworkPaint().apply {
                         isAntiAlias = true
                         textSize = 30f
-                        color = if (amount > 0) android.graphics.Color.parseColor("#2E7D32")
-                        else android.graphics.Color.parseColor("#C62828")
+                        color = if (amount > 0)
+                            android.graphics.Color.parseColor("#2E7D32")
+                        else
+                            android.graphics.Color.parseColor("#C62828")
                         textAlign = android.graphics.Paint.Align.CENTER
+                        isFakeBoldText = true
                     }
 
                     val textY = if (amount > 0) {
-                        centerY - barHeight - 8
+                        centerY - barHeight - 10
                     } else {
-                        centerY + barHeight + 28
+                        centerY + barHeight + 35
                     }
 
                     drawContext.canvas.nativeCanvas.drawText(
@@ -157,6 +156,7 @@ fun WeeklyFinanceBarChart(
         }
     }
 }
+
 
 
 

@@ -52,6 +52,7 @@ import com.example.quanlychitieu.Utils.formatDayDisplay
 import com.example.quanlychitieu.domain.model.KhoanChiModel
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
+import com.example.quanlychitieu.ui.theme.Dimens.SpaceLarge
 import com.example.quanlychitieu.ui.theme.PrimaryColor
 import formatCurrency
 
@@ -61,7 +62,7 @@ fun CardKhoanChiDetail(
     item: KhoanChiModel,
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
-    onDetailClick : () -> Unit = {}
+    onDetailClick: () -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -69,11 +70,17 @@ fun CardKhoanChiDetail(
         (item.tong_tien_da_chi.toFloat() / item.so_tien_du_kien.toFloat()).coerceIn(0f, 1f)
     }
 
-    val backgroundGradientColors = when (item.mausac) {
-        "red" -> listOf(Color(0xFFE57373), Color(0xFFF06292).copy(alpha = 0.35f))
-        "blue" -> listOf(Color(0xFF64B5F6), Color(0xFF4FC3F7).copy(alpha = 0.35f))
-        "green" -> listOf(Color(0xFF81C784), Color(0xFF4DB6AC).copy(alpha = 0.35f))
-        "yellow" -> listOf(Color(0xFFFFB74D), Color(0xFFFF8A65).copy(alpha = 0.35f))
+    val isOverLimit = item.tong_tien_da_chi > item.so_tien_du_kien
+
+    val backgroundGradientColors = when {
+        isOverLimit -> listOf( // ⚠️ nền cảnh báo đỏ
+            Color(0xFFFF4B2B),
+            Color(0xFFFF416C)
+        )
+        item.mausac == "red" -> listOf(Color(0xFFE57373), Color(0xFFF06292).copy(alpha = 0.35f))
+        item.mausac == "blue" -> listOf(Color(0xFF64B5F6), Color(0xFF4FC3F7).copy(alpha = 0.35f))
+        item.mausac == "green" -> listOf(Color(0xFF81C784), Color(0xFF4DB6AC).copy(alpha = 0.35f))
+        item.mausac == "yellow" -> listOf(Color(0xFFFFB74D), Color(0xFFFF8A65).copy(alpha = 0.35f))
         else -> listOf(Color(0xFFA0C7E1), Color(0xFFB461CC).copy(alpha = 0.35f))
     }
 
@@ -81,10 +88,10 @@ fun CardKhoanChiDetail(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(RadiusXL))
             .background(Brush.horizontalGradient(colors = backgroundGradientColors))
-            .clickable { expanded = !expanded } // nhấn vào card mở rộng
-            .animateContentSize() // hiệu ứng mượt
+            .clickable { expanded = !expanded }
+            .animateContentSize()
             .padding(16.dp)
     ) {
         Column(
@@ -113,6 +120,7 @@ fun CardKhoanChiDetail(
                         modifier = Modifier.padding(start = 10.dp, top = 10.dp, bottom = 10.dp, end = 15.dp)
                     )
                 }
+
                 TextButton(
                     modifier = Modifier,
                     contentPadding = PaddingValues(0.dp),
@@ -122,7 +130,6 @@ fun CardKhoanChiDetail(
                         "Xem chi tiết",
                         color = Color.White,
                     )
-
                     Icon(
                         Icons.Default.ArrowForwardIos,
                         contentDescription = null,
@@ -130,10 +137,10 @@ fun CardKhoanChiDetail(
                         modifier = Modifier.size(20.dp)
                     )
                 }
-
-
-
             }
+
+            // Hiển thị ngày bắt đầu và kết thúc
+
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -143,16 +150,19 @@ fun CardKhoanChiDetail(
             ) {
                 Text(
                     text = "Dự kiến: ${formatCurrency(item.so_tien_du_kien)}",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.White.copy(alpha = 0.9f)
                 )
 
                 Text(
-                    text = "Còn lại: ${formatCurrency(item.so_tien_du_kien - item.tong_tien_da_chi)}",
-                    fontSize = 16.sp,
+                    text = if (isOverLimit)
+                        "Quá hạn: ${formatCurrency(item.tong_tien_da_chi - item.so_tien_du_kien)}"
+                    else
+                        "Còn lại: ${formatCurrency(item.so_tien_du_kien - item.tong_tien_da_chi)}",
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White.copy(alpha = 0.9f)
+                    color = Color.White.copy(alpha = 0.95f)
                 )
             }
 
@@ -163,15 +173,6 @@ fun CardKhoanChiDetail(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.8f),
-                    modifier = Modifier.size(25.dp)
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
@@ -212,6 +213,7 @@ fun CardKhoanChiDetail(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            // Thanh tiến độ
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -234,7 +236,7 @@ fun CardKhoanChiDetail(
                 )
             }
 
-            // Hiện nút sửa - xóa khi mở rộng
+            // Nút chỉnh sửa / xóa
             AnimatedVisibility(visible = expanded) {
                 Row(
                     modifier = Modifier
@@ -247,26 +249,21 @@ fun CardKhoanChiDetail(
                         modifier = Modifier.padding(end = 8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(0.5f))
                     ) {
-                        Text(
-                            "Sửa",
-                            color = Color.Black
-                        )
+                        Text("Sửa", color = Color.Black)
                     }
 
                     Button(
                         onClick = onDelete,
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                     ) {
-                        Text(
-                            "Xóa",
-                            color = Color.White
-                        )
+                        Text("Xóa", color = Color.White)
                     }
                 }
             }
         }
     }
 }
+
 
 
 @Composable

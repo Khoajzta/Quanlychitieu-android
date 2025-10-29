@@ -1,4 +1,5 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingMedium
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusFull
@@ -26,7 +28,8 @@ import com.example.quanlychitieu.ui.theme.Dimens.RadiusFull
 fun CardFunction(
     modifier: Modifier = Modifier,
     title: String,
-    gradientColors: List<Color>
+    gradientColors: List<Color>,
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -37,7 +40,8 @@ fun CardFunction(
                     start = Offset(0f, 0f),
                     end = Offset(300f, 300f)
                 )
-            ),
+            )
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -54,7 +58,10 @@ fun CardFunction(
 }
 
 @Composable
-fun FunctionRow() {
+fun FunctionRow(
+    navController: NavController,
+    userId: Int
+) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(PaddingMedium),
@@ -65,7 +72,10 @@ fun FunctionRow() {
                 gradientColors = listOf(
                     Color(0xFF4C9AFF),
                     Color(0xFF6BB8FF)
-                )
+                ),
+                onClick = {
+                    navController.navigate(Screen.ThongKeNam.createRoute(userId = userId))
+                }
             )
         }
         item {
@@ -103,6 +113,5 @@ fun FunctionRow() {
 @Composable
 @Preview()
 fun PreviewFunctionRow() {
-    FunctionRow()
-//    CardFunction(modifier = Modifier, title = "Thống kê trong năm")
+
 }

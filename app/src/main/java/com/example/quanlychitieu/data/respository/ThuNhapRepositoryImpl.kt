@@ -6,6 +6,7 @@ import com.example.quanlychitieu.data.remote.ThuNhapAPIService
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
 import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
 import com.example.quanlychitieu.data.remote.dto.StatusResponse
+import com.example.quanlychitieu.domain.model.ThongKeThuNhapModel
 import com.example.quanlychitieu.domain.model.ThuNhapModel
 import com.example.quanlychitieu.domain.respository.ThuNhapRepository
 import javax.inject.Inject
@@ -20,6 +21,18 @@ class ThuNhapRepositoryImpl @Inject constructor(
         nam: Int
     ): BaseResponseMes<List<ThuNhapModel>> {
         val response = api.getThuNhapTheoThang(userId, thang, nam)
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty body")
+        } else {
+            throw Exception("API error ${response.code()}")
+        }
+    }
+
+    override suspend fun thongkeTheoNam(
+        userId: Int,
+        nam: Int
+    ): BaseResponseMes<List<ThongKeThuNhapModel>> {
+        val response = api.thongKeTheoNam(userId, nam)
         if (response.isSuccessful) {
             return response.body() ?: throw Exception("Empty body")
         } else {

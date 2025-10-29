@@ -20,6 +20,7 @@ import com.example.quanlychitieu.ui.Views.AddTaiKhoan.AddTaiKhoanScreen
 import com.example.quanlychitieu.ui.Views.ChuyenTien.ChuyenTienScreen
 import com.example.quanlychitieu.ui.Views.KhoanChiDetail.KhoanChiDetailScreen
 import com.example.quanlychitieu.ui.Views.LichSuChuyenTien.LichSuChuyenTienScreen
+import com.example.quanlychitieu.ui.Views.ThongKeTheoNam.ThongKeTheoNamScreen
 import com.example.quanlychitieu.ui.Views.UpdateKhoanChi.UpdateKhoanChiScreen
 
 
@@ -277,6 +278,24 @@ fun AppNavGraph(navController: NavHostController) {
             val userId = backStackEntry.arguments?.getInt("userId") ?: 0
 
             LichSuChuyenTienScreen(
+                navController = navController,
+                userId = userId,
+            )
+        }
+
+        composable(
+            route = Screen.ThongKeNam.route,
+            enterTransition = truotVaoTuPhai(),
+            exitTransition = truotRaSangTrai(),
+            popEnterTransition = truotVaoTuTrai(),
+            popExitTransition = truotRaSangPhai(),
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+
+            ThongKeTheoNamScreen(
                 navController = navController,
                 userId = userId,
             )

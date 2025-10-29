@@ -111,6 +111,8 @@ dependencies {
     //load ảnh url
     implementation("io.coil-kt:coil-compose:2.7.0")
 
+
+
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.foundation.layout)

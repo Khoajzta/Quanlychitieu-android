@@ -3,8 +3,10 @@ package com.example.quanlychitieu.data.respository
 import android.util.Log
 import com.example.quanlychitieu.data.remote.ChiTieuAPIService
 import com.example.quanlychitieu.data.remote.dto.BaseResponse
+import com.example.quanlychitieu.data.remote.dto.BaseResponseMes
 import com.example.quanlychitieu.data.remote.dto.StatusResponse
 import com.example.quanlychitieu.domain.model.ChiTieuModel
+import com.example.quanlychitieu.domain.model.ThongKeChiTieuModel
 import com.example.quanlychitieu.domain.respository.ChiTieuRespository
 import javax.inject.Inject
 
@@ -70,6 +72,18 @@ class ChiTieuRepositoryImpl @Inject constructor(
                 success = false,
                 message = e.message ?: "Lỗi không xác định"
             )
+        }
+    }
+
+    override suspend fun thongKeTheoNam(
+        userId: Int,
+        nam: Int
+    ): BaseResponseMes<List<ThongKeChiTieuModel>> {
+        val response = api.thongkeTheoNam(userId, nam)
+        if (response.isSuccessful) {
+            return response.body() ?: throw Exception("Empty body")
+        } else {
+            throw Exception("API error ${response.code()}")
         }
     }
 }
