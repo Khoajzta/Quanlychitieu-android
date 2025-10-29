@@ -44,7 +44,7 @@ fun KhoanChiMoreRow(
             }
         ) {
             Text(
-                text = "Xem thêm",
+                text = "Xem tất cả",
                 fontWeight = FontWeight.Bold,
                 color = PrimaryColor,
                 fontSize = 15.sp

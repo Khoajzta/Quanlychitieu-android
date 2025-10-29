@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -54,6 +55,7 @@ fun CardTaikhoanPhu(
                 if (fullWidth) Modifier.fillMaxWidth()
                 else Modifier.width(370.dp) // 👈 khi ở LazyRow
             )
+            .shadow(5.dp, RoundedCornerShape(RadiusXL))
             .clip(RoundedCornerShape(RadiusXL))
             .background(
                 brush = Brush.linearGradient(

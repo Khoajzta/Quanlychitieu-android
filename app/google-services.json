@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "421455894843-pmccv37ktcopbc2230k8rjsljj56c3mj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.quanlychitieu",
+            "certificate_hash": "09e43117208e593084046d4b6986b784737a07fa"
+          }
+        },
+        {
+          "client_id": "421455894843-vvvpshbsusevcfocn43jlmj1619uvhga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.quanlychitieu",
+            "certificate_hash": "c07ef2c69fb76f427ab66f164070dce99ed276b5"
+          }
+        },
+        {
           "client_id": "421455894843-e6m49anlu68s7mg3glcrr953it6t1cg4.apps.googleusercontent.com",
           "client_type": 3
         }

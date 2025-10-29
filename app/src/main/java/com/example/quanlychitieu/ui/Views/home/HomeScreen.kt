@@ -203,7 +203,7 @@ fun HomeScreen(
                         .fillMaxSize()
                         .background(Color(0xFFC7E6F6)),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(SpaceMedium)
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     // Tổng quan tài khoản
                     item {
@@ -241,12 +241,12 @@ fun HomeScreen(
 
                     // Thu nhập
                     if (thuNhapList.isNotEmpty()) {
-                        item { HomeThuNhapColumn(thuNhapList) }
+                        item { HomeThuNhapColumn(navController,userId,thuNhapList) }
                     }
 
                     // Chi tiêu
                     if (chiTieuList.isNotEmpty()) {
-                        item { HomeChiTieuColumn(chiTieuList) }
+                        item { HomeChiTieuColumn(navController,userId,chiTieuList) }
                     }
 
                     item { Spacer(Modifier.height(200.dp)) }

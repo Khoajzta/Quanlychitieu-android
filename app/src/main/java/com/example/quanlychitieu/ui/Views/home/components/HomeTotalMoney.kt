@@ -37,7 +37,7 @@ fun HomeTotalMoney(
         modifier = modifier
             .height(200.dp)
             .width(370.dp)
-            .shadow(12.dp, RoundedCornerShape(RadiusXL))
+            .shadow(5.dp, RoundedCornerShape(RadiusXL))
             .clip(RoundedCornerShape(RadiusXL))
             .background(
                 Brush.horizontalGradient(

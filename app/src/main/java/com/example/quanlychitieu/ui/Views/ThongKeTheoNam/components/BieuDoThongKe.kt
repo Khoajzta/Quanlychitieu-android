@@ -63,6 +63,7 @@ fun BieuDoThongKe(
                 item {
                     Canvas(
                         modifier = Modifier
+                            .padding(top = 10.dp)
                             .width((thongKeList.size * (barWidth * 2 + barSpace)))
                             .height(chartHeight)
                     ) {

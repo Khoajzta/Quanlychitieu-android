@@ -46,4 +46,12 @@ sealed class Screen(val route: String) {
     object ThongKeNam : Screen("thong_ke_nam/{userId}"){
         fun createRoute(userId: Int) = "thong_ke_nam/$userId"
     }
+
+    object ListThuNhapTheoThang : Screen("listThuNhaptheoThang/{userId}"){
+        fun createRoute(userId: Int) = "listThuNhaptheoThang/$userId"
+    }
+
+    object ListChiTieuTheoThang : Screen("listChiTieutheoThang/{userId}"){
+        fun createRoute(userId: Int) = "listChiTieutheoThang/$userId"
+    }
 }

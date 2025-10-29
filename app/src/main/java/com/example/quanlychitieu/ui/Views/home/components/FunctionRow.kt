@@ -78,33 +78,6 @@ fun FunctionRow(
                 }
             )
         }
-        item {
-            CardFunction(
-                title = "Xem lịch sử chi tiêu",
-                gradientColors = listOf(
-                    Color(0xFF9B8CFF),
-                    Color(0xFFC6A8FF)
-                )
-            )
-        }
-        item {
-            CardFunction(
-                title = "Thêm khoản chi khoản thu",
-                gradientColors = listOf(
-                    Color(0xFFFFA96B),
-                    Color(0xFFFFC18C)
-                )
-            )
-        }
-        item {
-            CardFunction(
-                title = "Quản lý danh mục",
-                gradientColors = listOf(
-                    Color(0xFF4CD3C2),
-                    Color(0xFF6BE8D8)
-                )
-            )
-        }
     }
 }
 
