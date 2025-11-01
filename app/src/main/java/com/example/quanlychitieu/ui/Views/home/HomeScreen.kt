@@ -1,3 +1,5 @@
+import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,10 +44,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.quanlychitieu.Components.CustomButton
 import com.example.quanlychitieu.Components.DotLoading
+import com.example.quanlychitieu.MainActivity
 import com.example.quanlychitieu.Utils.tinhTongTheoTuanVaNgay
 import com.example.quanlychitieu.ViewModels.KhoanChiViewModel
 import com.example.quanlychitieu.Views.home.components.BottomNavigationBar
 import com.example.quanlychitieu.Views.home.components.HeaderMain
+import com.example.quanlychitieu.data.local.Notification.NotificationReceiver
 import com.example.quanlychitieu.ui.ViewModels.ChiTieuViewModel
 import com.example.quanlychitieu.ui.ViewModels.NguoiDungViewModel
 import com.example.quanlychitieu.ui.ViewModels.TaiKhoanViewModel
@@ -100,6 +106,7 @@ fun HomeScreen(
             }
         }
     }
+
 
     //========================= CHUYỂN UI STATE SANG LIST =======================
     val khoanChiList = (khoanChiState as? UiState.Success)?.data ?: emptyList()
@@ -215,6 +222,8 @@ fun HomeScreen(
                         )
                     }
 
+
+
                     item { FunctionRow(navController, userId) }
 
                     // Biểu đồ thống kê
@@ -250,6 +259,7 @@ fun HomeScreen(
                     }
 
                     item { Spacer(Modifier.height(200.dp)) }
+
                 }
 
                 PullRefreshIndicator(

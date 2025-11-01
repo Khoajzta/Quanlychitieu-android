@@ -103,7 +103,7 @@ fun LoginScreen(
                     )
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_logo),
+                    painter = painterResource(R.drawable.icon_3),
                     contentDescription = "App Logo",
                     modifier = Modifier.size(120.dp),
                     contentScale = ContentScale.Fit

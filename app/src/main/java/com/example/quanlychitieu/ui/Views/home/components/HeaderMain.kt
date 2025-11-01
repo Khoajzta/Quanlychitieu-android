@@ -95,23 +95,23 @@ fun HeaderMain(
             }
 
         }
-
-        Box(
-            modifier = Modifier
-                .shadow(12.dp, RoundedCornerShape(RadiusFull))
-                .clip(RoundedCornerShape(RadiusFull))
-                .background(color = Color(0xFF42A7E8))
-                .padding(5.dp)
-                .size(35.dp),
-            contentAlignment = Alignment.Center
-        ){
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(30.dp)
-            )
-        }
+//
+//        Box(
+//            modifier = Modifier
+//                .shadow(12.dp, RoundedCornerShape(RadiusFull))
+//                .clip(RoundedCornerShape(RadiusFull))
+//                .background(color = Color(0xFF42A7E8))
+//                .padding(5.dp)
+//                .size(35.dp),
+//            contentAlignment = Alignment.Center
+//        ){
+//            Icon(
+//                imageVector = Icons.Default.Notifications,
+//                contentDescription = null,
+//                tint = Color.White,
+//                modifier = Modifier.size(30.dp)
+//            )
+//        }
 
 
     }
