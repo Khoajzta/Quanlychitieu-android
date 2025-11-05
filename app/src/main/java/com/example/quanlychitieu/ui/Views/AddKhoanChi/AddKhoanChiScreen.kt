@@ -2,6 +2,8 @@ package com.example.quanlychitieu.Views.AddKhoanChi
 
 import EmojiPickerBottomSheet
 import Header
+import android.text.format.DateUtils.formatDateRange
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -40,6 +42,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.emoji2.text.EmojiCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -61,6 +64,8 @@ import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import formatCurrency
 import kotlinx.coroutines.delay
+import unifiedToEmoji
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,16 +83,39 @@ fun AddKhoanChiScreen(
 
     var showEmojiDialog by remember { mutableStateOf(false) }
 
-    var ngayBatDau by remember { mutableStateOf<Long?>(null) }
-    var ngayKetThuc by remember { mutableStateOf<Long?>(null) }
-
     var snackbarVisible by remember { mutableStateOf(false) }
     var snackbarType by remember { mutableStateOf(SnackbarType.SUCCESS) }
     var snackbarMessage by remember { mutableStateOf("") }
 
     val createKhoanChiUiState = khoanchiViewModel.createKhoanChiState
-
     val colorOptions = listOf("red", "blue", "green", "yellow")
+
+    // ✅ Lấy tháng hiện tại
+    val currentDate = remember { Calendar.getInstance() }
+
+    val firstDayOfMonth = remember {
+        Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    val lastDayOfMonth = remember {
+        Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
+    }
+
+    Log.d("firstDayOfMonth", "firstDayOfMonth: $firstDayOfMonth")
+    Log.d("lastDayOfMonth", "lastDayOfMonth: $lastDayOfMonth")
+
 
     Scaffold(
         containerColor = BackgroundColor,
@@ -95,7 +123,8 @@ fun AddKhoanChiScreen(
             Header(
                 navController,
                 Modifier.windowInsetsPadding(WindowInsets.statusBars),
-                title = "Thêm khoản chi"
+                title = "Thêm khoản chi",
+                userId = userId
             )
         },
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
@@ -110,14 +139,14 @@ fun AddKhoanChiScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(SpaceMedium)
             ) {
-                // Tên khoản chi
+                // Nhập tên khoản chi
                 CusTomTextField(
                     value = tenKhoanChiInput,
                     onValueChange = { tenKhoanChiInput = it },
                     leadingIcon = {
                         Text(
                             text = EmojiCompat.get().process(emojiInput).toString(),
-                            fontSize = MaterialTheme.typography.headlineMedium.fontSize
+                            fontSize = 20.sp,
                         )
                     },
                     placeholder = "Tên khoản chi",
@@ -128,19 +157,10 @@ fun AddKhoanChiScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                CustomDatePicker(
-                    selectedDate = ngayBatDau,
-                    placeholder = "Ngày bắt đầu",
-                    onDateSelected = { ngayBatDau = it }
-                )
+                // ✅ Hiển thị khoảng thời gian tự động
+                
 
-                CustomDatePicker(
-                    selectedDate = ngayKetThuc,
-                    placeholder = "Ngày kết thúc",
-                    onDateSelected = { ngayKetThuc = it }
-                )
-
-
+                // Nhập số tiền
                 CusTomTextField(
                     value = if (sotien == 0L) "" else formatCurrency(sotien),
                     onValueChange = { newValue ->
@@ -148,12 +168,15 @@ fun AddKhoanChiScreen(
                         sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
                     },
                     leadingIcon = {
-                        Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+                        Text(
+                            text = "💵",
+                            fontSize = 20.sp,
+                        )
                     },
-                    placeholder = "Số tiền",
+                    placeholder = "Số tiền dự kiến",
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Done
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -170,26 +193,20 @@ fun AddKhoanChiScreen(
                     onColorSelected = { selectedColor = it }
                 )
 
+                // Nút thêm khoản chi
                 CustomButton(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     title = "Thêm khoản chi",
                     icon = Icons.Default.AddCircle,
                     onClick = {
-                        if (
-                            tenKhoanChiInput.isNotBlank() &&
-                            selectedColor.isNotBlank() &&
-                            ngayBatDau != null &&
-                            ngayKetThuc != null &&
-                            sotien > 0
-                        ) {
+                        if (tenKhoanChiInput.isNotBlank() && sotien > 0) {
                             val khoanchinew = KhoanChiModel(
                                 id = 0,
                                 ten_khoanchi = tenKhoanChiInput,
                                 id_nguoidung = userId,
                                 mausac = selectedColor,
-                                ngay_batdau = formatMillisToDB(ngayBatDau),
-                                ngay_ketthuc = formatMillisToDB(ngayKetThuc),
+                                ngay_batdau = formatMillisToDB(firstDayOfMonth),
+                                ngay_ketthuc = formatMillisToDB(lastDayOfMonth),
                                 so_tien_du_kien = sotien,
                                 emoji = emojiInput
                             )
@@ -220,13 +237,9 @@ fun AddKhoanChiScreen(
                 enter = slideInVertically { it } + fadeIn(),
                 exit = slideOutVertically { it } + fadeOut()
             ) {
-                CustomSnackbar(
-                    message = snackbarMessage,
-                    type = snackbarType
-                )
+                CustomSnackbar(message = snackbarMessage, type = snackbarType)
             }
 
-            // ✅ Tự động ẩn snackbar sau vài giây
             LaunchedEffect(snackbarVisible) {
                 if (snackbarVisible) {
                     delay(3000)
@@ -234,7 +247,6 @@ fun AddKhoanChiScreen(
                 }
             }
 
-            // ✅ Lắng nghe UI state khi tạo khoản chi
             LaunchedEffect(createKhoanChiUiState) {
                 when (createKhoanChiUiState) {
                     is UiState.Success -> {

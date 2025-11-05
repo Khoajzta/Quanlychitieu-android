@@ -3,6 +3,7 @@ package com.example.quanlychitieu.ui.Views.home.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,9 +23,10 @@ fun BarChartColumn(
     ) {
         Text(
             "Thống kê trong tuần",
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
             color = Color.Black,
-            fontSize = 15.sp
+            fontSize = 16.sp,
+            modifier = Modifier.padding(horizontal = 10.dp)
         )
         Spacer(Modifier.height(10.dp))
         WeeklyFinanceBarChart(data = data, dates = dates)

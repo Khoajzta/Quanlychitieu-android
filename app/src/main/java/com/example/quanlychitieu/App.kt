@@ -8,8 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
-import androidx.emoji2.bundled.BundledEmojiCompatConfig
-import androidx.emoji2.text.EmojiCompat
 import com.example.quanlychitieu.data.local.Notification.NotificationReceiver
 import dagger.hilt.android.HiltAndroidApp
 import java.util.Calendar
@@ -90,8 +88,7 @@ class App : Application() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         return alarmManager.canScheduleExactAlarms()
     }
-
-
 }
+
 
 

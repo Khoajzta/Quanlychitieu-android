@@ -69,6 +69,7 @@ dependencies {
 
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.compose.ui.text)
+    implementation(libs.firebase.firestore)
     kapt(libs.dagger.hilt.android.compiler)
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
@@ -112,6 +113,17 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
 
 
+// Nếu bạn muốn dùng Compose + Lifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.5")
+
+    implementation("com.google.guava:guava:31.1-android")
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+
+    //Svg
+    implementation("io.coil-kt:coil-svg:2.7.0")
+
+// Compose permissions (hỗ trợ yêu cầu quyền)
+    implementation("com.google.accompanist:accompanist-permissions:0.37.3")
 
     implementation(libs.firebase.crashlytics.buildtools)
     implementation(libs.androidx.ui.graphics)

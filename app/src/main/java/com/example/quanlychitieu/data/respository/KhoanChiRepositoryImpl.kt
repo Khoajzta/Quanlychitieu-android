@@ -23,6 +23,21 @@ class KhoanChiRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getKhoanChiTheoThangVaNam(
+        userId: Int,
+        thang: Int,
+        nam: Int
+    ): List<KhoanChiModel> {
+        val response = api.getKhoanChiTheoThangVaNam(userId,thang,nam)
+        Log.d("API_TEST", "Response: $response")
+        if (response.success) {
+            return response.data
+        } else {
+            throw Exception("API trả về success = false")
+        }
+    }
+
+
     override suspend fun getKhoanChiById(id_khoanchi: Int): KhoanChiModel {
         val response = api.getKhoanChiByID(id_khoanchi)
         Log.d("API_TEST", "Response: $response")

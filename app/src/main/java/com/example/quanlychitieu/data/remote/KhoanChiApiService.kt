@@ -15,6 +15,8 @@ import retrofit2.http.Path
 interface KhoanChiApiService{
     @GET("api/khoanchi/user/{userId}")
     suspend fun getKhoanChiByUser(@Path("userId") userId: Int): BaseResponse<List<KhoanChiModel>>
+    @GET("api/khoanchi/{userId}/{thang}/{nam}")
+    suspend fun getKhoanChiTheoThangVaNam(@Path("userId") userId: Int, @Path("thang") thang:Int ,@Path("nam") nam:Int): BaseResponse<List<KhoanChiModel>>
 
     @GET("api/khoanchi/{id_khoanchi}")
     suspend fun getKhoanChiByID(@Path("id_khoanchi") id_khoanchi: Int): BaseResponse<KhoanChiModel>

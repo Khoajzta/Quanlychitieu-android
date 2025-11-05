@@ -78,28 +78,53 @@ fun HomeScreen(
     chiTieuViewModel: ChiTieuViewModel = hiltViewModel()
 ) {
     //========================= STATES ==========================================
-    val khoanChiState by khoanChiViewModel.uiState.collectAsState()
+    val khoanChiState by khoanChiViewModel.loadtheothang.collectAsState()
     val taiKhoanState by taiKhoanViewModel.uiState.collectAsState()
     val thuNhapState by thuNhapViewModel.uiState.collectAsState()
+    val thuNhapTruocState by thuNhapViewModel.uiStateTheoThangTruoc.collectAsState()
     val chiTieuState by chiTieuViewModel.uiStateTheoThang.collectAsState()
+    val chiTieuTruocState by chiTieuViewModel.uiStateTheoThangTruoc.collectAsState()
     val nguoiDungState = nguoidungViewModel.getByIdState
 
+//========================= NGÀY THÁNG HIỆN TẠI ==============================
     val currentDate = LocalDate.now()
     val currentMonth = currentDate.monthValue
     val currentYear = currentDate.year
 
-    //========================= TẢI DỮ LIỆU =====================================
+    val previousMonth = if (currentMonth == 1) 12 else currentMonth - 1
+    val previousYear = if (currentMonth == 1) currentYear - 1 else currentYear
+
+
+//========================= TẢI DỮ LIỆU =====================================
     LaunchedEffect(userId) {
         if (userId > 0) {
+
             suspend fun loadAll() {
-                khoanChiViewModel.loadKhoanChi(userId)
+                // Load dữ liệu hiện tại
+                khoanChiViewModel.loadKhoanChiTheoThang(userId, currentMonth, currentYear)
                 taiKhoanViewModel.loadTaiKhoans(userId)
                 nguoidungViewModel.getNguoiDungByID(userId)
+
+                // Kiểm tra nếu tuần hiện tại bắt đầu ở tháng trước → load thêm dữ liệu tháng trước
+                val startOfWeek = currentDate.with(java.time.DayOfWeek.MONDAY)
+                val isCrossMonth = startOfWeek.monthValue != currentMonth
+
+                // Load chi tiêu & thu nhập
                 thuNhapViewModel.getThuNhapTheoThang(userId, currentMonth, currentYear)
                 chiTieuViewModel.getChiTieuTheoThangVaNam(userId, currentMonth, currentYear)
+
+                if (isCrossMonth) {
+                    thuNhapViewModel.getThuNhapTheoThangTruoc(userId, previousMonth, previousYear)
+                    chiTieuViewModel.getChiTieuTheoThangTruoc(userId, previousMonth, previousYear)
+                }
+
+
             }
 
-            loadAll() // Lần đầu
+            // Lần đầu load
+            loadAll()
+
+            // Cập nhật định kỳ mỗi 15 phút
             while (true) {
                 delay(15 * 60 * 1000L)
                 loadAll()
@@ -108,31 +133,46 @@ fun HomeScreen(
     }
 
 
-    //========================= CHUYỂN UI STATE SANG LIST =======================
+//========================= CHUYỂN UI STATE SANG LIST =======================
     val khoanChiList = (khoanChiState as? UiState.Success)?.data ?: emptyList()
+    val taiKhoanList = (taiKhoanState as? UiState.Success)?.data ?: emptyList()
 
+    val thuNhapListTotal = ((thuNhapState as? UiState.Success)?.data ?: emptyList())
+    val thuNhapTruocList = ((thuNhapTruocState as? UiState.Success)?.data ?: emptyList())
+    val chiTieuListTotal = ((chiTieuState as? UiState.Success)?.data ?: emptyList())
+    val chiTieuTruocList = ((chiTieuTruocState as? UiState.Success)?.data ?: emptyList())
+
+    Log.d("chiTieuTruocList", "thuNhapTruocList: $thuNhapTruocList")
+    Log.d("chiTieuTruocList", "chiTieuTruocList: $chiTieuTruocList")
+
+
+// Lấy top 5 khoản chi có nhiều chi tiêu nhất
     val top5KhoanChi = khoanChiList
         .sortedByDescending { it.so_luong_chi_tieu }
         .take(5)
 
-    val taiKhoanList = (taiKhoanState as? UiState.Success)?.data ?: emptyList()
-    val thuNhapListTotal = ((thuNhapState as? UiState.Success)?.data ?: emptyList())
-    val chiTieuListTotal = ((chiTieuState as? UiState.Success)?.data ?: emptyList())
-
-
-    val thuNhapList = ((thuNhapState as? UiState.Success)?.data ?: emptyList())
+// 5 thu nhập gần nhất
+    val thuNhapList = thuNhapListTotal
         .sortedByDescending { it.ngay_tao }
         .take(5)
 
-    val chiTieuList = ((chiTieuState as? UiState.Success)?.data ?: emptyList())
+// 5 chi tiêu gần nhất
+    val chiTieuList = chiTieuListTotal
         .sortedByDescending { it.ngay_tao }
         .take(5)
 
+// Tính tổng tiền
     val tongThuNhap = thuNhapListTotal.sumOf { it.so_tien }
     val tongChiTieu = chiTieuListTotal.sumOf { it.so_tien }
     val tongTienDuKien = khoanChiList.sumOf { it.so_tien_du_kien }
 
-    val (data, dates) = tinhTongTheoTuanVaNgay(chiTieuListTotal, thuNhapListTotal)
+// Tính dữ liệu biểu đồ
+    val (data, dates) = tinhTongTheoTuanVaNgay(
+        chiTieuListTotal + chiTieuTruocList,
+        thuNhapListTotal + thuNhapTruocList
+    )
+
+
 
     //========================= REFRESH =========================================
     var isRefreshing by remember { mutableStateOf(false) }
@@ -243,7 +283,7 @@ fun HomeScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                         } else {
-                            KhoanChiMoreRow(navController = navController, userId = userId)
+                            KhoanChiMoreRow(modifier = Modifier.padding(horizontal = 10.dp), navController = navController, userId = userId)
                             KhoanChiColumn(top5KhoanChi)
                         }
                     }

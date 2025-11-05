@@ -4,7 +4,7 @@ import Screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.SyncAlt
 import androidx.compose.runtime.Composable
@@ -48,7 +48,7 @@ fun ChucNangRow(
                 onClick = {
                     navController.navigate(Screen.AddTaiKhoan.createRoute(userId))
                 },
-                icon = Icons.Default.AddCircle
+                icon = Icons.Default.Add
             )
         }
     }

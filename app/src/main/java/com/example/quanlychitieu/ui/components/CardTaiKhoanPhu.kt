@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissDirection
@@ -33,11 +34,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 import formatCurrency
@@ -46,88 +52,111 @@ import formatCurrency
 fun CardTaikhoanPhu(
     modifier: Modifier = Modifier,
     taikhoan: TaiKhoanModel,
+    iconPath: String = "file:///android_asset/icons/ic_wallet.svg", // icon ví hoặc ngân hàng
     fullWidth: Boolean = false
 ) {
+    val context = LocalContext.current
+
     Box(
         modifier = modifier
-            .height(200.dp)
-            .then(
-                if (fullWidth) Modifier.fillMaxWidth()
-                else Modifier.width(370.dp) // 👈 khi ở LazyRow
-            )
-            .shadow(5.dp, RoundedCornerShape(RadiusXL))
+            .height(220.dp)
+            .then(if (fullWidth) Modifier.fillMaxWidth() else Modifier.width(370.dp))
+            .shadow(6.dp, RoundedCornerShape(RadiusXL))
             .clip(RoundedCornerShape(RadiusXL))
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFF11998e), Color(0xFF38ef7d)),
-                    start = Offset.Zero,
-                    end = Offset.Infinite
+                Brush.linearGradient(
+                    colors = listOf(Color(0xFF56CCF2), Color(0xFF2F80ED)), // xanh gradient hiện đại
+                    start = Offset(0f, 0f),
+                    end = Offset(400f, 400f)
                 )
             )
-
             .padding(20.dp)
     ) {
         Column(
-            modifier = Modifier,
-            verticalArrangement = Arrangement.SpaceAround
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Hàng trên: Chip + logo ngân hàng
+
+            // Hàng trên: Tên tài khoản + icon
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(
-                        text = taikhoan.ten_taikhoan.uppercase(),
-                        style = TextStyle(
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(iconPath)
+                            .decoderFactory(SvgDecoder.Factory())
+                            .build(),
+                        contentDescription = taikhoan.ten_taikhoan,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .padding(end = 10.dp),
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+
+                    Column {
+                        Text(
+                            text = taikhoan.ten_taikhoan,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = taikhoan.mo_ta,
-                        color = Color.White.copy(alpha = 0.9f),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                        Text(
+                            text = taikhoan.mo_ta,
+                            fontSize = 14.sp,
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
+                    }
                 }
 
-                Text(
-                    text = "BANK",
-                    color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                // Chip góc phải
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = Color.White.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "BANK",
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 12.sp
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            // Khoảng cách
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
+            // Số dư
+            Column {
                 Text(
-                    text = formatCurrency(taikhoan.so_du),
-                    style = TextStyle(
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
-                    )
+                    text = "Số dư khả dụng",
+                    fontSize = 14.sp,
+                    color = Color.White.copy(alpha = 0.7f)
                 )
                 Text(
+                    text = formatCurrency(taikhoan.so_du),
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
                     text = "**** **** **** ${taikhoan.id.toString().takeLast(4)}",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        letterSpacing = 2.sp,
-                        color = Color.White.copy(alpha = 0.8f)
-                    )
+                    fontSize = 14.sp,
+                    letterSpacing = 2.sp,
+                    color = Color.White.copy(alpha = 0.7f)
                 )
             }
         }
     }
 }
+
 
 
 @OptIn(ExperimentalMaterialApi::class)

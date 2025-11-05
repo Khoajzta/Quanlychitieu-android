@@ -186,7 +186,10 @@ fun AddChiTieuPage(
                     sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
                 },
                 leadingIcon = {
-                    Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+                    Text(
+                        text = "💵",
+                        fontSize = 20.sp,
+                    )
                 },
                 placeholder = "Số tiền",
                 keyboardOptions = KeyboardOptions(
@@ -217,7 +220,10 @@ fun AddChiTieuPage(
                 onValueChange = { mota = it },
                 placeholder = "Nhập ghi chú",
                 leadingIcon = {
-                    Icon(Icons.Default.EditNote, contentDescription = null, tint = Color.Gray)
+                    Text(
+                        text = "📝",
+                        fontSize = 20.sp
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -269,6 +275,8 @@ fun AddChiTieuPage(
 
                 },
             )
+
+
         }
 
         // Hiển thị Snackbar ở cuối màn hình
@@ -328,7 +336,10 @@ fun AddThuNhapPage(
                 value = tenThuNhap,
                 onValueChange = { tenThuNhap = it },
                 leadingIcon = {
-                    Icon(Icons.Default.DriveFileRenameOutline, contentDescription = null, tint = Color.Gray)
+                    Text(
+                        text = "📝",
+                        fontSize = 20.sp
+                    )
                 },
                 placeholder = "Tên thu nhập",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
@@ -342,7 +353,10 @@ fun AddThuNhapPage(
                     sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
                 },
                 leadingIcon = {
-                    Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+                    Text(
+                        text = "💵",
+                        fontSize = 20.sp,
+                    )
                 },
                 placeholder = "Số tiền",
                 keyboardOptions = KeyboardOptions(

@@ -25,6 +25,9 @@ class KhoanChiViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<List<KhoanChiModel>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<KhoanChiModel>>> = _uiState
 
+    private val _loadtheothang = MutableStateFlow<UiState<List<KhoanChiModel>>>(UiState.Loading)
+    val loadtheothang: StateFlow<UiState<List<KhoanChiModel>>> = _loadtheothang
+
     var createKhoanChiState by mutableStateOf<UiState<BaseResponse<KhoanChiModel>>>(UiState.Loading)
         private set
     var getKhoanChiByIdState by mutableStateOf<UiState<KhoanChiModel>>(UiState.Loading)
@@ -44,6 +47,18 @@ class KhoanChiViewModel @Inject constructor(
                 _uiState.value = UiState.Success(result)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error(e.localizedMessage ?: "Lỗi không xác định")
+            }
+        }
+    }
+
+    fun loadKhoanChiTheoThang(userId: Int, thang:Int, nam:Int) {
+        viewModelScope.launch {
+            _loadtheothang.value = UiState.Loading
+            try {
+                val result = repo.getKhoanChiTheoThangVaNam(userId,thang,nam)
+                _loadtheothang.value = UiState.Success(result)
+            } catch (e: Exception) {
+                _loadtheothang.value = UiState.Error(e.localizedMessage ?: "Lỗi không xác định")
             }
         }
     }

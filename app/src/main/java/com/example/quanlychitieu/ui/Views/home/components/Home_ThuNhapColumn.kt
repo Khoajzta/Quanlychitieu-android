@@ -27,21 +27,18 @@ fun HomeThuNhapColumn(
     userId : Int,
     listThuNhap : List<ThuNhapModel>
 ){
-    Column(
-        modifier = Modifier.wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Column {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth().padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Thu nhập gần đây",
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 color = Color.Black,
-                fontSize = 15.sp
+                fontSize = 16.sp,
             )
 
             TextButton(
@@ -53,13 +50,21 @@ fun HomeThuNhapColumn(
                     text = "Xem tất cả",
                     fontWeight = FontWeight.Bold,
                     color = PrimaryColor,
-                    fontSize = 15.sp
+                    fontSize = 16.sp,
                 )
             }
         }
 
-        for(item in listThuNhap){
-            CardThuNhap(thuNhap = item)
+        Column(
+            modifier = Modifier.wrapContentHeight(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+
+            for(item in listThuNhap){
+                CardThuNhap(thuNhap = item)
+            }
         }
     }
+
 }

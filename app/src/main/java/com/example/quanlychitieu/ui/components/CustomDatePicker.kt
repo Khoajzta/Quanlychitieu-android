@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.PadingExtraSmall
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusLarge
@@ -89,10 +90,9 @@ fun CustomDatePicker(
             readOnly = true,
             placeholder = { Text(placeholder, color = Color.Gray) },
             leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = null,
-                    tint = Color.Gray
+                Text(
+                    text = "️🗓️",
+                    fontSize = 20.sp
                 )
             },
             modifier = Modifier.fillMaxWidth(),

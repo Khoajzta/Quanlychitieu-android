@@ -28,24 +28,22 @@ fun HomeChiTieuColumn(
     userId:Int,
     listChiTieu :List<ChiTieuModel>
 ){
-    Column(
-        modifier = Modifier.wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Column {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth().padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Chi tiêu gần đây",
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 color = Color.Black,
-                fontSize = 15.sp
+                fontSize = 16.sp,
             )
 
             TextButton(
+                modifier = Modifier,
                 onClick = {
                     navController.navigate(Screen.ListChiTieuTheoThang.createRoute(userId))
                 }
@@ -54,12 +52,20 @@ fun HomeChiTieuColumn(
                     text = "Xem tất cả",
                     fontWeight = FontWeight.Bold,
                     color = PrimaryColor,
-                    fontSize = 15.sp
+                    fontSize = 16.sp
                 )
             }
         }
-        for(item in listChiTieu){
-            CardChiTieu(chitieu = item)
+
+        Column(
+            modifier = Modifier.wrapContentHeight(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            for(item in listChiTieu){
+                CardChiTieu(chitieu = item)
+            }
         }
     }
+
 }

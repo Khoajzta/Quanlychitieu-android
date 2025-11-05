@@ -1,6 +1,7 @@
 package com.example.quanlychitieu.Views.home.components
 
 import Screen
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,18 +33,24 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
+import com.example.quanlychitieu.R
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusFull
 
 // Dữ liệu mỗi mục trong bottom bar
 data class BottomNavItem(
     val title: String,
-    val icon: ImageVector,
+    val iconPath: String, // đổi từ iconRes sang đường dẫn SVG
     val route: String
 )
 
@@ -51,13 +58,13 @@ data class BottomNavItem(
 fun BottomNavigationBar(
     navController: NavController? = null,
     modifier: Modifier = Modifier,
-    userId: Int // thêm userId
+    userId: Int
 ) {
     val items = listOf(
-        BottomNavItem("Home", Icons.Default.Home, Screen.Home.route),
-        BottomNavItem("Giao dịch", Icons.Default.Autorenew, Screen.Trade.route),
-        BottomNavItem("Ngân sách", Icons.Default.AccountBalanceWallet, Screen.NganSach.route),
-        BottomNavItem("Cá nhân", Icons.Default.Person, Screen.Profile.route)
+        BottomNavItem("Home", "file:///android_asset/icons/ic_home.svg", Screen.Home.route),
+        BottomNavItem("Giao dịch", "file:///android_asset/icons/ic_trade.svg", Screen.Trade.route),
+        BottomNavItem("Ngân sách", "file:///android_asset/icons/ic_wallet.svg", Screen.NganSach.route),
+        BottomNavItem("Cá nhân", "file:///android_asset/icons/ic_profile.svg", Screen.Profile.route)
     )
 
     val currentRoute = navController?.currentBackStackEntryAsState()?.value?.destination?.route
@@ -74,17 +81,22 @@ fun BottomNavigationBar(
                 .height(65.dp)
                 .shadow(
                     5.dp,
-                    RoundedCornerShape(RadiusFull),
+                    RoundedCornerShape(50.dp),
                     ambientColor = Color(0xFF6FBAD6),
                 )
-                .clip(RoundedCornerShape(RadiusFull)),
+                .clip(RoundedCornerShape(50.dp)),
             contentAlignment = Alignment.Center
         ) {
+            // Nền gradient mờ
             Box(
                 modifier = Modifier
                     .matchParentSize()
                     .blur(18.dp)
-                    .background(Brush.horizontalGradient(listOf(Color(0xFF9FD7EE), Color(0xFF6FBAD6))))
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(Color(0xFF9FD7EE), Color(0xFF6FBAD6))
+                        )
+                    )
             )
 
             Row(
@@ -95,11 +107,10 @@ fun BottomNavigationBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEach { item ->
-                    val isSelected = currentRoute == item.route
                     BottomBarItem(
-                        icon = item.icon,
+                        iconPath = item.iconPath,
                         title = item.title,
-                        selected = isSelected,
+                        isSelected = currentRoute == item.route,
                         onClick = {
                             if (navController != null && currentRoute != item.route) {
                                 val routeToNavigate = when (item.route) {
@@ -122,17 +133,15 @@ fun BottomNavigationBar(
     }
 }
 
-
 @Composable
 fun BottomBarItem(
-    icon: ImageVector,
+    iconPath: String,
     title: String,
-    selected: Boolean = false,
+    isSelected: Boolean = false,
     onClick: () -> Unit
 ) {
-//    val color = if (selected) Color(0xFF1C94D5) else Color.White
-    val color = Color.White
-
+    val iconColor = if (isSelected) Color(0xFF1C94D5) else Color.White
+    val context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,24 +154,20 @@ fun BottomBarItem(
                 .size(50.dp)
                 .clip(CircleShape)
                 .clickable { onClick() },
-//                .background(
-//                    if (selected) Color.White.copy(alpha = 0.2f)
-//                    else Color.Transparent
-//                ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = icon,
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(iconPath)
+                    .decoderFactory(SvgDecoder.Factory())
+                    .build(),
                 contentDescription = title,
-                tint = color,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp),
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(iconColor)
             )
         }
-//        Text(
-//            text = title,
-//            color = color,
-//            fontSize = 12.sp
-//        )
     }
 }
 

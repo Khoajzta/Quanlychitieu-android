@@ -51,7 +51,7 @@ fun CardThuNhap(
             .fillMaxWidth()
             .background(
                 brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFF22C4A0), Color(0xFF84EFB2)),
+                    colors = listOf(Color(0xFF189D80), Color(0xFF4EBD7F), Color(0xFF90EFB7)),
                     start = Offset(0f, 0f),
                     end = Offset(300f, 300f)
                 ),
@@ -97,7 +97,7 @@ fun CardThuNhap(
 
             ) {
                 Text(
-                    text = "+ ${formatCurrency(thuNhap.so_tien)}",
+                    text = "💵 ${formatCurrency(thuNhap.so_tien)}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF057968)

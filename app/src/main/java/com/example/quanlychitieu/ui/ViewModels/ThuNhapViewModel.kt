@@ -28,6 +28,10 @@ class ThuNhapViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<List<ThuNhapModel>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<ThuNhapModel>>> = _uiState
 
+    private val _uiStateTheoThangTruoc = MutableStateFlow<UiState<List<ThuNhapModel>>>(UiState.Loading)
+    val uiStateTheoThangTruoc: StateFlow<UiState<List<ThuNhapModel>>> = _uiStateTheoThangTruoc
+
+
     private val _thongKeTheoNamuiState = MutableStateFlow<UiState<List<ThongKeThuNhapModel>>>(UiState.Loading)
     val thongKeTheoNamState: StateFlow<UiState<List<ThongKeThuNhapModel>>> = _thongKeTheoNamuiState
     var thuNhapCreateState by mutableStateOf<UiState<BaseResponse<ThuNhapModel>>>(UiState.Loading)
@@ -50,6 +54,25 @@ class ThuNhapViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _uiState.value = UiState.Error(e.message ?: "Lỗi kết nối")
+                Log.e("THU_NHAP_VIEWMODEL", "Exception: ${e.message}")
+            }
+        }
+    }
+
+    fun getThuNhapTheoThangTruoc(userId: Int, thang: Int, nam: Int) {
+        viewModelScope.launch {
+            _uiStateTheoThangTruoc.value = UiState.Loading
+            try {
+                val result = repository.getThuNhapTheoThang(userId, thang, nam)
+                if (result.success) {
+                    _uiStateTheoThangTruoc.value = UiState.Success(result.data!!)
+                    Log.d("THU_NHAP_VIEWMODEL", "Dữ liệu nhận được: ${result.data}")
+                } else {
+                    _uiStateTheoThangTruoc.value = UiState.Error(result.message ?: "Lỗi không xác định")
+                    Log.e("THU_NHAP_VIEWMODEL", "Lỗi từ API: ${result.message}")
+                }
+            } catch (e: Exception) {
+                _uiStateTheoThangTruoc.value = UiState.Error(e.message ?: "Lỗi kết nối")
                 Log.e("THU_NHAP_VIEWMODEL", "Exception: ${e.message}")
             }
         }

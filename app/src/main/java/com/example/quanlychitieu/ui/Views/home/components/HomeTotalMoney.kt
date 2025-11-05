@@ -5,127 +5,154 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.quanlychitieu.R
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
 import com.example.quanlychitieu.ui.theme.Dimens.RadiusXL
 
 @Composable
 fun HomeTotalMoney(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     taikhoan: TaiKhoanModel,
-    tongTienDuKien :Long,
-    tongThuNhap:Long,
-    tongChiTieu :Long
+    tongTienDuKien: Long,
+    tongThuNhap: Long,
+    tongChiTieu: Long
 ) {
     Box(
         modifier = modifier
-            .height(200.dp)
             .width(370.dp)
-            .shadow(5.dp, RoundedCornerShape(RadiusXL))
-            .clip(RoundedCornerShape(RadiusXL))
+            .height(220.dp)
+            .shadow(8.dp, RoundedCornerShape(28.dp))
+            .clip(RoundedCornerShape(28.dp))
             .background(
-                Brush.horizontalGradient(
-                    colors = listOf(Color(0xFF73B5E1), Color(0xFF753a88))
+                Brush.linearGradient(
+                    colors = listOf(Color(0xFF8BC6EC), Color(0xFF9599E2)), // gradient pastel
+                    start = Offset(0f, 0f),
+                    end = Offset(400f, 400f)
                 )
             )
-    ){
+            .padding(18.dp)
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp)
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                "Tổng số dư",
-                lineHeight = 15.sp,
-                color = Color.White.copy(0.6f)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                "${formatCurrency(taikhoan.so_du)}",
-                fontSize = 30.sp,
-                lineHeight = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-
-
-
-            Text(
-                "Khoản chi dự kiến",
-                lineHeight = 15.sp,
-                color = Color.White.copy(0.6f)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                "${formatCurrency(tongTienDuKien)}",
-                fontSize = 20.sp,
-                lineHeight = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(Color(0xFFA0C7E1), Color(0xFFB461CC))
-                    )
+            // 🧾 Phần trên: Tổng số dư
+            Column {
+                Text(
+                    text = "Tổng số dư",
+                    color = Color.White.copy(0.7f),
+                    fontSize = 14.sp
                 )
-        ) {
-            Row(
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = formatCurrency(taikhoan.so_du),
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Khoản chi dự kiến",
+                    color = Color.White.copy(0.7f),
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = formatCurrency(tongTienDuKien),
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            // 💰 Phần dưới: Thống kê thu / chi trong tháng
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(Color.White.copy(0.15f), Color.White.copy(0.08f))
+                        )
+                    )
+                    .padding(vertical = 10.dp, horizontal = 15.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1f),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Tổng thu nhập:", fontSize = 12.sp, lineHeight = 20.sp, color = Color.White.copy(0.6f))
-                    Text(formatCurrency(tongThuNhap), fontSize = 17.sp, lineHeight = 15.sp, color = Color.White)
-                }
-                Spacer(modifier = Modifier.width(30.dp))
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1f),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("Tổng đã chi:", fontSize = 12.sp, lineHeight = 20.sp, color = Color.White.copy(0.6f))
-                    Text(formatCurrency(tongChiTieu), fontSize = 17.sp, lineHeight = 15.sp, color = Color.White)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.ArrowUpward, contentDescription = null, tint = Color(0xFF00E676))
+
+                        Spacer(Modifier.width(6.dp))
+                        Column {
+                            Text(
+                                text = "Thu nhập tháng",
+                                color = Color.White.copy(0.7f),
+                                fontSize = 12.sp
+                            )
+                            Text(
+                                text = formatCurrency(tongThuNhap),
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.ArrowDownward, contentDescription = null, tint = Color(0xFFFF5252))
+                        Spacer(Modifier.width(6.dp))
+                        Column {
+                            Text(
+                                text = "Chi tiêu tháng",
+                                color = Color.White.copy(0.7f),
+                                fontSize = 12.sp
+                            )
+                            Text(
+                                text = formatCurrency(tongChiTieu),
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 @Preview

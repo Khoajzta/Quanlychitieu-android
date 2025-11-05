@@ -33,9 +33,9 @@ fun KhoanChiMoreRow(
     ) {
         Text(
             text = "Các khoản hay chi tiêu",
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
             color = Color.Black,
-            fontSize = 15.sp
+            fontSize = 16.sp
         )
 
         TextButton(
@@ -47,7 +47,7 @@ fun KhoanChiMoreRow(
                 text = "Xem tất cả",
                 fontWeight = FontWeight.Bold,
                 color = PrimaryColor,
-                fontSize = 15.sp
+                fontSize = 16.sp
             )
         }
     }

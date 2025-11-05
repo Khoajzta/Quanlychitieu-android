@@ -27,6 +27,9 @@ class ChiTieuViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<UiState<List<ChiTieuModel>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<ChiTieuModel>>> = _uiState
+
+    private val _uiStateTheoThangTruoc = MutableStateFlow<UiState<List<ChiTieuModel>>>(UiState.Loading)
+    val uiStateTheoThangTruoc: StateFlow<UiState<List<ChiTieuModel>>> = _uiStateTheoThangTruoc
     private val _uiStateTheoThang = MutableStateFlow<UiState<List<ChiTieuModel>>>(UiState.Loading)
     val uiStateTheoThang: StateFlow<UiState<List<ChiTieuModel>>> = _uiStateTheoThang
     var createChiTieuState by mutableStateOf<UiState<BaseResponse<ChiTieuModel>>>(UiState.Loading)
@@ -58,6 +61,18 @@ class ChiTieuViewModel @Inject constructor(
                 _uiStateTheoThang.value = UiState.Success(result)
             } catch (e: Exception) {
                 _uiStateTheoThang.value = UiState.Error(e.localizedMessage ?: "Lỗi không xác định")
+            }
+        }
+    }
+
+    fun getChiTieuTheoThangTruoc(userId :Int, thang:Int, nam: Int) {
+        viewModelScope.launch {
+            _uiStateTheoThangTruoc.value = UiState.Loading
+            try {
+                val result = repository.getChiTieuTheoThangVaNam(userId = userId, thang = thang, nam = nam)
+                _uiStateTheoThangTruoc.value = UiState.Success(result)
+            } catch (e: Exception) {
+                _uiStateTheoThangTruoc.value = UiState.Error(e.localizedMessage ?: "Lỗi không xác định")
             }
         }
     }

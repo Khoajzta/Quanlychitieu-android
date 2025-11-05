@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.SyncAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.CusTomTextField
@@ -140,7 +142,10 @@ fun ChuyenTienScreen(
                             sotien = if (digits.isNotEmpty()) digits.toLong() else 0L
                         },
                         leadingIcon = {
-                            Icon(Icons.Default.AttachMoney, contentDescription = null, tint = Color.Gray)
+                            Text(
+                                text = "💵",
+                                fontSize = 20.sp,
+                            )
                         },
                         placeholder = "Số tiền",
                         keyboardOptions = KeyboardOptions(
@@ -155,7 +160,10 @@ fun ChuyenTienScreen(
                         onValueChange = { ghichu = it },
                         placeholder = "Nhập ghi chú",
                         leadingIcon = {
-                            Icon(Icons.Default.EditNote, contentDescription = null, tint = Color.Gray)
+                            Text(
+                                text = "📝",
+                                fontSize = 20.sp
+                            )
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,

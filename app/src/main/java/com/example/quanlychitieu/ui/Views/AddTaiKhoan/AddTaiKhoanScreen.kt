@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.DriveFileRenameOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.quanlychitieu.Components.CusTomTextField
@@ -107,10 +109,9 @@ fun AddTaiKhoanScreen(
                     value = tenTaiKhoan,
                     onValueChange = { tenTaiKhoan = it },
                     leadingIcon = {
-                        Icon(
-                            Icons.Default.DriveFileRenameOutline,
-                            contentDescription = null,
-                            tint = Color.Gray
+                        Text(
+                            text = "📝",
+                            fontSize = 20.sp
                         )
                     },
                     placeholder = "Tên tài khoản",
@@ -125,10 +126,9 @@ fun AddTaiKhoanScreen(
                     value = moTa,
                     onValueChange = { moTa = it },
                     leadingIcon = {
-                        Icon(
-                            Icons.Default.Description,
-                            contentDescription = null,
-                            tint = Color.Gray
+                        Text(
+                            text = "📝",
+                            fontSize = 20.sp
                         )
                     },
                     placeholder = "Mô tả",

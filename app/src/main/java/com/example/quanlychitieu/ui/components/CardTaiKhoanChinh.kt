@@ -6,18 +6,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +37,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -40,6 +47,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import com.example.quanlychitieu.Components.CusTomTextField
 import com.example.quanlychitieu.Components.CustomButton
 import com.example.quanlychitieu.domain.model.TaiKhoanModel
@@ -52,16 +62,17 @@ fun CardTaiKhoanChinh(
     modifier: Modifier = Modifier,
     taikhoan: TaiKhoanModel,
     taiKhoanViewModel: TaiKhoanViewModel = hiltViewModel()
-){
+) {
     var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
+    // 🔹 Hiển thị dialog nạp tiền
     if (showDialog) {
         CustomDialog(
             onDismiss = { showDialog = false },
             title = "Nạp tiền"
         ) {
             var sotien by remember { mutableStateOf(0L) }
-
 
             CusTomTextField(
                 value = if (sotien == 0L) "" else formatCurrency(sotien),
@@ -87,27 +98,16 @@ fun CardTaiKhoanChinh(
             ) {
                 CustomButton(
                     title = "Hủy",
-                    onClick = {showDialog = false},
+                    onClick = { showDialog = false },
                     containerColor = Color.Red
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 CustomButton(
                     title = "Nạp",
                     onClick = {
-                        var taikhoanUpdate = TaiKhoanModel(
-                            id = taikhoan.id,
-                            id_nguoidung = taikhoan.id_nguoidung,
-                            ten_taikhoan = taikhoan.ten_taikhoan,
-                            so_du = taikhoan.so_du + sotien,
-                            loai_taikhoan = taikhoan.loai_taikhoan,
-                            mo_ta = taikhoan.mo_ta
-                        )
-
-                        taiKhoanViewModel.updateTaiKhoan(taikhoanUpdate, id = taikhoan.id)
+                        val taikhoanUpdate = taikhoan.copy(so_du = taikhoan.so_du + sotien)
+                        taiKhoanViewModel.updateTaiKhoan(taikhoanUpdate, taikhoan.id)
                         taiKhoanViewModel.loadTaiKhoans(taikhoan.id_nguoidung)
-
-                        Log.d("So tien nap", sotien.toString())
-
                         showDialog = false
                     },
                 )
@@ -115,101 +115,115 @@ fun CardTaiKhoanChinh(
         }
     }
 
+    // 🔹 Card chính
     Box(
         modifier = modifier
-            .height(200.dp)
+            .height(220.dp)
             .fillMaxWidth()
-            .shadow(5.dp, RoundedCornerShape(RadiusXL))
+            .shadow(8.dp, RoundedCornerShape(RadiusXL))
             .clip(RoundedCornerShape(RadiusXL))
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFF232526), Color(0xFF414345)),
-                    start = Offset.Zero,
-                    end = Offset.Infinite
+                Brush.linearGradient(
+                    colors = listOf(Color(0xFF141E30), Color(0xFF243B55)), // xanh đen sang trọng
+                    start = Offset(0f, 0f),
+                    end = Offset(400f, 400f)
                 )
             )
-
-            .clickable { /* TODO: xử lý khi bấm vào card */ }
             .padding(20.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceAround
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Hàng trên: Chip + logo ngân hàng
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        text = taikhoan.ten_taikhoan.uppercase(),
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    )
-                    Text(
-                        text = taikhoan.mo_ta,
-                        color = Color.White.copy(alpha = 0.9f),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Text(
-                    text = "BANK",
-                    color = Color.White.copy(alpha = 0.9f),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
+            // 🔹 Hàng đầu: tên tài khoản + logo + icon
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        text = formatCurrency(taikhoan.so_du),
-                        style = TextStyle(
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.SemiBold,
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data("file:///android_asset/icons/ic_wallet.svg")
+                            .decoderFactory(SvgDecoder.Factory())
+                            .build(),
+                        contentDescription = "Main Wallet",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(end = 10.dp),
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+
+                    Column {
+                        Text(
+                            text = taikhoan.ten_taikhoan,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
+                        Text(
+                            text = taikhoan.mo_ta,
+                            fontSize = 14.sp,
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = Color.White.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "MAIN",
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+
+            // 🔹 Số dư + nút nạp tiền
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = "Số dư hiện tại",
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        text = formatCurrency(taikhoan.so_du),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                     Text(
                         text = "**** **** **** ${taikhoan.id.toString().takeLast(4)}",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            letterSpacing = 2.sp,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
+                        fontSize = 14.sp,
+                        letterSpacing = 2.sp,
+                        color = Color.White.copy(alpha = 0.7f)
                     )
                 }
 
                 CustomButton(
-                    modifier = Modifier
-                        .wrapContentWidth(),
                     title = "Nạp tiền",
-                    onClick = {
-                        showDialog = true
-                    }
+                    onClick = { showDialog = true},
+                    containerColor = Color(0xFF1C94D5),
+                    icon = Icons.Default.Add
                 )
-            }
 
+            }
         }
     }
-
 }
+
 
 @Composable
 @Preview

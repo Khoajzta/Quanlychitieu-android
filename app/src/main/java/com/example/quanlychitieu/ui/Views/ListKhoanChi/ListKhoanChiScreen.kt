@@ -46,6 +46,7 @@ import com.example.quanlychitieu.ui.theme.BackgroundColor
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import com.example.quanlychitieu.ui.theme.Dimens.SpaceMedium
 import kotlinx.coroutines.delay
+import java.time.LocalDate
 
 @Composable
 fun ListKhoanChiScreen(
@@ -53,13 +54,17 @@ fun ListKhoanChiScreen(
     userId: Int,
     khoanChiViewModel: KhoanChiViewModel = hiltViewModel(),
 ){
-    val khoanChiuiState by khoanChiViewModel.uiState.collectAsState()
+    val currentDate = LocalDate.now()
+    val currentMonth = currentDate.monthValue
+    val currentYear = currentDate.year
+
+    val khoanChiuiState by khoanChiViewModel.loadtheothang.collectAsState()
     val deleteState = khoanChiViewModel.deleteKhoanChiState
 
     LaunchedEffect(userId) {
         if (userId > 0) {
             while (true) {
-                khoanChiViewModel.loadKhoanChi(userId)
+                khoanChiViewModel.loadKhoanChiTheoThang(userId, currentMonth, currentYear)
                 delay(15 * 60 * 1000L)
             }
         }

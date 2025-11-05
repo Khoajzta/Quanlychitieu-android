@@ -83,7 +83,7 @@ fun CardChiTieu(
 
                 Text(
                     text = "Ngày: ${formatDayDisplay(chitieu.ngay_tao)}",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = Color.White.copy(alpha = 0.85f),
                 )
             }
@@ -99,7 +99,7 @@ fun CardChiTieu(
 
             ) {
                 Text(
-                    text = "💰 ${formatCurrency(chitieu.so_tien)}",
+                    text = "💵 ${formatCurrency(chitieu.so_tien)}",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White

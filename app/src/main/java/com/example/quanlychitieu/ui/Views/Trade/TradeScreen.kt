@@ -38,6 +38,7 @@ import com.example.quanlychitieu.ui.state.UiState
 import com.example.quanlychitieu.ui.theme.BackgroundColor
 import com.example.quanlychitieu.ui.theme.Dimens.PaddingBody
 import kotlinx.coroutines.delay
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -46,13 +47,17 @@ fun TradeScreen(
     userId: Int,
     khoanChiViewModel: KhoanChiViewModel = hiltViewModel(),
 ) {
-    val khoanChiUiState by khoanChiViewModel.uiState.collectAsState()
+    val khoanChiUiState by khoanChiViewModel.loadtheothang.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
+
+    val currentDate = LocalDate.now()
+    val currentMonth = currentDate.monthValue
+    val currentYear = currentDate.year
 
     // ✅ Gọi API khi mở màn hình
     LaunchedEffect(userId) {
         if (userId > 0) {
-            khoanChiViewModel.loadKhoanChi(userId)
+            khoanChiViewModel.loadKhoanChiTheoThang(userId, currentMonth, currentYear)
         }
     }
 
